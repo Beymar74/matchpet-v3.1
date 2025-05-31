@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../components/ui/badge';
 import Image from 'next/image';
 
 const pets = [
