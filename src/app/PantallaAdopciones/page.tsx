@@ -46,10 +46,10 @@ export default function Page() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h1 className="text-white text-3xl md:text-5xl font-bold drop-shadow-lg mb-2">
-            Módulo 3: Adopciones
+          Centro de Adopciones y Seguimiento
           </h1>
           <p className="text-white text-sm md:text-lg max-w-2xl drop-shadow">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet felis a nibh dignissim facilisis. Ayudamos a conectar familias con nuevas mascotas de forma segura y amorosa.
+          Gestiona solicitudes, visitas y seguimientos post-adopción para asegurar que cada mascota encuentre un hogar responsable, amoroso y permanente.
           </p>
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function Page() {
         {opciones.map((op) => (
           <button
             key={op.ruta}
-            onClick={() => router.push(`/Modulo3Adopciones/${op.ruta}`)}
+            onClick={() => router.push(`/PantallaAdopciones/${op.ruta}`)}
             className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transform hover:scale-105 transition duration-300 overflow-hidden text-left"
           >
             <Image
