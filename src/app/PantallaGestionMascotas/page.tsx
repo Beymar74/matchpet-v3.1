@@ -77,7 +77,7 @@ export default function GestionMascotas() {
             { href: '/multimedia', icon: '📸', label: 'Gestión de Multimedia' },
             { href: '/borrador', icon: '📝', label: 'Marcar como Borrador' }
           ].map(({ href, icon, label }) => (
-            <Link key={href} href={`/Modulo_6-Gestion_de_Mascotas${href}`}>
+            <Link key={href} href={`/PantallaGestionMascotas${href}`}>
               <div className="bg-gradient-to-r from-[#30588C] via-[#6093BF] to-[#254559] hover:from-[#BF3952] hover:to-[#30588C] text-white p-4 rounded-lg shadow-lg transition-all duration-300 text-center font-medium">
                 {icon} {label}
               </div>
@@ -127,13 +127,13 @@ export default function GestionMascotas() {
             <p><strong>Estado:</strong> {mascotaSeleccionada.estado}</p>
 
             <div className="mt-4 flex flex-wrap justify-between gap-2">
-              <Link href={`/Modulo_6-Gestion_de_Mascotas/editar/${mascotaSeleccionada.id}`}>
+              <Link href={`/PantallaGestionMascotas/editar/${mascotaSeleccionada.id}`}>
                 <button className="bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-auto">Editar</button>
               </Link>
-              <Link href={`/Modulo_6-Gestion_de_Mascotas/ficha-medica/${mascotaSeleccionada.id}`}>
+              <Link href={`/PantallaGestionMascotas/ficha-medica/${mascotaSeleccionada.id}`}>
                 <button className="bg-[#6093BF] text-white px-4 py-2 rounded hover:bg-[#30588C] w-full sm:w-auto">Ficha Médica</button>
               </Link>
-              <Link href={`/Modulo_6-Gestion_de_Mascotas/eliminar/${mascotaSeleccionada.id}`}>
+              <Link href={`/PantallaGestionMascotas/eliminar/${mascotaSeleccionada.id}`}>
                 <button className="bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-auto">Eliminar</button>
               </Link>
             </div>

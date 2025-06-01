@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Header from '@/components/layout/Header'
+import Header from '@/components/Header'
 import Link from 'next/link'
 
 export default function GestionMultimediaPage() {
@@ -26,27 +26,27 @@ export default function GestionMultimediaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-4 text-[#BF3952]">📸 Gestión de Multimedia</h1>
-        <p className="mb-6 text-sm text-white/80">
+        <p className="mb-6 text-sm text-gray-700 dark:text-white/80">
           Aquí puedes cargar fotos o documentos relevantes sobre la mascota.
         </p>
 
-        <div className="bg-white text-gray-900 p-6 rounded-xl shadow-lg space-y-4">
+        <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-lg space-y-4">
           <input
             type="file"
             accept="image/*,.pdf"
             multiple
             onChange={handleArchivo}
-            className="w-full border border-gray-300 p-2 rounded"
+            className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-[#2a2a2a]"
           />
 
           <button
             onClick={subirArchivos}
-            className="bg-[#2e7d5f] hover:bg-[#256f52] text-white px-5 py-2 rounded transition"
+            className="bg-gradient-to-r from-[#2e7d5f] to-[#30588C] hover:opacity-90 text-white px-5 py-2 rounded transition"
           >
             🚀 Subir archivos
           </button>
@@ -54,9 +54,9 @@ export default function GestionMultimediaPage() {
           {vistaPrevia.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-4">
               {vistaPrevia.map((src, i) => (
-                <div key={i} className="border border-gray-300 rounded-lg p-2 bg-gray-50 text-center">
+                <div key={i} className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-[#2a2a2a] text-center">
                   {src.endsWith('.pdf') ? (
-                    <p className="text-sm text-gray-700">📄 Documento PDF</p>
+                    <p className="text-sm text-gray-700 dark:text-white/80">📄 Documento PDF</p>
                   ) : (
                     <img
                       src={src}
@@ -72,7 +72,7 @@ export default function GestionMultimediaPage() {
 
         <div className="mt-6 text-sm">
           <Link
-            href="/Modulo_6-Gestion_de_Mascotas"
+            href="/PantallaGestionMascotas"
             className="text-[#6093BF] hover:underline"
           >
             ← Volver a Gestión de Mascotas

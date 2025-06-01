@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Header from '@/components/layout/Header';
+import Header from '@/components/Header';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -15,7 +15,6 @@ interface Mascota {
   esterilizado: boolean;
 }
 
-// Datos simulados
 const mockMascotas: Mascota[] = [
   {
     id: '1',
@@ -52,43 +51,43 @@ export default function FichaMedicaPage() {
   const mascota = mockMascotas.find((m) => m.id === mascotaId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🩺 Ficha Médica de la Mascota</h1>
 
         {mascota ? (
-          <div className="bg-white text-gray-900 rounded-xl shadow-lg p-6 space-y-4">
+          <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-lg p-6 space-y-4">
             <div>
-              <strong className="text-[#30588C]">Nombre:</strong> {mascota.nombre}
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Nombre:</strong> {mascota.nombre}
             </div>
             <div>
-              <strong className="text-[#30588C]">Especie:</strong> {mascota.especie}
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Especie:</strong> {mascota.especie}
             </div>
             <div>
-              <strong className="text-[#30588C]">Edad:</strong> {mascota.edad} años
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Edad:</strong> {mascota.edad} años
             </div>
             <div>
-              <strong className="text-[#30588C]">Estado de salud:</strong> {mascota.estadoSalud}
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Estado de salud:</strong> {mascota.estadoSalud}
             </div>
             <div>
-              <strong className="text-[#30588C]">Vacunas:</strong> {mascota.vacunas.join(', ')}
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Vacunas:</strong> {mascota.vacunas.join(', ')}
             </div>
             <div>
-              <strong className="text-[#30588C]">Esterilizado:</strong>{' '}
+              <strong className="text-[#30588C] dark:text-[#6093BF]">Esterilizado:</strong>{' '}
               {mascota.esterilizado ? 'Sí' : 'No'}
             </div>
           </div>
         ) : (
-          <div className="bg-red-100 text-red-800 p-6 rounded-xl shadow-md">
+          <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-6 rounded-xl shadow-md">
             Mascota no encontrada.
           </div>
         )}
 
         <div className="mt-6 text-sm">
           <Link
-            href="/Modulo_6-Gestion_de_Mascotas"
+            href="/PantallaGestionMascotas"
             className="text-[#6093BF] hover:underline"
           >
             ← Volver a Gestión de Mascotas
@@ -98,4 +97,3 @@ export default function FichaMedicaPage() {
     </div>
   );
 }
-

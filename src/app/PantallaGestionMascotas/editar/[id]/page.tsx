@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
+import Header from '@/components/Header';
 
 interface Mascota {
   id: string;
@@ -24,7 +24,7 @@ const mockMascotas: Mascota[] = [
     edad: 3,
     estado: 'Disponible',
     descripcion: 'Luna es amigable y le encanta jugar.',
-    foto: 'https://place-puppy.com/300x300',
+    foto: 'Perros/labrador.jpg',
   },
   {
     id: '2',
@@ -34,7 +34,7 @@ const mockMascotas: Mascota[] = [
     edad: 2,
     estado: 'Adoptado',
     descripcion: 'Milo es tranquilo y cariñoso.',
-    foto: 'https://placekitten.com/300/300',
+    foto: 'Gatos/persa.jpg',
   },
   {
     id: '3',
@@ -44,7 +44,7 @@ const mockMascotas: Mascota[] = [
     edad: 4,
     estado: 'En tratamiento',
     descripcion: 'Toby se está recuperando de una lesión.',
-    foto: 'https://place-puppy.com/301x301',
+    foto: 'Perros/beagle.jpg',
   },
 ];
 
@@ -95,129 +95,138 @@ export default function EditarMascotaPage() {
 
     console.log('Mascota actualizada (simulado):', formData);
     alert('✅ Mascota actualizada correctamente (simulado)');
-    router.push('/Modulo_6-Gestion_de_Mascotas');
+    router.push('/PantallaGestionMascotas');
   };
 
   if (!formData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+      <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
         <Header />
         <main className="max-w-3xl mx-auto py-10 px-6">
           <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
-          <p className="text-red-300">Mascota no encontrada.</p>
+          <p className="text-red-500">Mascota no encontrada.</p>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
-      <main className="max-w-3xl mx-auto py-10 px-6">
+      <main className="max-w-4xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-8 text-[#BF3952]">✏️ Editar Mascota</h1>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white text-gray-800 p-6 rounded-xl shadow-xl space-y-5"
+          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5"
         >
-          {/* Vista previa de la imagen */}
-          {formData.foto && (
-            <img
-              src={formData.foto}
-              alt="Vista previa"
-              className="w-full max-h-64 object-cover rounded-lg shadow mb-4"
-            />
-          )}
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-1 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Nombre *</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.nombre ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Nombre *</label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded mt-1 ${errores.nombre ? 'border-red-500' : 'border-gray-300'}`}
-              required
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Especie *</label>
+                <input
+                  type="text"
+                  name="especie"
+                  value={formData.especie}
+                  onChange={handleChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.especie ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Especie *</label>
-            <input
-              type="text"
-              name="especie"
-              value={formData.especie}
-              onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded mt-1 ${errores.especie ? 'border-red-500' : 'border-gray-300'}`}
-              required
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Raza</label>
+                <input
+                  type="text"
+                  name="raza"
+                  value={formData.raza}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a]"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Raza</label>
-            <input
-              type="text"
-              name="raza"
-              value={formData.raza}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Edad *</label>
+                <input
+                  type="number"
+                  name="edad"
+                  value={formData.edad}
+                  onChange={handleChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.edad ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Edad *</label>
-            <input
-              type="number"
-              name="edad"
-              value={formData.edad}
-              onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded mt-1 ${errores.edad ? 'border-red-500' : 'border-gray-300'}`}
-              required
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Estado *</label>
+                <select
+                  name="estado"
+                  value={formData.estado}
+                  onChange={handleChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.estado ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                  required
+                >
+                  <option value="Disponible">Disponible</option>
+                  <option value="Adoptado">Adoptado</option>
+                  <option value="En tratamiento">En tratamiento</option>
+                  <option value="Necesidades Especiales">Necesidades Especiales</option>
+                </select>
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
-            <select
-              name="estado"
-              value={formData.estado}
-              onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded mt-1 ${errores.estado ? 'border-red-500' : 'border-gray-300'}`}
-              required
-            >
-              <option value="Disponible">Disponible</option>
-              <option value="Adoptado">Adoptado</option>
-              <option value="En tratamiento">En tratamiento</option>
-              <option value="Necesidades Especiales">Necesidades Especiales</option>
-            </select>
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Descripción</label>
+                <textarea
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a]"
+                  rows={3}
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Descripción</label>
-            <textarea
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
-              rows={3}
-            />
-          </div>
+              <div>
+                <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Subir nueva imagen</label>
+                <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#30588C] dark:bg-[#6093BF] text-white rounded shadow hover:opacity-90">
+                  Seleccionar archivo
+                </label>
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C]">Subir nueva imagen</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full text-sm text-gray-600 mt-1"
-            />
+            {formData.foto && (
+              <div className="flex-1">
+                <img
+                  src={formData.foto}
+                  alt="Vista previa"
+                  className="w-full h-full max-h-[400px] object-cover rounded-lg shadow"
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="bg-[#BF3952] text-white px-6 py-2 rounded hover:bg-[#a72d45] transition"
+              className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded transition"
             >
               💾 Guardar Cambios
             </button>
@@ -227,4 +236,3 @@ export default function EditarMascotaPage() {
     </div>
   );
 }
-

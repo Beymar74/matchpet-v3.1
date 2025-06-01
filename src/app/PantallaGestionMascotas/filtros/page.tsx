@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Header from '@/components/layout/Header'
+import Header from '@/components/Header'
 import Link from 'next/link'
 
 export default function FiltrosAvanzadosPage() {
@@ -22,24 +22,24 @@ export default function FiltrosAvanzadosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-12 px-6">
         <h1 className="text-4xl font-bold mb-4 text-[#BF3952]">🔍 Filtros Avanzados</h1>
-        <p className="mb-6 text-sm text-white/80">
+        <p className="mb-6 text-sm text-gray-700 dark:text-white/80">
           Usa los siguientes filtros para buscar mascotas según tus preferencias:
         </p>
 
         <form
-          className="bg-white text-gray-900 rounded-xl shadow-lg p-6 space-y-5"
+          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-lg p-6 space-y-5"
           onSubmit={e => e.preventDefault()}
         >
           <div>
-            <label className="block font-semibold text-[#30588C] mb-1">Edad</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Edad</label>
             <select
               name="edad"
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-[#2a2a2a]"
               value={filtros.edad}
               onChange={handleChange}
             >
@@ -51,10 +51,10 @@ export default function FiltrosAvanzadosPage() {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] mb-1">Especie</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Especie</label>
             <select
               name="especie"
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-[#2a2a2a]"
               value={filtros.especie}
               onChange={handleChange}
             >
@@ -66,10 +66,10 @@ export default function FiltrosAvanzadosPage() {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] mb-1">Tamaño</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Tamaño</label>
             <select
               name="tamaño"
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-[#2a2a2a]"
               value={filtros.tamaño}
               onChange={handleChange}
             >
@@ -81,10 +81,10 @@ export default function FiltrosAvanzadosPage() {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] mb-1">Estado</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Estado</label>
             <select
               name="estado"
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-[#2a2a2a]"
               value={filtros.estado}
               onChange={handleChange}
             >
@@ -99,7 +99,7 @@ export default function FiltrosAvanzadosPage() {
           <button
             type="button"
             onClick={aplicarFiltros}
-            className="bg-[#BF3952] hover:bg-[#a73745] text-white px-5 py-2 rounded transition"
+            className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-5 py-2 rounded transition"
           >
             Aplicar Filtros
           </button>
@@ -107,7 +107,7 @@ export default function FiltrosAvanzadosPage() {
 
         <div className="mt-6 text-sm">
           <Link
-            href="/Modulo_6-Gestion_de_Mascotas"
+            href="/PantallaGestionMascotas"
             className="text-[#6093BF] hover:underline"
           >
             ← Volver a Gestión de Mascotas

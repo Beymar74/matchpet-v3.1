@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Header from '@/components/layout/Header'
+import Header from '@/components/Header'
 import Link from 'next/link'
 
 export default function FichaMedicaPage() {
@@ -39,7 +39,7 @@ export default function FichaMedicaPage() {
 
         <div className="mt-6 text-sm">
           <Link
-            href="/Modulo_6-Gestion_de_Mascotas"
+            href="/PantallaGestionMascotas"
             className="text-[#6093BF] hover:underline"
           >
             ← Volver a Gestión de Mascotas

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
+import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 
 export default function RegistrarMascotaPage() {
@@ -33,11 +33,11 @@ export default function RegistrarMascotaPage() {
 
     console.log('Mascota registrada (simulada):', formData);
     alert('✅ Mascota registrada correctamente (simulado)');
-    router.push('/Modulo_6-Gestion_de_Mascotas');
+    router.push('/PantallaGestionMascotas');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-12 px-6">
@@ -45,64 +45,64 @@ export default function RegistrarMascotaPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white text-gray-900 p-6 rounded-xl shadow-xl space-y-5"
+          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5"
         >
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Nombre *</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Nombre *</label>
             <input
               type="text"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Especie *</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Especie *</label>
             <input
               type="text"
               name="especie"
               value={formData.especie}
               onChange={handleChange}
               placeholder="Perro, Gato, etc."
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Raza</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Raza</label>
             <input
               type="text"
               name="raza"
               value={formData.raza}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Edad (años) *</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Edad (años) *</label>
             <input
               type="number"
               name="edad"
               value={formData.edad}
               onChange={handleChange}
               min={0}
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Estado *</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Estado *</label>
             <select
               name="estado"
               value={formData.estado}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               required
             >
               <option value="">Selecciona un estado</option>
@@ -114,32 +114,32 @@ export default function RegistrarMascotaPage() {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Descripción</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Descripción</label>
             <textarea
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               rows={3}
             ></textarea>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Foto (URL)</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Foto (URL)</label>
             <input
               type="text"
               name="foto"
               value={formData.foto}
               onChange={handleChange}
-              placeholder="https://..."
-              className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+              placeholder="/img/mascotas/luna.jpg"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
             />
           </div>
 
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="bg-[#BF3952] hover:bg-[#a73745] text-white px-6 py-2 rounded transition"
+              className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded transition"
             >
               Registrar
             </button>
