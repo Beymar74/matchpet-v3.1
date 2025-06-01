@@ -61,8 +61,8 @@ export default function GestionMascotas() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-      <div><Header /></div>
+    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500 pt-[80px] ">
+      <Header />
 
       <main className="max-w-6xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🐾 Gestión de Mascotas</h1>

@@ -100,7 +100,7 @@ export default function EditarMascotaPage() {
 
   if (!formData) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+      <div className=" pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
         <Header />
         <main className="max-w-3xl mx-auto py-10 px-6">
           <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>

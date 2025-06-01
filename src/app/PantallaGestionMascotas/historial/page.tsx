@@ -24,7 +24,7 @@ export default function HistorialCambiosPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-4xl mx-auto py-12 px-6">

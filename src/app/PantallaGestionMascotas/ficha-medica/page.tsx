@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function FichaMedicaPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="pt-[80px] min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
