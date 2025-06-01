@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const solicitudes = [
+const solicitudesIniciales = [
   {
     id: 1,
     usuario: 'Carlos R.',
     mascota: 'Luna',
     estado: 'Pendiente',
-    fotoMascota: '/img/luna.jpg',
+    fotoMascota: '/Gatos/gatito_PA_14.png',
     fecha: '2025-05-25 10:45',
   },
   {
@@ -16,7 +16,7 @@ const solicitudes = [
     usuario: 'María F.',
     mascota: 'Max',
     estado: 'En revisión',
-    fotoMascota: '/img/max.jpg',
+    fotoMascota: '/Gatos/gatito_PA_12.png',
     fecha: '2025-05-26 09:20',
   },
   {
@@ -24,13 +24,80 @@ const solicitudes = [
     usuario: 'Luis M.',
     mascota: 'Bella',
     estado: 'Rechazada',
-    fotoMascota: '/img/bella.jpg',
+    fotoMascota: '/Gatos/gatito_PA_15.png',
     fecha: '2025-05-24 16:30',
   },
+  {
+    id: 4,
+    usuario: 'Cristian R.',
+    mascota: 'Pimpi',
+    estado: 'Pendiente',
+    fotoMascota: '/Gatos/gatito_PA_16.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 5,
+    usuario: 'Ivan C.',
+    mascota: 'Silpi',
+    estado: 'En revisión',
+    fotoMascota: '/Perros/perrito_PA_13.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 6,
+    usuario: 'Beymar M.',
+    mascota: 'Gael',
+    estado: 'Rechazada',
+    fotoMascota: '/Perros/perrito_PA_15.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 7,
+    usuario: 'Reyshel O.',
+    mascota: 'Hassan',
+    estado: 'Pendiente',
+    fotoMascota: '/Perros/perrito_PA_14.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 8,
+    usuario: 'Kiara P.',
+    mascota: 'Blanquito',
+    estado: 'En revisión',
+    fotoMascota: '/Perros/perrito_PA_15.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 9,
+    usuario: 'Geraldine L.',
+    mascota: 'Bella',
+    estado: 'Pendiente',
+    fotoMascota: '/Perros/perrito_PA_16.png',
+    fecha: '2025-05-24 16:30',
+  },
+  {
+    id: 10,
+    usuario: 'Wendy I.',
+    mascota: 'Pepa',
+    estado: 'En revisión',
+    fotoMascota: '/Perros/perrito_PA_13.png',
+    fecha: '2025-05-24 16:30',
+  }
 ];
 
 export default function EvaluacionSolicitudes() {
+  const [solicitudes, setSolicitudes] = useState(solicitudesIniciales);
   const [filtro, setFiltro] = useState('Todos');
+
+  const actualizarEstado = (id: number, nuevoEstado: string) => {
+    const confirmacion = confirm(`¿Seguro que deseas marcar como "${nuevoEstado}" esta solicitud?`);
+    if (!confirmacion) return;
+
+    const actualizadas = solicitudes.map((s) =>
+      s.id === id ? { ...s, estado: nuevoEstado } : s
+    );
+    setSolicitudes(actualizadas);
+  };
 
   const solicitudesFiltradas = filtro === 'Todos'
     ? solicitudes
@@ -44,11 +111,10 @@ export default function EvaluacionSolicitudes() {
       {/* Banner */}
       <div className="relative w-full h-72 md:h-80">
         <Image
-          src="/img/banner-evaluacion.jpg"
+          src="/Perros y Gatos/bannerprincipaladopciones.jpg"
           alt="Banner Evaluación Solicitudes"
-          layout="fill"
-          objectFit="cover"
-          className="brightness-75"
+          fill
+          className="object-cover brightness-75"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h1 className="text-white text-3xl md:text-5xl font-bold drop-shadow-lg mb-2">
@@ -138,10 +204,22 @@ export default function EvaluacionSolicitudes() {
                     {s.estado}
                   </span>
                 </p>
-                <div className="mt-3 space-x-2">
-                  <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">Aceptar</button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">Rechazar</button>
-                </div>
+                {s.estado === 'Pendiente' && (
+                  <div className="mt-3 space-x-2">
+                    <button
+                      onClick={() => actualizarEstado(s.id, 'En revisión')}
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      onClick={() => actualizarEstado(s.id, 'Rechazada')}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                    >
+                      Rechazar
+                    </button>
+                  </div>
+                )}
               </div>
             </li>
           ))}
