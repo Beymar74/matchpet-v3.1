@@ -1,126 +1,352 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Heart, MapPin, Calendar, Info } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import Image from 'next/image';
 
 const pets = [
   {
+    id: 1,
     name: 'Pelusa',
-    tags: ['Juguetón', 'Joven'],
-    selected: false,
+    age: '2 años',
+    location: 'La Paz Centro',
+    tags: ['Juguetón', 'Joven', 'Sociable'],
     imageSrc: '/Perros/perritos1.jpg',
     alt: 'Un gato bonito llamado Pelusa',
+    description: 'Pelusa es un gato muy juguetón que ama la compañía humana. Perfecto para familias con niños.',
+    gender: 'Macho',
+    vaccinated: true,
+    sterilized: false
   },
   {
+    id: 2,
     name: 'Kuro',
-    tags: ['Tranquilo', 'Macho'],
-    selected: false,
+    age: '4 años',
+    location: 'Sopocachi',
+    tags: ['Tranquilo', 'Macho', 'Independiente'],
     imageSrc: '/Perros/perritos3.jpg',
     alt: 'Un gato tranquilo llamado Kuro',
+    description: 'Kuro es un compañero leal y tranquilo, ideal para personas que buscan una mascota relajada.',
+    gender: 'Macho',
+    vaccinated: true,
+    sterilized: true
   },
   {
+    id: 3,
     name: 'Iker',
-    tags: ['Casa con Patio', 'Adulto'],
-    selected: false,
+    age: '3 años',
+    location: 'Zona Sur',
+    tags: ['Casa con Patio', 'Adulto', 'Activo'],
     imageSrc: '/Gatos/gatito10.jpg',
     alt: 'Un perro llamado Iker que necesita casa con patio',
+    description: 'Iker necesita espacio para correr y jugar. Un perro lleno de energía que busca una familia activa.',
+    gender: 'Macho',
+    vaccinated: true,
+    sterilized: false
   },
   {
+    id: 4,
     name: 'Susanita',
-    tags: ['Energética', 'Hembra'],
-    selected: false,
+    age: '1.5 años',
+    location: 'Miraflores',
+    tags: ['Energética', 'Hembra', 'Cariñosa'],
     imageSrc: '/Gatos/gato2.jpg',
     alt: 'Una mascota enérgica llamada Susanita',
+    description: 'Susanita es una compañera llena de amor y energía. Le encanta jugar y recibir caricias.',
+    gender: 'Hembra',
+    vaccinated: false,
+    sterilized: false
   },
 ];
 
 export default function PetsSection() {
-  const [selectedPet, setSelectedPet] = useState<string | null>(null);
+  const [selectedPet, setSelectedPet] = useState<number>(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
-  const handleSelectPet = (petName: string) => {
-    setSelectedPet(petName === selectedPet ? null : petName);
+  const handleSelectPet = (petId: number) => {
+    if (petId !== selectedPet) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setSelectedPet(petId);
+        setIsAnimating(false);
+      }, 200);
+    }
   };
 
-  const currentPet = pets.find(pet => pet.name === selectedPet) || pets[0];
+  const toggleFavorite = (petId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(petId)) {
+        newFavorites.delete(petId);
+      } else {
+        newFavorites.add(petId);
+      }
+      return newFavorites;
+    });
+  };
+
+  const currentPet = pets.find(pet => pet.id === selectedPet) || pets[0];
+
+  // Auto-rotate pets every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSelectedPet(prev => {
+        const currentIndex = pets.findIndex(pet => pet.id === prev);
+        const nextIndex = (currentIndex + 1) % pets.length;
+        return pets[nextIndex].id;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="min-h-screen px-4 py-12 sm:px-6 md:px-8 md:py-16 bg-gradient-to-r from-[#30588C] via-[#6093BF] to-[#254559] text-white">
-      <div className="container mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+    <section className="min-h-screen px-4 py-12 sm:px-6 md:px-8 md:py-16 bg-gradient-to-br from-[#1e3a5f] via-[#2a4d73] to-[#1a2f4a] text-white relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+        <div className="absolute bottom-32 right-16 w-48 h-48 bg-blue-300 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-indigo-200 rounded-full blur-2xl"></div>
+      </div>
 
-        {/* Imagen destacada */}
-        <div className="w-full lg:w-1/2 relative rounded-xl overflow-hidden bg-gray-700 aspect-[4/3] flex items-center justify-center shadow-lg group">
-          <Image
-            key={currentPet.imageSrc}
-            src={currentPet.imageSrc}
-            alt={currentPet.alt}
-            fill
-            className="object-cover transition-opacity duration-500 ease-in-out"
-            priority
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 sm:p-5 md:p-6 flex justify-between items-center">
-            <h3 className="text-white text-lg sm:text-xl md:text-2xl font-semibold drop-shadow-md">
-              {currentPet.name}
-            </h3>
-            <button className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 transition duration-300 transform hover:scale-110">
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+      <div className="container mx-auto relative z-10">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            Encuentra tu Compañero Perfecto
+          </h1>
+          <p className="text-lg sm:text-xl text-blue-100 max-w-2xl mx-auto">
+            Cada mascota tiene una historia única y está esperando encontrar un hogar lleno de amor
+          </p>
         </div>
 
-        {/* Lista de mascotas */}
-        <div className="w-full lg:w-1/2">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 text-center lg:text-left">
-            Mascotas Adoptables
-          </h2>
-          <div className="flex flex-col gap-4">
-            {pets.map(pet => (
-              <div
-                key={pet.name}
-                className={`flex items-center p-3 sm:p-4 rounded-xl border transition-all duration-300 transform cursor-pointer ${
-                  selectedPet === pet.name
-                    ? 'bg-gradient-to-r from-[#BF3952] to-[#30588C] border-transparent shadow-xl scale-105 text-white'
-                    : 'bg-white bg-opacity-90 border-gray-300 hover:bg-opacity-100 hover:shadow-lg hover:border-[#6093BF] hover:scale-[1.02] text-gray-800'
-                }`}
-                onClick={() => handleSelectPet(pet.name)}
+        <div className="flex flex-col xl:flex-row gap-8 lg:gap-12 items-start">
+          {/* Featured Pet Image */}
+          <div className="w-full xl:w-3/5 relative">
+            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 aspect-[4/3] shadow-2xl group">
+              <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+                <Image
+                  key={currentPet.imageSrc}
+                  src={currentPet.imageSrc}
+                  alt={currentPet.alt}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* Heart button */}
+              <button
+                onClick={(e) => toggleFavorite(currentPet.id, e)}
+                className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 transform hover:scale-110 z-10"
+                aria-label={`${favorites.has(currentPet.id) ? 'Quitar de' : 'Agregar a'} favoritos`}
               >
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden mr-4 flex-shrink-0 relative shadow-sm">
-                  <Image
-                    src={pet.imageSrc}
-                    alt={pet.alt}
-                    fill
-                    className="object-cover"
-                  />
+                <Heart 
+                  className={`w-5 h-5 transition-colors ${
+                    favorites.has(currentPet.id) ? 'fill-red-500 text-red-500' : 'text-white'
+                  }`} 
+                />
+              </button>
+
+              {/* Pet info overlay */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-6">
+                <div className="flex items-end justify-between">
+                  <div className="flex-grow">
+                    <h3 className="text-white text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">
+                      {currentPet.name}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-3 mb-3 text-sm text-blue-100">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{currentPet.age}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>{currentPet.location}</span>
+                      </div>
+                    </div>
+                    <p className="text-white/90 text-sm md:text-base mb-3 line-clamp-2">
+                      {currentPet.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {currentPet.tags.slice(0, 3).map(tag => (
+                        <Badge
+                          key={tag}
+                          className="bg-blue-500/80 border-transparent text-white text-xs backdrop-blur-sm"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full p-3 ml-4 transition-all duration-300 transform hover:scale-110 shadow-lg">
+                    <ArrowRight className="w-6 h-6" />
+                  </button>
                 </div>
-                <div className="flex-grow">
-                  <h4 className={`font-semibold text-sm sm:text-base md:text-lg mb-1 ${selectedPet === pet.name ? 'text-white' : 'text-gray-900'}`}>
-                    {pet.name}
-                  </h4>
-                  <div className="flex flex-wrap gap-1">
-                    {pet.tags.map(tag => (
-                      <Badge
-                        key={tag}
-                        variant={selectedPet === pet.name ? 'secondary' : 'outline'}
-                        className={`text-xs font-medium ${
-                          selectedPet === pet.name
-                            ? 'bg-white/20 border-transparent text-white'
-                            : 'bg-gray-100 border-gray-300 text-gray-600'
+              </div>
+
+              {/* Status indicators */}
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
+                {currentPet.vaccinated && (
+                  <Badge className="bg-green-500/90 border-transparent text-white text-xs backdrop-blur-sm">
+                    Vacunado
+                  </Badge>
+                )}
+                {currentPet.sterilized && (
+                  <Badge className="bg-purple-500/90 border-transparent text-white text-xs backdrop-blur-sm">
+                    Esterilizado
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            {/* Pet navigation dots */}
+            <div className="flex justify-center mt-6 gap-2">
+              {pets.map(pet => (
+                <button
+                  key={pet.id}
+                  onClick={() => handleSelectPet(pet.id)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    selectedPet === pet.id 
+                      ? 'bg-blue-400 scale-125' 
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                  aria-label={`Ver ${pet.name}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Pets List */}
+          <div className="w-full xl:w-2/5">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-xl">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center xl:text-left bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                Mascotas Disponibles
+              </h2>
+              
+              <div className="space-y-4">
+                {pets.map(pet => {
+                  const isSelected = selectedPet === pet.id;
+                  const isFavorite = favorites.has(pet.id);
+                  
+                  return (
+                    <div
+                      key={pet.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={isSelected}
+                      onClick={() => handleSelectPet(pet.id)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleSelectPet(pet.id);
+                        }
+                      }}
+                      className={`relative flex items-center p-4 rounded-xl border transition-all duration-300 transform cursor-pointer select-none group
+                        ${isSelected
+                          ? 'bg-gradient-to-r from-blue-500/20 to-indigo-600/20 border-blue-400/50 shadow-xl scale-[1.02] backdrop-blur-sm'
+                          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:shadow-lg hover:scale-[1.01] backdrop-blur-sm'
+                        }
+                      `}
+                    >
+                      {/* Pet thumbnail */}
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden mr-4 flex-shrink-0 shadow-lg ring-2 ring-white/20">
+                        <Image
+                          src={pet.imageSrc}
+                          alt={pet.alt}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* Pet info */}
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-bold text-base sm:text-lg text-white truncate">
+                            {pet.name}
+                          </h4>
+                          {isFavorite && (
+                            <Heart className="w-4 h-4 fill-red-500 text-red-500 flex-shrink-0" />
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-3 mb-2 text-xs text-blue-100">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {pet.age}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {pet.location}
+                          </span>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1">
+                          {pet.tags.slice(0, 2).map(tag => (
+                            <Badge
+                              key={tag}
+                              className={`text-xs font-medium transition-colors ${
+                                isSelected
+                                  ? 'bg-blue-400/30 border-blue-300/50 text-blue-100'
+                                  : 'bg-white/10 border-white/20 text-white/80'
+                              }`}
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                          {pet.tags.length > 2 && (
+                            <Badge
+                              className={`text-xs font-medium ${
+                                isSelected
+                                  ? 'bg-blue-400/30 border-blue-300/50 text-blue-100'
+                                  : 'bg-white/10 border-white/20 text-white/80'
+                              }`}
+                            >
+                              +{pet.tags.length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action button */}
+                      <button
+                        aria-label={`Ver detalles de ${pet.name}`}
+                        className={`rounded-full p-2 transition-all duration-300 flex-shrink-0 ml-3 group-hover:scale-110 ${
+                          isSelected 
+                            ? 'bg-blue-500/50 text-white shadow-lg' 
+                            : 'bg-white/10 text-white/70 hover:bg-white/20'
                         }`}
                       >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+
+                      {/* Selection indicator */}
+                      {isSelected && (
+                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-r-full"></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Call to action */}
+              <div className="mt-8 p-4 bg-gradient-to-r from-blue-500/10 to-indigo-600/10 rounded-xl border border-blue-400/20 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Info className="w-5 h-5 text-blue-300 flex-shrink-0" />
+                  <h3 className="font-semibold text-blue-100">¿Listo para adoptar?</h3>
                 </div>
-                <button className={`rounded-full p-2 transition duration-300 flex-shrink-0 ml-2 ${
-                  selectedPet === pet.name ? 'bg-white/20 hover:bg-white/30' : 'bg-[#6093BF] hover:bg-[#30588C]'
-                }`}>
-                  <ArrowRight className="w-4 h-4 text-white" />
+                <p className="text-sm text-blue-200/80 mb-3">
+                  Contáctanos para conocer más sobre el proceso de adopción y los requisitos.
+                </p>
+                <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
+                  Iniciar Adopción
                 </button>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
