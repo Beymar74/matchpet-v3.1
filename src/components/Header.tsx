@@ -1,96 +1,43 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
-import { Button } from '../components/ui/button';
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen(prev => !prev);
-  const closeMenu = () => setIsOpen(false);
-
   return (
-    <header className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-16">
-        
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-        <div className="w-[100px] sm:w-[120px]">
-            <Image
-              src="/Logo/logo2.png"
-              alt="MatchPet Logo"
-              width={300}
-              height={100}
-              className="w-full h-auto object-contain"
-              priority
-            />
-          </div>
-
+          <Image src="/Logo/logo2.png" alt="MatchPet" width={40} height={40} />
+          <span className="font-bold text-xl text-[#30588C]">MatchPet</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 font-medium text-sm" role="navigation">
-          <Link href="/" className="text-gray-600 hover:text-[#BF3952] transition">Inicio</Link>
-          <Link href="/about" className="text-gray-600 hover:text-[#BF3952] transition">Sobre Nosotros</Link>
-          <Link href="/pets" className="text-gray-600 hover:text-[#BF3952] transition">Mascotas</Link>
-          <Link href="/community" className="text-gray-600 hover:text-[#BF3952] transition">Comunidad</Link>
-          <Link href="/contact" className="text-gray-600 hover:text-[#BF3952] transition">Contacto</Link>
+        {/* Navegación */}
+        <nav className="hidden md:flex space-x-6">
+          <Link href="#about" className="text-gray-700 hover:text-[#BF3952] font-medium transition">Sobre Nosotros</Link>
+          <Link href="#pets" className="text-gray-700 hover:text-[#BF3952] font-medium transition">Mascotas</Link>
+          <Link href="#explorar" className="text-gray-700 hover:text-[#BF3952] font-medium transition">Explorar</Link>
+          <Link href="#contacto" className="text-gray-700 hover:text-[#BF3952] font-medium transition">Contacto</Link>
         </nav>
 
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/login">Iniciar Sesión</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link href="/register">Regístrate</Link>
-          </Button>
-        </div>
-
-        {/* Mobile menu button */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu} aria-label="Abrir menú">
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+        {/* Botones */}
+        <div className="flex items-center space-x-4">
+          <Link
+            href="/acceso"
+            className="text-sm font-semibold text-[#30588C] hover:underline"
+          >
+            Iniciar sesión
+          </Link>
+          <Link
+            href="/registro"
+            className="bg-[#BF3952] text-white text-sm px-4 py-2 rounded-full hover:bg-[#a53147] transition"
+          >
+            Regístrate
+          </Link>
         </div>
       </div>
-
-      {/* Mobile Dropdown Menu */}
-      {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-40">
-          <nav className="flex flex-col px-4 py-4 space-y-3 font-medium text-sm">
-            {[
-              { href: '/', label: 'Inicio' },
-              { href: '/about', label: 'Sobre Nosotros' },
-              { href: '/pets', label: 'Mascotas' },
-              { href: '/community', label: 'Comunidad' },
-              { href: '/contact', label: 'Contacto' },
-            ].map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={closeMenu}
-                className="text-gray-700 hover:text-[#BF3952] transition"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Mobile auth buttons */}
-          <div className="flex flex-col px-4 py-4 space-y-2 border-t border-gray-200">
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link href="/login" onClick={closeMenu}>Iniciar Sesión</Link>
-            </Button>
-            <Button asChild size="sm" className="w-full">
-              <Link href="/register" onClick={closeMenu}>Regístrate</Link>
-            </Button>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
