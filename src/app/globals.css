@@ -1,32 +1,31 @@
 @import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --color-dingy-dungeon: #BF3952;
-  --color-b-dazzled-blue: #30588C;
-  --color-rich-black: #011526;
-  --color-silver-lake-blue: #6093BF;
-  --color-japanese-indigo: #254559;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --background: #ffffff;
+    --foreground: #171717;
+    --color-dingy-dungeon: #BF3952;
+    --color-b-dazzled-blue: #30588C;
+    --color-rich-black: #011526;
+    --color-silver-lake-blue: #6093BF;
+    --color-japanese-indigo: #254559;
+    /* Variables que antes estaban en @theme */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans, sans-serif);
+    --font-mono: var(--font-geist-mono, monospace);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --color-rich-black: #011526; /* Use Rich Black in dark mode */
-    --foreground: #ededed;
-  }
+     :root {
+        --background: #0a0a0a;
+        --color-rich-black: #011526;
+        --foreground: #ededed;
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
 }
