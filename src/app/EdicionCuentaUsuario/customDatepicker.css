@@ -1,0 +1,101 @@
+/* 🌑 Fondo general del calendario */
+.custom-calendar {
+  background-color: #ffffff; /* FONDO BLANCO */
+  color: #000000;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #30588C;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 📅 Encabezado (mes y año) */
+.react-datepicker__header {
+  background-color: #30588C;
+  color: #000000;
+  border-bottom: none;
+}
+
+/* 📌 Texto del mes/año */
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* 🗓 Día de la semana */
+.react-datepicker__day-name {
+  color: #4a4a4a;
+  font-size: 0.85rem;
+}
+
+/* 🔘 Días individuales */
+.react-datepicker__day {
+  color: #000000;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 🔴 Día seleccionado */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #BF3952;
+  color: white;
+}
+
+/* 🟦 Hover sobre día */
+.react-datepicker__day:hover {
+  background-color: #30588C;
+  color: white;
+}
+
+/* ◀️▶️ Botones de navegación */
+.react-datepicker__navigation {
+  top: 12px;
+}
+
+/* 📤 Dropdowns de mes y año */
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  z-index: 10;
+}
+
+/* 🔽 Flecha y texto del selector */
+.react-datepicker__month-read-view,
+.react-datepicker__year-read-view {
+  color: #000000;
+}
+
+.react-datepicker__month-read-view--down-arrow,
+.react-datepicker__year-read-view--down-arrow {
+  border-top-color: #000000;
+}
+
+/* 📋 Opciones del dropdown */
+.react-datepicker__month-option,
+.react-datepicker__year-option {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+/* 🟦 Hover sobre opciones */
+.react-datepicker__month-option:hover,
+.react-datepicker__year-option:hover {
+  background-color: #30588C;
+  color: white;
+}
+
+/* ✅ Opción seleccionada */
+.react-datepicker__month-option--selected,
+.react-datepicker__year-option--selected {
+  background-color: #BF3952;
+  color: white;
+}
