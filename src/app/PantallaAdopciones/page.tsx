@@ -9,22 +9,22 @@ export default function Page() {
     {
       titulo: 'Evaluación de Solicitudes',
       ruta: 'EvaluacionSolicitudes',
-      imagen: '/img/evaluacion.png',
+      imagen: '/Perros/perrito_PA_10.png',
     },
     {
       titulo: 'Estado de Solicitudes',
       ruta: 'EstadoSolicitud',
-      imagen: '/img/estado.png',
+      imagen: '/Perros/perrito_PA_11.png',
     },
     {
       titulo: 'Seguimiento Post-Adopción',
       ruta: 'SeguimientoPostAdopcion',
-      imagen: '/img/seguimiento.png',
+      imagen: '/Gatos/gatito_PA_10.png',
     },
     {
       titulo: 'Visitas Previas',
       ruta: 'VisitasPrevias',
-      imagen: '/img/visitas.png',
+      imagen: '/Gatos/gatito_PA_13.png',
     },
   ];
 
@@ -38,18 +38,18 @@ export default function Page() {
       {/* Banner */}
       <div className="relative w-full h-72 md:h-80">
         <Image
-          src="/img/banner-adopciones.jpg"
+          src="/Perros y Gatos/bannerprincipaladopciones.jpg"
           alt="Banner Adopciones"
-          layout="fill"
-          objectFit="cover"
-          className="brightness-75"
+          fill
+          className="object-cover brightness-75"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h1 className="text-white text-3xl md:text-5xl font-bold drop-shadow-lg mb-2">
-          Centro de Adopciones y Seguimiento
+            Centro de Adopciones y Seguimiento
           </h1>
           <p className="text-white text-sm md:text-lg max-w-2xl drop-shadow">
-          Gestiona solicitudes, visitas y seguimientos post-adopción para asegurar que cada mascota encuentre un hogar responsable, amoroso y permanente.
+            Gestiona solicitudes, visitas y seguimientos post-adopción para asegurar que cada mascota
+            encuentre un hogar responsable, amoroso y permanente.
           </p>
         </div>
       </div>
