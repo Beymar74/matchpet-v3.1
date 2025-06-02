@@ -363,7 +363,7 @@ export default function PetsSection() {
                 <p className="text-sm text-blue-200/80 mb-3">
                   Contáctanos para conocer más sobre el proceso de adopción y los requisitos.
                 </p>
-                <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
+                <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg" onClick={() => window.location.href = '/login'}>
                   Iniciar Adopción
                 </button>
               </div>

@@ -83,20 +83,12 @@ export default function HeroSection() {
             {/* Botones de acción simplificados */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
               <Link
-                href="/registro"
+                href="/login"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#BF3952] hover:bg-[#8B2B3B] text-white font-semibold text-base rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 <Heart className="w-5 h-5" />
                 Comenzar búsqueda
                 <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/80 border border-[#30588C]/30 text-[#30588C] hover:bg-[#30588C] hover:text-white font-semibold text-base rounded-xl shadow-lg transition-all duration-300"
-              >
-                <Play className="w-4 h-4" />
-                Ver cómo funciona
               </Link>
             </div>
 
