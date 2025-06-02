@@ -311,7 +311,7 @@ export default function HeaderUsuario() {
           <div className="md:hidden bg-white border-t border-gray-200 animate-slide-down">
             <nav className="px-4 py-4 space-y-2">
               <Link 
-                href="/match" 
+                href="/Match" 
                 onClick={closeMenu}
                 className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 hover:text-[#BF3952] transition-all duration-300"
               >

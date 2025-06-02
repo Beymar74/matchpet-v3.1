@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { 
   Heart, 
   Home, 
@@ -212,16 +213,20 @@ export default function AboutUs() {
 
             {/* Call to action */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <Link href="/NuestraMision" passHref>
               <button className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <Target className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Nuestra Misión
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              
+            </Link>
+            
+            <Link href="/verImpacto" passHref>
               <button className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105">
                 <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Ver Impacto
               </button>
+            </Link>
             </div>
           </div>
 
