@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { 
   Search, 
   FileText, 
@@ -84,7 +85,6 @@ export default function AdoptionProcess() {
     const section = document.getElementById('adoption-section');
     if (section) observer.observe(section);
 
-    // Ciclo automático de pasos activos
     const interval = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % steps.length);
     }, 3000);
@@ -256,17 +256,17 @@ export default function AdoptionProcess() {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           <div className="inline-flex flex-col sm:flex-row gap-4">
-            <button className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#BF3952] to-pink-600 hover:from-[#8B2B3B] hover:to-pink-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-              <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              Comenzar adopción
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            
-            <button className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-[#30588C]/20 text-[#30588C] hover:bg-[#30588C] hover:text-white font-semibold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-              <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              Más información
-            </button>
-          </div>
+      <Link href="/login" passHref legacyBehavior>
+        <button
+          type="button"
+          className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#BF3952] to-pink-600 hover:from-[#8B2B3B] hover:to-pink-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+        >
+          <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          Comenzar adopción
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </button>
+      </Link>
+    </div>
           
           <p className="text-gray-500 mt-6 max-w-md mx-auto">
             ¿Tienes preguntas? Nuestro equipo está aquí para ayudarte en cada paso del proceso.
