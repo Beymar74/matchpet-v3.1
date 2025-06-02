@@ -145,38 +145,33 @@ const mascotas = [
 
 export default function TodasLasMascotas() {
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Listado de todas las mascotas</h1>
-      <div
-        style={{
-          display: "flex",
-          gap: 20,
-          flexWrap: "wrap",
-          marginTop: 20,
-        }}
-      >
+    <section className="max-w-7xl mx-auto px-6 py-12">
+      <h1 className="text-4xl font-extrabold text-center text-[#30588C] mb-12">
+        Listado de todas las mascotas
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {mascotas.map((m) => (
-          <div
+          <article
             key={m.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: 8,
-              padding: 10,
-              width: 250,
-              boxShadow: "2px 2px 6px rgba(0,0,0,0.1)",
-            }}
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
           >
             <img
               src={m.foto}
               alt={m.nombre}
-              style={{ width: "100%", height: 150, objectFit: "cover", borderRadius: 6 }}
+              className="w-full h-48 object-cover rounded-t-2xl"
+              loading="lazy"
             />
-            <h2 style={{ margin: "10px 0 5px" }}>{m.nombre}</h2>
-            <p><b>Edad:</b> {m.edad}</p>
-            <p>{m.descripcion}</p>
-          </div>
+            <div className="p-4">
+              <h2 className="text-xl font-semibold text-[#BF3952] mb-2">{m.nombre}</h2>
+              <p className="text-sm text-gray-600 mb-1">
+                <span className="font-semibold text-gray-700">Edad:</span> {m.edad}
+              </p>
+              <p className="text-gray-700 text-sm">{m.descripcion}</p>
+            </div>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
