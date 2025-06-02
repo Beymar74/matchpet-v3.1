@@ -86,7 +86,7 @@ export default function Header() {
   const navigationLinks = [
     { href: '/', label: 'Inicio', icon: Home },
     { href: '/about', label: 'Sobre Nosotros', icon: Info },
-    { href: '/pets', label: 'Mascotas', icon: PawPrint },
+    { href: '/Mascotas', label: 'Mascotas', icon: PawPrint },
     { href: '/community', label: 'Comunidad', icon: Users },
     { href: '/contact', label: 'Contacto', icon: Mail }
   ];
