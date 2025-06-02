@@ -27,9 +27,6 @@ export const MatchModal: React.FC<MatchModalProps> = ({ pet, onClose, onViewProf
         
         <div className="flex gap-3">
           <Button variant="primary" size="md" onClick={onViewProfile} className="flex-1">
-            Ver perfil completo
-          </Button>
-          <Button variant="ghost" size="md" onClick={onClose}>
             Seguir
           </Button>
         </div>
