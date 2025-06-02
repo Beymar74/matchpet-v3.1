@@ -81,9 +81,9 @@ export default function Header() {
 
   const navigationLinks = [
     { href: '/', label: 'Inicio', icon: Home },
-    { href: '/about', label: 'Sobre Nosotros', icon: Info },
-    { href: '/pets', label: 'Mascotas', icon: PawPrint },
-    { href: '#about-section', label: 'Comunidad', icon: Users }, // href cambiado a ancla
+    { href: '/about', label: 'Comunidad', icon: Info },
+    { href: '/Mascotas', label: 'Mascotas', icon: PawPrint },
+    { href: '#about-section', label: 'Sobre Nosotros', icon: Users }, // href cambiado a ancla
   ];
 
   // Función para hacer scroll suave a la sección about-section
