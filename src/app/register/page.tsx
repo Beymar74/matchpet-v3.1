@@ -93,7 +93,18 @@ export default function RegisterPage() {
 
         {/* Columna izquierda */}
         <div className="space-y-4 text-center md:text-left flex flex-col justify-center">
-          <h2 className="text-3xl font-extrabold text-black flex items-center justify-center md:justify-start gap-2 flex-wrap">
+          <div className="md:col-span-2 flex justify-center gap-4 mb-8">
+  <Link href="/register" passHref legacyBehavior>
+    <a className="px-6 py-2 rounded-xl bg-[#BF3952] text-white font-semibold hover:bg-[#a53044] transition">
+      Registro Usuario
+    </a>
+  </Link>
+  <Link href="/registerefugio" passHref legacyBehavior>
+    <a className="px-6 py-2 rounded-xl border border-[#30588C] text-[#30588C] font-semibold hover:bg-[#30588C] hover:text-white transition">
+      Registro Refugio
+    </a>
+  </Link>
+</div><h2 className="text-3xl font-extrabold text-black flex items-center justify-center md:justify-start gap-2 flex-wrap">
             Buena decisión <span className="text-3xl animate-bounce">🐶</span><span className="text-3xl animate-bounce">🐱</span>
             Tu compañero te espera
           </h2>
