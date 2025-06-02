@@ -61,23 +61,31 @@ export default function AboutUs() {
   ];
 
   useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          // Animar contadores
-          Object.keys(finalNumbers).forEach((key) => {
-            let current = 0;
-            const increment = finalNumbers[key] / 100;
-            const timer = setInterval(() => {
-              current += increment;
-              if (current >= finalNumbers[key]) {
-                current = finalNumbers[key];
-                clearInterval(timer);
-              }
-              setCounters(prev => ({ ...prev, [key]: Math.floor(current) }));
-            }, 20);
-          });
+
+          // Animar contadores con limpieza de timers
+          for (const key in finalNumbers) {
+            if (Object.prototype.hasOwnProperty.call(finalNumbers, key)) {
+              let current = 0;
+              const increment = finalNumbers[key as keyof typeof finalNumbers] / 100;
+
+              const timer = setInterval(() => {
+                current += increment;
+                if (current >= finalNumbers[key as keyof typeof finalNumbers]) {
+                  current = finalNumbers[key as keyof typeof finalNumbers];
+                  clearInterval(timer);
+                }
+                setCounters(prev => ({ ...prev, [key]: Math.floor(current) }));
+              }, 20);
+
+              timers.push(timer);
+            }
+          }
         }
       },
       { threshold: 0.3 }
@@ -86,7 +94,10 @@ export default function AboutUs() {
     const section = document.getElementById('about-section');
     if (section) observer.observe(section);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      timers.forEach(timer => clearInterval(timer));
+    };
   }, []);
 
   return (

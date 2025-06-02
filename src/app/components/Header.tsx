@@ -12,7 +12,6 @@ import {
   Heart, 
   Home, 
   Users, 
-  Mail, 
   Info,
   PawPrint,
   ChevronDown
@@ -51,11 +50,9 @@ export default function Header() {
   useEffect(() => {
     updateHeaderState();
 
-    // Listener por si otro componente modifica localStorage
     const handleStorageChange = () => updateHeaderState();
     window.addEventListener('storage', handleStorageChange);
 
-    // Detectar scroll para cambiar estilo del header
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -67,7 +64,6 @@ export default function Header() {
     };
   }, []);
 
-  // Cerrar menús al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.profile-menu') && !e.target.closest('.mobile-menu')) {
@@ -86,10 +82,24 @@ export default function Header() {
   const navigationLinks = [
     { href: '/', label: 'Inicio', icon: Home },
     { href: '/about', label: 'Sobre Nosotros', icon: Info },
+
+    { href: '/pets', label: 'Mascotas', icon: PawPrint },
+    { href: '#about-section', label: 'Comunidad', icon: Users }, // href cambiado a ancla
+
     { href: '/Mascotas', label: 'Mascotas', icon: PawPrint },
     { href: '/community', label: 'Comunidad', icon: Users },
     { href: '/contact', label: 'Contacto', icon: Mail }
+
   ];
+
+  // Función para hacer scroll suave a la sección about-section
+  const handleScrollToSection = () => {
+    const element = document.getElementById('about-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      closeMenu();
+    }
+  };
 
   return (
     <>
@@ -123,6 +133,22 @@ export default function Header() {
           <nav className="hidden lg:flex items-center space-x-1 font-medium text-sm" role="navigation">
             {navigationLinks.map((link) => {
               const IconComponent = link.icon;
+
+              // Para el link "Comunidad" que tiene href="#about-section", usamos botón para scroll
+              if (link.href === '#about-section') {
+                return (
+                  <button
+                    key={link.href}
+                    onClick={handleScrollToSection}
+                    className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] transition-all duration-300 flex items-center gap-2"
+                  >
+                    <IconComponent className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                    <span className="group-hover:font-semibold transition-all">{link.label}</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={link.href}
@@ -164,7 +190,6 @@ export default function Header() {
 
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden animate-slide-down">
-                    
                     {/* Header del menú */}
                     <div className="bg-gradient-to-r from-[#30588C] to-[#BF3952] p-4 text-white">
                       <div className="flex items-center gap-3">
@@ -263,6 +288,20 @@ export default function Header() {
             <nav className="px-4 py-4 space-y-2">
               {navigationLinks.map((link) => {
                 const IconComponent = link.icon;
+
+                if (link.href === '#about-section') {
+                  return (
+                    <button
+                      key={link.href}
+                      onClick={handleScrollToSection}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 hover:text-[#BF3952] transition-all duration-300 group"
+                    >
+                      <IconComponent className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                      <span className="font-medium">{link.label}</span>
+                    </button>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.href}
