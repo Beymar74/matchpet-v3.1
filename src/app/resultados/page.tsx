@@ -67,7 +67,7 @@ export default function ResultadoPage() {
               <RefreshCw size={18} /> Repetir test
             </Button>
           </Link>
-          <Link href="/Match">
+          <Link href="/match">
             <Button className="bg-[#30588C] text-white hover:bg-[#254559] flex gap-2 items-center">
               <PawPrint size={18} /> Ver mis coincidencias
             </Button>
