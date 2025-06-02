@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Heart, MapPin, Calendar, Info } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
-import Image from 'next/image';
 
 const pets = [
   {
@@ -12,7 +11,7 @@ const pets = [
     age: '2 años',
     location: 'La Paz Centro',
     tags: ['Juguetón', 'Joven', 'Sociable'],
-    imageSrc: '/Perros/perritos1.jpg',
+    imageSrc: '/Gatos/gatito4.jpg',
     alt: 'Un gato bonito llamado Pelusa',
     description: 'Pelusa es un gato muy juguetón que ama la compañía humana. Perfecto para familias con niños.',
     gender: 'Macho',
@@ -25,7 +24,7 @@ const pets = [
     age: '4 años',
     location: 'Sopocachi',
     tags: ['Tranquilo', 'Macho', 'Independiente'],
-    imageSrc: '/Perros/perritos3.jpg',
+    imageSrc: '/Gatos/gatito8.jpg',
     alt: 'Un gato tranquilo llamado Kuro',
     description: 'Kuro es un compañero leal y tranquilo, ideal para personas que buscan una mascota relajada.',
     gender: 'Macho',
@@ -38,7 +37,7 @@ const pets = [
     age: '3 años',
     location: 'Zona Sur',
     tags: ['Casa con Patio', 'Adulto', 'Activo'],
-    imageSrc: '/Gatos/gatito10.jpg',
+    imageSrc: '/Perros/perritos12.jpg',
     alt: 'Un perro llamado Iker que necesita casa con patio',
     description: 'Iker necesita espacio para correr y jugar. Un perro lleno de energía que busca una familia activa.',
     gender: 'Macho',
@@ -51,8 +50,8 @@ const pets = [
     age: '1.5 años',
     location: 'Miraflores',
     tags: ['Energética', 'Hembra', 'Cariñosa'],
-    imageSrc: '/Gatos/gato2.jpg',
-    alt: 'Una mascota enérgica llamada Susanita',
+    imageSrc: '/Perros/perritos15.jpg',
+    alt: 'Una perra enérgica llamada Susanita',
     description: 'Susanita es una compañera llena de amor y energía. Le encanta jugar y recibir caricias.',
     gender: 'Hembra',
     vaccinated: false,
@@ -64,6 +63,7 @@ export default function PetsSection() {
   const [selectedPet, setSelectedPet] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [imageError, setImageError] = useState<Set<number>>(new Set());
 
   const handleSelectPet = (petId: number) => {
     if (petId !== selectedPet) {
@@ -86,6 +86,11 @@ export default function PetsSection() {
       }
       return newFavorites;
     });
+  };
+
+  const handleImageError = (petId: number) => {
+    setImageError(prev => new Set(prev).add(petId));
+    console.error(`Error loading image for pet ${petId}`);
   };
 
   const currentPet = pets.find(pet => pet.id === selectedPet) || pets[0];
@@ -124,18 +129,28 @@ export default function PetsSection() {
         </div>
 
         <div className="flex flex-col xl:flex-row gap-8 lg:gap-12 items-start">
-          {/* Featured Pet Image */}
+          {/* Featured Pet Image - CUADRO GRANDE QUE SE ACTUALIZA */}
           <div className="w-full xl:w-3/5 relative">
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 aspect-[4/3] shadow-2xl group">
-              <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-                <Image
-                  key={currentPet.imageSrc}
-                  src={currentPet.imageSrc}
-                  alt={currentPet.alt}
-                  fill
-                  className="object-cover"
-                  priority
-                />
+              <div className={`absolute inset-0 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+                {!imageError.has(currentPet.id) ? (
+                  <img
+                    key={currentPet.imageSrc}
+                    src={currentPet.imageSrc}
+                    alt={currentPet.alt}
+                    className="w-full h-full object-cover"
+                    onError={() => handleImageError(currentPet.id)}
+                    loading="eager"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-700">
+                    <div className="text-center">
+                      <div className="text-6xl mb-4">🐾</div>
+                      <p className="text-white text-lg">{currentPet.name}</p>
+                      <p className="text-gray-300 text-sm">Imagen no disponible</p>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Heart button */}
@@ -221,7 +236,7 @@ export default function PetsSection() {
             </div>
           </div>
 
-          {/* Pets List */}
+          {/* Pets List - LISTA DE SELECCIÓN */}
           <div className="w-full xl:w-2/5">
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-xl">
               <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center xl:text-left bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
@@ -255,12 +270,18 @@ export default function PetsSection() {
                     >
                       {/* Pet thumbnail */}
                       <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden mr-4 flex-shrink-0 shadow-lg ring-2 ring-white/20">
-                        <Image
-                          src={pet.imageSrc}
-                          alt={pet.alt}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
+                        {!imageError.has(pet.id) ? (
+                          <img
+                            src={pet.imageSrc}
+                            alt={pet.alt}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onError={() => handleImageError(pet.id)}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-600">
+                            <span className="text-2xl">🐾</span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Pet info */}
