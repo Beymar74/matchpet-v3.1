@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Header from '@/components/Header'; // Usa la versión general que ya usas
+import HeaderUsuario from '@/components/layout/HeaderUsuario'; // Usa la versión general que ya usas
 
 const mensajesImportantes = [
   {
@@ -21,7 +21,7 @@ const mensajesImportantes = [
 export default function MensajesImportantesPage() {
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#0F172A] text-[#011526] dark:text-white">
-      <Header />
+      <HeaderUsuario />
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-3xl font-bold text-center mb-10 text-[#30588C] dark:text-[#4EDCD8]">
           📨 Comunicaciones Importantes

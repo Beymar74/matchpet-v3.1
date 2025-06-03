@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import HeaderUsuario from '@/components/layout/HeaderUsuario';
 
 export default function ChatSimuladoPage() {
   const [mensajes, setMensajes] = useState([
@@ -23,7 +23,7 @@ export default function ChatSimuladoPage() {
 
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#0F172A] text-[#011526] dark:text-white">
-      <Header />
+      <HeaderUsuario />
 
       <div className="max-w-xl mx-auto p-6">
         <div className="mb-6 text-center">

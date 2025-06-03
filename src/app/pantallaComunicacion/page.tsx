@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
+import HeaderUsuario from '@/components/layout/HeaderUsuario';
 
 const ComunicacionPrincipal = () => {
   const router = useRouter();
@@ -25,7 +25,7 @@ const ComunicacionPrincipal = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-[#011526]">
-      <Header />
+      <HeaderUsuario />
       <div className="max-w-4xl mx-auto py-10 px-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-[#30588C]">
           Centro de Comunicación
