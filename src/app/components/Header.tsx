@@ -81,7 +81,7 @@ export default function Header() {
 
   const navigationLinks = [
     { href: '/', label: 'Inicio', icon: Home },
-    { href: '/about', label: 'Comunidad', icon: Info },
+    { href: '/#community-section', label: 'Comunidad', icon: Info },
     { href: '/Mascotas', label: 'Mascotas', icon: PawPrint },
     { href: '#about-section', label: 'Sobre Nosotros', icon: Users }, // href cambiado a ancla
   ];

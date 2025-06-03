@@ -145,32 +145,36 @@ const mascotas = [
 
 export default function TodasLasMascotas() {
   return (
-    <section className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-4xl font-extrabold text-center text-[#30588C] mb-12">
-        Listado de todas las mascotas
-      </h1>
+    <section className="min-h-screen w-full bg-gradient-to-br from-white via-[#f1f5f9] to-[#e0ecf6] dark:from-[#011526] dark:via-[#254559] dark:to-[#30588C] text-gray-900 dark:text-white transition-colors duration-500">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-4xl font-extrabold text-center text-[#30588C] dark:text-[#6093BF] mb-12">
+          Listado de todas las mascotas
+        </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {mascotas.map((m) => (
-          <article
-            key={m.id}
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-          >
-            <img
-              src={m.foto}
-              alt={m.nombre}
-              className="w-full h-48 object-cover rounded-t-2xl"
-              loading="lazy"
-            />
-            <div className="p-4">
-              <h2 className="text-xl font-semibold text-[#BF3952] mb-2">{m.nombre}</h2>
-              <p className="text-sm text-gray-600 mb-1">
-                <span className="font-semibold text-gray-700">Edad:</span> {m.edad}
-              </p>
-              <p className="text-gray-700 text-sm">{m.descripcion}</p>
-            </div>
-          </article>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {mascotas.map((m) => (
+            <article
+              key={m.id}
+              className="bg-white/90 dark:bg-[#1e2e3c]/80 dark:backdrop-blur-md border border-gray-200 dark:border-[#30588C]/40 text-gray-900 dark:text-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer overflow-hidden"
+            >
+              <img
+                src={m.foto}
+                alt={m.nombre}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-semibold text-[#BF3952] dark:text-[#BF3952] mb-2">
+                  {m.nombre}
+                </h2>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                  <span className="font-semibold text-gray-900 dark:text-white">Edad:</span> {m.edad}
+                </p>
+                <p className="text-gray-700 dark:text-gray-300 text-sm">{m.descripcion}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
