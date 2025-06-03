@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Header from '@/components/Header';
+import HeaderRefugio from '@/components/layout/HeaderRefugio';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -52,7 +52,7 @@ export default function FichaMedicaPage() {
 
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-      <Header />
+      <HeaderRefugio />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🩺 Ficha Médica de la Mascota</h1>

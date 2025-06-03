@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Header from '@/components/Header'
+import HeaderRefugio from '@/components/layout/HeaderRefugio';
 import Link from 'next/link'
 
 export default function MarcarBorradorPage() {
@@ -24,7 +24,7 @@ export default function MarcarBorradorPage() {
 
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-      <Header />
+      <HeaderRefugio />
 
       <main className="max-w-xl mx-auto py-12 px-6">
         <h1 className="text-3xl font-bold mb-4 text-[#BF3952]">

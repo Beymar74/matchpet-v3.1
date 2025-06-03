@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Header from '@/components/Header';
+import HeaderRefugio from '@/components/layout/HeaderRefugio';
 
 interface Mascota {
   id: string;
@@ -101,7 +101,7 @@ export default function EditarMascotaPage() {
   if (!formData) {
     return (
       <div className=" pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-        <Header />
+        <HeaderRefugio />
         <main className="max-w-3xl mx-auto py-10 px-6">
           <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
           <p className="text-red-500">Mascota no encontrada.</p>
@@ -112,7 +112,7 @@ export default function EditarMascotaPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-      <Header />
+      <HeaderRefugio />
 
       <main className="max-w-4xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-8 text-[#BF3952]">✏️ Editar Mascota</h1>
