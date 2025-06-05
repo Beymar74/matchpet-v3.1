@@ -19,7 +19,12 @@ import {
   Clock,
   Star,
   Trophy,
-  PawPrint
+  PawPrint,
+  TrendingUp,
+  Activity,
+  CheckCircle,
+  Lock,
+  ExternalLink
 } from 'lucide-react';
 
 // Importa tu header
@@ -46,291 +51,431 @@ const VerPerfilPage = () => {
   });
 
   const [logros, setLogros] = useState([
-    { nombre: 'Primer Match', icono: '🎯', completado: true },
-    { nombre: 'Amante de Mascotas', icono: '❤️', completado: true },
-    { nombre: 'Explorador', icono: '🔍', completado: true },
-    { nombre: 'Adopción Exitosa', icono: '🏆', completado: false }
+    { nombre: 'Primer Match', icono: '🎯', completado: true, descripcion: 'Encontraste tu primera coincidencia' },
+    { nombre: 'Amante de Mascotas', icono: '❤️', completado: true, descripcion: 'Marcaste 10 mascotas como favoritas' },
+    { nombre: 'Explorador', icono: '🔍', completado: true, descripcion: 'Visitaste 25 perfiles de mascotas' },
+    { nombre: 'Adopción Exitosa', icono: '🏆', completado: false, descripcion: 'Completa tu primera adopción' }
   ]);
 
-  useEffect(() => {
-    const nombre = localStorage.getItem('nombreUsuario') || 'Usuario';
-    const correo = localStorage.getItem('email') || 'correo@ejemplo.com';
-    const rol = localStorage.getItem('rol') || 'Adoptante';
-    const telefono = localStorage.getItem('telefono') || 'No registrado';
-    const foto = localStorage.getItem('fotoPerfil') || '/Perfil/Usuario1.jpeg';
-    const fecha = localStorage.getItem('fechaRegistro') || '01/06/2025';
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    setPerfil({ 
-      nombre, 
-      correo, 
-      rol, 
-      telefono, 
-      fotoPerfil: foto, 
-      fechaRegistro: fecha,
-      ubicacion: 'La Paz, Bolivia',
-      miembro: 'Premium',
-      puntos: 1250
-    });
+  useEffect(() => {
+    const idUsuario = localStorage.getItem('idUsuario');
+    if (!idUsuario) {
+      setLoading(false);
+      return;
+    }
+  
+    fetch(`/api/usuario/${idUsuario}`)
+      .then(res => res.json())
+      .then(data => {
+        setPerfil({
+          nombre: data.nombre,
+          correo: data.correo,
+          telefono: data.telefono ?? 'No registrado',
+          fotoPerfil: data.fotoPerfil ?? '/Perfil/Usuario1.jpeg',
+          fechaRegistro: data.fechaRegistro ?? '01/06/2025',
+          rol: data.rol,
+          ubicacion: 'La Paz, Bolivia',
+          miembro: 'Premium',
+          puntos: 1250
+        });
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error al cargar perfil:', error);
+        setError('Error al cargar el perfil');
+        setLoading(false);
+      });
   }, []);
 
+  const estadisticasData = [
+    { 
+      label: 'Matches', 
+      value: estadisticas.matches, 
+      icon: PawPrint, 
+      color: 'from-blue-500 to-blue-600',
+      bg: 'from-blue-50 to-blue-100'
+    },
+    { 
+      label: 'Favoritos', 
+      value: estadisticas.favoritos, 
+      icon: Heart, 
+      color: 'from-pink-500 to-rose-600',
+      bg: 'from-pink-50 to-rose-100'
+    },
+    { 
+      label: 'Visitas', 
+      value: estadisticas.visitas, 
+      icon: TrendingUp, 
+      color: 'from-green-500 to-emerald-600',
+      bg: 'from-green-50 to-emerald-100'
+    },
+    { 
+      label: 'Adopciones', 
+      value: estadisticas.adopciones, 
+      icon: Trophy, 
+      color: 'from-amber-500 to-orange-600',
+      bg: 'from-amber-50 to-orange-100'
+    }
+  ];
+
+  const accionesRapidas = [
+    {
+      href: '/match',
+      icon: PawPrint,
+      label: 'Buscar Mascotas',
+      description: 'Encuentra tu compañero ideal',
+      gradient: 'from-blue-500 to-purple-600',
+      bgGradient: 'from-blue-50 to-purple-50'
+    },
+    {
+      href: '/favoritos',
+      icon: Heart,
+      label: 'Ver Favoritos',
+      description: 'Mascotas que te gustan',
+      gradient: 'from-pink-500 to-rose-600',
+      bgGradient: 'from-pink-50 to-rose-50'
+    },
+    {
+      href: '/configuracion',
+      icon: Settings,
+      label: 'Configuración',
+      description: 'Ajustes de tu cuenta',
+      gradient: 'from-gray-500 to-slate-600',
+      bgGradient: 'from-gray-50 to-slate-50'
+    }
+  ];
+
+  if (loading) {
+    return (
+      <>
+        <HeaderUsuario />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#30588C] mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando perfil...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !perfil || !perfil.nombre) {
+    return (
+      <>
+        <HeaderUsuario />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error || 'Error al cargar el perfil'}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="bg-[#30588C] text-white px-4 py-2 rounded-lg hover:bg-[#254559] transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+  
   return (
     <>
       <HeaderUsuario />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 pt-24 px-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
         
-        {/* Elementos decorativos de fondo */}
+        {/* Elementos decorativos de fondo optimizados */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-32 left-10 w-32 h-32 bg-gradient-to-r from-blue-300/20 to-purple-300/20 rounded-full blur-xl"></div>
-          <div className="absolute top-64 right-20 w-48 h-48 bg-gradient-to-r from-pink-300/20 to-orange-300/20 rounded-full blur-xl"></div>
-          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-r from-green-300/20 to-blue-300/20 rounded-full blur-xl"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-1/4 w-80 h-80 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
 
-        <div className="max-w-6xl mx-auto py-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
           
-          {/* Header de la página */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#30588C] to-[#BF3952] bg-clip-text text-transparent mb-2">
-              Mi Perfil
-            </h1>
-            <p className="text-gray-600">Gestiona tu información y preferencias</p>
-          </div>
+         
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             
-            {/* Tarjeta principal del perfil */}
-            <div className="lg:col-span-2">
-              <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-white/20">
+            {/* Tarjeta principal del perfil - Mejorada */}
+            <div className="xl:col-span-3">
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/30 hover:shadow-3xl transition-all duration-500">
                 
-                {/* Header de la tarjeta */}
-                <div className="relative mb-8">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#30588C] to-[#BF3952] rounded-2xl opacity-10"></div>
-                  <div className="relative p-6 text-center">
+                {/* Header de la tarjeta con gradiente mejorado */}
+                <div className="relative mb-10">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#30588C]/5 to-[#BF3952]/5 rounded-2xl"></div>
+                  <div className="relative p-8">
                     
-                    {/* Foto de perfil con overlay */}
-                    <div className="relative inline-block">
-                      <div className="relative">
-                        <Image
-                          src={perfil.fotoPerfil}
-                          alt="Foto de perfil"
-                          width={140}
-                          height={140}
-                          className="mx-auto rounded-full border-4 border-white shadow-2xl"
-                        />
-                        <div className="absolute bottom-2 right-2 w-8 h-8 bg-gradient-to-r from-[#BF3952] to-pink-500 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                          <Camera className="w-4 h-4 text-white" />
+                    {/* Foto de perfil mejorada */}
+                    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+                      <div className="relative group">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#30588C] to-[#BF3952] rounded-full blur-lg opacity-25 group-hover:opacity-40 transition-opacity"></div>
+                          <Image
+                            src={perfil.fotoPerfil}
+                            alt="Foto de perfil"
+                            width={160}
+                            height={160}
+                            className="relative mx-auto rounded-full border-4 border-white shadow-2xl transition-transform group-hover:scale-105"
+                          />
+                          <div className="absolute bottom-3 right-3 w-10 h-10 bg-gradient-to-r from-[#BF3952] to-pink-500 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-all duration-300 group">
+                            <Camera className="w-5 h-5 text-white" />
+                          </div>
+                        </div>
+                        
+                        {/* Badge de estado mejorado */}
+                        <div className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          {perfil.miembro}
                         </div>
                       </div>
-                      
-                      {/* Badge de estado */}
-                      <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                        {perfil.miembro}
-                      </div>
-                    </div>
 
-                    {/* Información básica */}
-                    <div className="mt-6">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-2">{perfil.nombre}</h2>
-                      <div className="flex items-center justify-center gap-2 text-[#BF3952] font-semibold mb-2">
-                        <Shield className="w-4 h-4" />
-                        {perfil.rol}
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
-                        <MapPin className="w-4 h-4" />
-                        {perfil.ubicacion}
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-[#30588C] font-medium">
-                        <Star className="w-4 h-4 fill-current" />
-                        {perfil.puntos} puntos
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Información de contacto */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <User className="w-5 h-5 text-[#30588C]" />
-                      Información Personal
-                    </h3>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <Mail className="w-5 h-5 text-[#30588C]" />
-                        <div>
-                          <p className="text-sm text-gray-600">Email</p>
-                          <p className="font-medium text-gray-800">{perfil.correo}</p>
+                      {/* Información básica reorganizada */}
+                      <div className="flex-1 text-center lg:text-left">
+                        <h2 className="text-3xl font-bold text-gray-800 mb-3">{perfil.nombre}</h2>
+                        
+                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-4">
+                          <div className="flex items-center gap-2 bg-gradient-to-r from-[#BF3952]/10 to-pink-500/10 px-4 py-2 rounded-full">
+                            <Shield className="w-4 h-4 text-[#BF3952]" />
+                            <span className="text-[#BF3952] font-semibold text-sm">{perfil.rol}</span>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-4 py-2 rounded-full">
+                            <MapPin className="w-4 h-4 text-blue-600" />
+                            <span className="text-blue-600 font-medium text-sm">{perfil.ubicacion}</span>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <Phone className="w-5 h-5 text-[#30588C]" />
-                        <div>
-                          <p className="text-sm text-gray-600">Teléfono</p>
-                          <p className="font-medium text-gray-800">{perfil.telefono}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-[#30588C]" />
-                      Información de Cuenta
-                    </h3>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <Calendar className="w-5 h-5 text-[#30588C]" />
-                        <div>
-                          <p className="text-sm text-gray-600">Miembro desde</p>
-                          <p className="font-medium text-gray-800">{perfil.fechaRegistro}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                        <Trophy className="w-5 h-5 text-green-600" />
-                        <div>
-                          <p className="text-sm text-green-600">Estado</p>
-                          <p className="font-medium text-green-700">Cuenta Verificada</p>
+                        
+                        <div className="flex items-center justify-center lg:justify-start gap-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 px-6 py-3 rounded-full inline-flex">
+                          <Star className="w-5 h-5 fill-current text-amber-500" />
+                          <span className="text-amber-700 font-bold">{perfil.puntos.toLocaleString()}</span>
+                          <span className="text-amber-600 text-sm">puntos</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Botones de acción principales */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Información de contacto mejorada */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#30588C] to-blue-600 rounded-xl flex items-center justify-center">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800">Información Personal</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-slate-50 hover:from-blue-50 hover:to-indigo-50 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Mail className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 font-medium">Email</p>
+                          <p className="font-semibold text-gray-800 truncate">{perfil.correo}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-slate-50 hover:from-green-50 hover:to-emerald-50 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-green-200">
+                        <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Phone className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 font-medium">Teléfono</p>
+                          <p className="font-semibold text-gray-800">{perfil.telefono}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#BF3952] to-pink-600 rounded-xl flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800">Información de Cuenta</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-slate-50 hover:from-purple-50 hover:to-violet-50 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-purple-200">
+                        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-violet-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Calendar className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 font-medium">Miembro desde</p>
+                          <p className="font-semibold text-gray-800">{perfil.fechaRegistro}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:border-green-300 transition-all duration-300">
+                        <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Lock className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-green-600 font-medium">Estado</p>
+                          <p className="font-bold text-green-700 flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4" />
+                            Cuenta Verificada
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de acción mejorados */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <Link href="/EdicionPerfilAdoptante" className="group">
-                    <button className="w-full bg-gradient-to-r from-[#30588C] to-blue-600 hover:from-[#254559] hover:to-blue-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                      <div className="flex items-center justify-center gap-2">
-                        <Edit3 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        Editar Perfil
+                    <div className="h-full bg-gradient-to-r from-[#30588C] to-blue-600 hover:from-[#254559] hover:to-blue-700 text-white p-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl cursor-pointer">
+                      <div className="flex items-center justify-between mb-3">
+                        <Edit3 className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                        <ExternalLink className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                       </div>
-                    </button>
+                      <h4 className="text-lg font-bold mb-1">Editar Perfil</h4>
+                      <p className="text-blue-100 text-sm">Actualiza tu información personal</p>
+                    </div>
                   </Link>
 
                   <Link href="/ConfiguracionPreferencias" className="group">
-                    <button className="w-full bg-gradient-to-r from-[#BF3952] to-pink-600 hover:from-[#8B2B3B] hover:to-pink-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                      <div className="flex items-center justify-center gap-2">
-                        <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        Preferencias
+                    <div className="h-full bg-gradient-to-r from-[#BF3952] to-pink-600 hover:from-[#8B2B3B] hover:to-pink-700 text-white p-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl cursor-pointer">
+                      <div className="flex items-center justify-between mb-3">
+                        <Heart className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                        <ExternalLink className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                       </div>
-                    </button>
+                      <h4 className="text-lg font-bold mb-1">Preferencias</h4>
+                      <p className="text-pink-100 text-sm">Configura tus preferencias de adopción</p>
+                    </div>
                   </Link>
 
                   <Link href="/EntornoHogar" className="group">
-                    <button className="w-full bg-gradient-to-r from-[#4E9F3D] to-green-600 hover:from-[#3B7A2B] hover:to-green-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                      <div className="flex items-center justify-center gap-2">
-                        <Home className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        Mi Hogar
+                    <div className="h-full bg-gradient-to-r from-[#4E9F3D] to-green-600 hover:from-[#3B7A2B] hover:to-green-700 text-white p-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl cursor-pointer">
+                      <div className="flex items-center justify-between mb-3">
+                        <Home className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                        <ExternalLink className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                       </div>
-                    </button>
+                      <h4 className="text-lg font-bold mb-1">Mi Hogar</h4>
+                      <p className="text-green-100 text-sm">Describe tu entorno para mascotas</p>
+                    </div>
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* Sidebar con estadísticas y logros */}
-            <div className="space-y-6">
+            {/* Sidebar mejorado */}
+            <div className="xl:col-span-1 space-y-8">
               
-              {/* Estadísticas */}
-              <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-[#30588C] mb-6 flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  Mis Estadísticas
-                </h3>
+              {/* Estadísticas optimizadas */}
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#30588C] to-blue-600 rounded-xl flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#30588C]">Mis Estadísticas</h3>
+                </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
-                    <div className="text-2xl font-bold text-[#30588C] mb-1">{estadisticas.matches}</div>
-                    <div className="text-sm text-gray-600">Matches</div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-gradient-to-r from-pink-50 to-pink-100 rounded-xl">
-                    <div className="text-2xl font-bold text-[#BF3952] mb-1">{estadisticas.favoritos}</div>
-                    <div className="text-sm text-gray-600">Favoritos</div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl">
-                    <div className="text-2xl font-bold text-green-600 mb-1">{estadisticas.visitas}</div>
-                    <div className="text-sm text-gray-600">Visitas</div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl">
-                    <div className="text-2xl font-bold text-purple-600 mb-1">{estadisticas.adopciones}</div>
-                    <div className="text-sm text-gray-600">Adopciones</div>
-                  </div>
+                <div className="grid grid-cols-2 xl:grid-cols-1 gap-4">
+                  {estadisticasData.map((stat, index) => {
+                    const IconComponent = stat.icon;
+                    return (
+                      <div key={index} className="group p-5 bg-gradient-to-r hover:shadow-lg transition-all duration-300 rounded-2xl border border-gray-100 hover:border-gray-200" style={{background: `linear-gradient(135deg, var(--tw-gradient-stops))`}}>
+                        <div className={`bg-gradient-to-r ${stat.bg} rounded-2xl p-4`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className={`w-10 h-10 bg-gradient-to-r ${stat.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                              <IconComponent className="w-5 h-5 text-white" />
+                            </div>
+                            <TrendingUp className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors" />
+                          </div>
+                          <div className="text-3xl font-bold text-gray-800 mb-1">{stat.value}</div>
+                          <div className="text-sm font-medium text-gray-600">{stat.label}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Logros */}
-              <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-[#30588C] mb-6 flex items-center gap-2">
-                  <Trophy className="w-5 h-5" />
-                  Mis Logros
-                </h3>
+              {/* Logros mejorados */}
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#30588C]">Mis Logros</h3>
+                </div>
                 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {logros.map((logro, index) => (
                     <div 
                       key={index}
-                      className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                      className={`group relative p-4 rounded-2xl transition-all duration-300 border ${
                         logro.completado 
-                          ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200' 
-                          : 'bg-gray-50 opacity-60'
+                          ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 hover:from-amber-100 hover:to-orange-100 hover:border-amber-300' 
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                       }`}
                     >
-                      <div className="text-2xl">{logro.icono}</div>
-                      <div className="flex-1">
-                        <p className={`font-semibold ${logro.completado ? 'text-gray-800' : 'text-gray-500'}`}>
-                          {logro.nombre}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {logro.completado ? 'Completado' : 'En progreso'}
-                        </p>
-                      </div>
-                      {logro.completado && (
-                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                      <div className="flex items-start gap-4">
+                        <div className={`text-3xl transition-transform group-hover:scale-110 ${!logro.completado && 'grayscale opacity-50'}`}>
+                          {logro.icono}
                         </div>
-                      )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className={`font-bold truncate ${logro.completado ? 'text-gray-800' : 'text-gray-500'}`}>
+                              {logro.nombre}
+                            </h4>
+                            {logro.completado && (
+                              <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                                <CheckCircle className="w-4 h-4 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className={`text-xs leading-relaxed ${logro.completado ? 'text-gray-600' : 'text-gray-400'}`}>
+                            {logro.descripcion}
+                          </p>
+                          <div className={`text-xs font-medium mt-2 ${logro.completado ? 'text-green-600' : 'text-gray-500'}`}>
+                            {logro.completado ? '✓ Completado' : '⏳ En progreso'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Acciones rápidas */}
-              <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-[#30588C] mb-6 flex items-center gap-2">
-                  <Settings className="w-5 h-5" />
-                  Acciones Rápidas
-                </h3>
+              {/* Acciones rápidas mejoradas */}
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-violet-600 rounded-xl flex items-center justify-center">
+                    <Settings className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#30588C]">Acciones Rápidas</h3>
+                </div>
                 
-                <div className="space-y-3">
-                  <Link href="/match" className="block">
-                    <button className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 rounded-xl transition-all duration-300 group">
-                      <PawPrint className="w-5 h-5 text-[#30588C] group-hover:scale-110 transition-transform" />
-                      <span className="font-medium text-gray-800">Buscar Mascotas</span>
-                    </button>
-                  </Link>
-                  
-                  <Link href="/favoritos" className="block">
-                    <button className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-pink-50 to-red-50 hover:from-pink-100 hover:to-red-100 rounded-xl transition-all duration-300 group">
-                      <Heart className="w-5 h-5 text-[#BF3952] group-hover:scale-110 transition-transform" />
-                      <span className="font-medium text-gray-800">Ver Favoritos</span>
-                    </button>
-                  </Link>
-                  
-                  <Link href="/configuracion" className="block">
-                    <button className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100 rounded-xl transition-all duration-300 group">
-                      <Settings className="w-5 h-5 text-gray-600 group-hover:scale-110 transition-transform" />
-                      <span className="font-medium text-gray-800">Configuración</span>
-                    </button>
-                  </Link>
+                <div className="space-y-4">
+                  {accionesRapidas.map((accion, index) => {
+                    const IconComponent = accion.icon;
+                    return (
+                      <Link key={index} href={accion.href} className="block group">
+                        <div className={`p-4 bg-gradient-to-r ${accion.bgGradient} hover:shadow-lg rounded-2xl transition-all duration-300 border border-gray-100 hover:border-gray-200 group-hover:-translate-y-1`}>
+                          <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 bg-gradient-to-r ${accion.gradient} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
+                              <IconComponent className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-bold text-gray-800 truncate">{accion.label}</h4>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 ml-2" />
+                              </div>
+                              <p className="text-sm text-gray-600 truncate">{accion.description}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>

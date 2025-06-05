@@ -4,12 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, User, Heart, LogOut, Bell, Settings, Sparkles, Search } from 'lucide-react';
-interface HeaderProps {
-  nombre?: string | null;
-  foto?: string | null;
-}
 
-export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
+export default function HeaderUsuario() {
   const [isOpen, setIsOpen] = useState(false);
   const [notificaciones, setNotificaciones] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -26,32 +22,52 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
     window.location.href = '/';
   };
 
+  const [nombreUsuario, setNombre] = useState('Usuario');
+  const [fotoUsuario, setFoto] = useState('/Perfil/Usuario1.jpeg');
 
-  // Cierra los menús si se hace clic fuera de ellos
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+    const id = localStorage.getItem("idUsuario");
+    if (!id) return;
+
+    fetch(`/api/usuario/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.nombre) setNombre(data.nombre);
+        if (data.fotoPerfil) setFoto(data.fotoPerfil);
+      })
+      .catch((err) => console.error("Error al cargar datos del usuario:", err));
+  }, []);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+  
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target as Node)
+      ) {
         setShowNotifications(false);
       }
     };
-    if (isOpen || showNotifications) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, showNotifications]);
-
-  const fotoPerfil = foto || '/Perfil/Usuario1.jpeg';
-  const nombreUsuario = nombre || 'Usuario';
+  
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  
 
   const mockNotifications = [
     { id: 1, message: "¡Nuevo match con Luna!", time: "Hace 5 min", type: "match" },
     { id: 2, message: "Tu perfil ha sido visitado", time: "Hace 1 hora", type: "visit" },
     { id: 3, message: "Mensaje de Refugio Amigo Fiel", time: "Hace 2 horas", type: "message" }
   ];
-
+  
   return (
     <>
       <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20 fixed top-0 left-0 right-0 z-50">
@@ -102,12 +118,14 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
             >
               Mi Perfil
             </Link>
+
             <Link 
-              href="/favoritos" 
+              href="/estado-adopcion" 
               className="px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 transition-all duration-300 transform hover:scale-105"
             >
-             
+              Estado de Adopción
             </Link>
+
           </nav>
 
           {/* Área de usuario mejorada */}
@@ -163,7 +181,7 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
             {/* Perfil + Menú mejorado */}
             <div className="relative flex items-center gap-3" ref={menuRef}>
               <div className="hidden lg:flex flex-col items-end">
-                <span className="font-semibold text-sm text-gray-800">{nombre || 'Usuario'}</span>
+                <span className="font-semibold text-sm text-gray-800">{nombreUsuario}</span>
                 <span className="text-xs text-gray-500">Usuario activo</span>
               </div>
               
@@ -172,9 +190,10 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
                 className="relative focus:outline-none group"
               >
                 <div className="relative">
-                  <Image
-                    src={fotoPerfil}
-                    alt={nombre || 'Usuario Perfil'}
+                <Image
+                    src={fotoUsuario}
+                    alt={nombreUsuario}
+
                     width={44}
                     height={44}
                     className="rounded-full border-3 border-white shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105"
@@ -191,9 +210,10 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
                   <div className="relative bg-gradient-to-r from-[#30588C] to-[#BF3952] p-6 text-white">
                     <div className="flex flex-col items-center">
                       <div className="relative">
-                        <Image
-                          src={foto || '/Perfil/Usuario1.jpeg'}
-                          alt={nombre || 'Usuario Perfil'}
+                      <Image
+                          src={fotoUsuario}
+                          alt={nombreUsuario}
+
                           width={70}
                           height={70}
                           className="rounded-full border-3 border-white shadow-lg"
@@ -324,12 +344,13 @@ export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
                 👤 Mi Perfil
               </Link>
               <Link 
-                href="/favoritos" 
+                href="/estado-adopcion" 
                 onClick={closeMenu}
-                className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-red-50 hover:text-[#BF3952] transition-all duration-300"
+                className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-[#30588C] transition-all duration-300"
               >
-                ❤️ Favoritos
+                📄 Estado de Adopción
               </Link>
+
               <div className="pt-2 border-t border-gray-200">
                 <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
                   <Bell className="w-5 h-5" />
