@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState } from 'react';
 import FormattedNumber from '@/components/FormattedNumber';
 // Remover esta línea: import HeaderAdmin from '@/components/layout/HeaderAdmin';
@@ -246,9 +247,11 @@ const AdminDashboard = () => {
           <p className="text-gray-600 mb-6">
             {modules.find(m => m.id === activeModule)?.description}
           </p>
+          <Link href="/AsignacionRolesPermisos">
           <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Configurar Módulo
           </button>
+        </Link>
         </div>
       </div>
     );

@@ -268,7 +268,7 @@ export default function HeaderRefugio() {
                     </Link>
                     
                     <Link
-                      href="/gestion-mascotas"
+                      href="/dashboard-refugio"
                       onClick={closeMenu}
                       className="flex items-center gap-3 px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-[#30588C] transition-all duration-300 group"
                     >
@@ -388,7 +388,7 @@ export default function HeaderRefugio() {
           <div className="md:hidden bg-white border-t border-gray-200 animate-slide-down">
             <nav className="px-4 py-4 space-y-2">
               <Link 
-                href="/gestion-mascotas" 
+                href="/dashboard-refugio" 
                 onClick={closeMenu}
                 className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-[#4E9F3D] transition-all duration-300"
               >
