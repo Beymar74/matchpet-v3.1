@@ -81,9 +81,9 @@ export default function Header() {
 
   const navigationLinks = [
     { href: '/', label: 'Inicio', icon: Home },
-    { href: '/about', label: 'Comunidad', icon: Info },
+    { href: '/comunidad', label: 'Comunidad', icon: Info },
     { href: '/Mascotas', label: 'Mascotas', icon: PawPrint },
-    { href: '#about-section', label: 'Sobre Nosotros', icon: Users }, // href cambiado a ancla
+    { href: '/sobrenosotros', label: 'Sobre Nosotros', icon: Users }, // Changed href to the new page
   ];
 
   // Función para hacer scroll suave a la sección about-section
@@ -128,13 +128,14 @@ export default function Header() {
             {navigationLinks.map((link) => {
               const IconComponent = link.icon;
 
-              // Para el link "Comunidad" que tiene href="#about-section", usamos botón para scroll
+              // Conditional rendering for the "Sobre Nosotros" link to use Link component
               if (link.href === '#about-section') {
+                 // This case is no longer needed after changing the href
                 return (
                   <button
                     key={link.href}
                     onClick={handleScrollToSection}
-                    className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] transition-all duration-300 flex items-center gap-2"
+ className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] transition-all duration-300 flex items-center gap-2"
                   >
                     <IconComponent className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                     <span className="group-hover:font-semibold transition-all">{link.label}</span>
@@ -148,7 +149,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] transition-all duration-300 flex items-center gap-2"
-                >
+>
                   <IconComponent className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                   <span className="group-hover:font-semibold transition-all">{link.label}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
@@ -283,13 +284,14 @@ export default function Header() {
               {navigationLinks.map((link) => {
                 const IconComponent = link.icon;
 
+                // Conditional rendering for the "Sobre Nosotros" link in mobile menu
                 if (link.href === '#about-section') {
+                   // This case is no longer needed after changing the href
                   return (
                     <button
                       key={link.href}
                       onClick={handleScrollToSection}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 hover:text-[#BF3952] transition-all duration-300 group"
-                    >
+ className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 hover:text-[#BF3952] transition-all duration-300 group"                    >
                       <IconComponent className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                       <span className="font-medium">{link.label}</span>
                     </button>

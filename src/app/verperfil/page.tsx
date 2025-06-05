@@ -53,26 +53,31 @@ const VerPerfilPage = () => {
   ]);
 
   useEffect(() => {
-    const nombre = localStorage.getItem('nombreUsuario') || 'Usuario';
-    const correo = localStorage.getItem('email') || 'correo@ejemplo.com';
-    const rol = localStorage.getItem('rol') || 'Adoptante';
-    const telefono = localStorage.getItem('telefono') || 'No registrado';
-    const foto = localStorage.getItem('fotoPerfil') || '/Perfil/Usuario1.jpeg';
-    const fecha = localStorage.getItem('fechaRegistro') || '01/06/2025';
-
-    setPerfil({ 
-      nombre, 
-      correo, 
-      rol, 
-      telefono, 
-      fotoPerfil: foto, 
-      fechaRegistro: fecha,
-      ubicacion: 'La Paz, Bolivia',
-      miembro: 'Premium',
-      puntos: 1250
-    });
+    const idUsuario = localStorage.getItem('idUsuario');
+    if (!idUsuario) return;
+  
+    fetch(`/api/usuario/${idUsuario}`)
+      .then(res => res.json())
+      .then(data => {
+        setPerfil({
+          nombre: data.nombre,
+          correo: data.correo,
+          telefono: data.telefono ?? 'No registrado',
+          fotoPerfil: data.fotoPerfil ?? '/Perfil/Usuario1.jpeg',
+          fechaRegistro: data.fechaRegistro ?? '01/06/2025',
+          rol: data.rol,
+          ubicacion: 'La Paz, Bolivia',
+          miembro: 'Premium',
+          puntos: 1250
+        });
+      })
+      .catch(error => console.error('Error al cargar perfil:', error));
   }, []);
-
+  
+  if (!perfil || !perfil.nombre) {
+    return <p className="text-center mt-20">Cargando perfil...</p>;
+  }
+  
   return (
     <>
       <HeaderUsuario />
