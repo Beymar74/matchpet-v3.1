@@ -15,45 +15,24 @@ interface Mascota {
   foto: string;
 }
 
-const mockMascotas: Mascota[] = [
-  
-  {
-    id: '1',
-    nombre: 'Luna',
-    especie: 'Perro',
-    raza: 'Labrador',
-    edad: 3,
-    estado: 'Disponible',
-    descripcion: 'Luna es amigable y le encanta jugar.',
-    foto: 'Perros/labrador.jpg',
-  },
-  {
-    id: '2',
-    nombre: 'Milo',
-    especie: 'Gato',
-    raza: 'Persa',
-    edad: 2,
-    estado: 'Adoptado',
-    descripcion: 'Milo es tranquilo y cariñoso.',
-    foto: 'Gatos/persa.jpg',
-  },
-  {
-    id: '3',
-    nombre: 'Toby',
-    especie: 'Perro',
-    raza: 'Beagle',
-    edad: 4,
-    estado: 'En tratamiento',
-    descripcion: 'Toby se está recuperando de una lesión.',
-    foto: 'Perros/beagle.jpg',
-  },
-];
-
 export default function GestionMascotas() {
-  const [mascotas, setMascotas] = useState<Mascota[]>(mockMascotas);
+  const [mascotas, setMascotas] = useState<Mascota[]>([]);
   const [mascotaSeleccionada, setMascotaSeleccionada] = useState<Mascota | null>(null);
 
+  // Obtener mascotas reales desde la API
   useEffect(() => {
+    const fetchMascotas = async () => {
+      try {
+        const res = await fetch('/api/mascotas');
+        const data = await res.json();
+        if (res.ok) setMascotas(data);
+      } catch (error) {
+        console.error('Error al cargar mascotas:', error);
+      }
+    };
+    fetchMascotas();
+
+    // Modo oscuro automático
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark');
     } else {
@@ -64,12 +43,13 @@ export default function GestionMascotas() {
   return (
     <>
       <HeaderRefugio />
-      
+
       <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500 pt-[80px]">
         <main className="max-w-6xl mx-auto py-10 px-6">
           <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🐾 Gestión de Mascotas</h1>
           <p className="mb-6 text-lg text-gray-700 dark:text-white/80">Selecciona una funcionalidad:</p>
 
+          {/* Funcionalidades */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {[
               { href: '/Registrar', icon: '➕', label: 'Registrar Nueva Mascota' },
@@ -89,6 +69,7 @@ export default function GestionMascotas() {
 
           <h2 className="text-3xl font-bold mb-6">Mascotas Registradas</h2>
 
+          {/* Tarjetas de mascotas */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {mascotas.map((mascota) => (
               <div
@@ -101,9 +82,10 @@ export default function GestionMascotas() {
                 <p className="text-sm text-white/80">{mascota.especie} • {mascota.raza}</p>
                 <p className="text-sm text-white/80">Edad: {mascota.edad} años</p>
                 <span className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full 
-                  ${mascota.estado === 'Disponible' ? 'bg-green-100 text-green-800' : 
-                    mascota.estado === 'Adoptado' ? 'bg-blue-100 text-blue-800' : 
-                    'bg-yellow-100 text-yellow-800'}`}>
+                  ${mascota.estado === 'Disponible' ? 'bg-green-100 text-green-800' :
+                    mascota.estado === 'Adoptado' ? 'bg-blue-100 text-blue-800' :
+                      mascota.estado === 'Borrador' ? 'bg-gray-200 text-gray-800' :
+                      'bg-yellow-100 text-yellow-800'}`}>
                   {mascota.estado}
                 </span>
               </div>
@@ -111,6 +93,7 @@ export default function GestionMascotas() {
           </div>
         </main>
 
+        {/* Modal de detalles */}
         {mascotaSeleccionada && (
           <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
             <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative">

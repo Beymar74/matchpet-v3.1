@@ -1,30 +1,55 @@
 'use client'
 
-import React, { useState } from 'react'
-import Header from '@/components/Header'
+import React, { useEffect, useState } from 'react'
+import Header from '@/components/layout/HeaderRefugio'
 import Link from 'next/link'
 
+interface Mascota {
+  id: string
+  nombre: string
+}
+
 export default function MarcarBorradorPage() {
+  const [mascotas, setMascotas] = useState<Mascota[]>([])
   const [mascotaSeleccionada, setMascotaSeleccionada] = useState('')
   const [mensaje, setMensaje] = useState('')
 
-  const mascotasMock = [
-    { id: '1', nombre: 'Max' },
-    { id: '2', nombre: 'Luna' },
-    { id: '3', nombre: 'Rocky' },
-  ]
+  // 🔄 Obtener mascotas reales desde la base de datos
+  useEffect(() => {
+    const fetchMascotas = async () => {
+      const res = await fetch('/api/mascotas')
+      const data = await res.json()
+      if (res.ok) setMascotas(data)
+      else setMensaje('⚠️ No se pudo cargar la lista de mascotas.')
+    }
+    fetchMascotas()
+  }, [])
 
-  const marcarComoBorrador = () => {
-    if (mascotaSeleccionada) {
-      setMensaje(`✅ Mascota "${mascotaSeleccionada}" marcada como borrador.`)
-    } else {
+  const marcarComoBorrador = async () => {
+    if (!mascotaSeleccionada) {
       setMensaje('⚠️ Selecciona una mascota antes de continuar.')
+      return
+    }
+
+    try {
+      const res = await fetch(`/api/mascotas/${mascotaSeleccionada}/borrador`, {
+        method: 'PUT',
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        setMensaje(`✅ Mascota marcada como borrador correctamente.`)
+      } else {
+        setMensaje(`❌ Error: ${data.error || 'No se pudo actualizar.'}`)
+      }
+    } catch (error) {
+      setMensaje('❌ Error al conectar con el servidor.')
     }
   }
 
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
-      <Header />
+      <Header  />
 
       <main className="max-w-xl mx-auto py-12 px-6">
         <h1 className="text-3xl font-bold mb-4 text-[#BF3952]">
@@ -45,8 +70,8 @@ export default function MarcarBorradorPage() {
               onChange={(e) => setMascotaSeleccionada(e.target.value)}
             >
               <option value="">-- Elegir --</option>
-              {mascotasMock.map((m) => (
-                <option key={m.id} value={m.nombre}>
+              {mascotas.map((m) => (
+                <option key={m.id} value={m.id}>
                   {m.nombre}
                 </option>
               ))}
@@ -82,4 +107,3 @@ export default function MarcarBorradorPage() {
     </div>
   )
 }
-

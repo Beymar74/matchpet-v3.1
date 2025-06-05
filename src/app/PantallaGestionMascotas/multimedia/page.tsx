@@ -1,28 +1,70 @@
 'use client'
 
-import React, { useState } from 'react'
-import Header from '@/components/Header'
+import React, { useState, useEffect } from 'react'
+import Header from '@/components/layout/HeaderRefugio'
 import Link from 'next/link'
 
 export default function GestionMultimediaPage() {
   const [archivos, setArchivos] = useState<File[]>([])
   const [vistaPrevia, setVistaPrevia] = useState<string[]>([])
+  const [mascotas, setMascotas] = useState<any[]>([])
+  const [idMascota, setIdMascota] = useState('')
+
+  // Cargar mascotas disponibles
+  useEffect(() => {
+    fetch('/api/mascotas')
+      .then(res => res.json())
+      .then(data => setMascotas(data))
+      .catch(err => console.error('Error al cargar mascotas:', err))
+  }, [])
 
   const handleArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files) {
       const fileList = Array.from(files)
       setArchivos(fileList)
-
-      const previews = fileList.map((file) => URL.createObjectURL(file))
-      setVistaPrevia(previews)
+      setVistaPrevia(fileList.map(file => URL.createObjectURL(file)))
     }
   }
 
-  const subirArchivos = () => {
-    console.log('Archivos a subir:', archivos)
-    alert('✅ Archivos simulados como subidos')
-    // Aquí iría la lógica para subir a Firebase o Cloudinary
+  const subirArchivos = async () => {
+    if (!idMascota) {
+      alert('⚠️ Por favor selecciona una mascota')
+      return
+    }
+
+    const uploadPromises = archivos.map(async (file) => {
+      const form = new FormData()
+      form.append('file', file)
+      form.append('upload_preset', 'matchpet_mascotas')  // Preset sin autenticación
+      form.append('folder', 'matchpet_mascotas')         // Carpeta en Cloudinary
+
+      const res = await fetch('https://api.cloudinary.com/v1_1/tu_cloud_name/upload', {
+        method: 'POST',
+        body: form,
+      })
+
+      const data = await res.json()
+      const tipo = file.type.includes('pdf') ? 'documento' : 'imagen'
+
+      // Guardar en tu base de datos
+      await fetch('/api/multimedia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_mascota: idMascota,
+          tipo,
+          url: data.secure_url,
+        }),
+      })
+
+      return data.secure_url
+    })
+
+    await Promise.all(uploadPromises)
+    alert('✅ Archivos subidos correctamente')
+    setArchivos([])
+    setVistaPrevia([])
   }
 
   return (
@@ -32,10 +74,24 @@ export default function GestionMultimediaPage() {
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-4 text-[#BF3952]">📸 Gestión de Multimedia</h1>
         <p className="mb-6 text-sm text-gray-700 dark:text-white/80">
-          Aquí puedes cargar fotos o documentos relevantes sobre la mascota.
+          Carga fotos o documentos relevantes para una mascota registrada.
         </p>
 
         <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-lg space-y-4">
+          <label className="block font-semibold mb-2 text-[#30588C]">Selecciona una mascota</label>
+          <select
+            value={idMascota}
+            onChange={(e) => setIdMascota(e.target.value)}
+            className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-[#2a2a2a]"
+          >
+            <option value="">-- Selecciona --</option>
+            {mascotas.map((m) => (
+              <option key={m.id_mascota} value={m.id_mascota}>
+                {m.nombre} ({m.especie})
+              </option>
+            ))}
+          </select>
+
           <input
             type="file"
             accept="image/*,.pdf"
@@ -71,10 +127,7 @@ export default function GestionMultimediaPage() {
         </div>
 
         <div className="mt-6 text-sm">
-          <Link
-            href="/PantallaGestionMascotas"
-            className="text-[#6093BF] hover:underline"
-          >
+          <Link href="/PantallaGestionMascotas" className="text-[#6093BF] hover:underline">
             ← Volver a Gestión de Mascotas
           </Link>
         </div>
@@ -82,3 +135,4 @@ export default function GestionMultimediaPage() {
     </div>
   )
 }
+
