@@ -364,14 +364,6 @@ export default function CompatibilidadPage() {
                 <span>Anterior</span>
               </Button>
               
-              <Button
-                onClick={guardarProgreso}
-                variant="outline"
-                className="flex items-center space-x-2 px-4 py-2 text-[#30588C] border-[#30588C]/30 hover:bg-[#30588C]/5"
-              >
-                <Save size={18} />
-                <span className="hidden sm:inline">Guardar</span>
-              </Button>
             </div>
 
             <div className="flex space-x-3">
@@ -481,19 +473,39 @@ export default function CompatibilidadPage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={() => router.push('/resultados')}
+            <Button
+                onClick={async () => {
+                  const idUsuario = localStorage.getItem("idUsuario");
+                  if (!idUsuario) return;
+
+                  try {
+                    const res = await fetch("/api/compatibilidad/guardar", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify({
+                        idUsuario: parseInt(idUsuario),
+                        respuestas: respuestas
+                      })
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                      router.push('/resultados');
+                    } else {
+                      alert("Error al guardar las respuestas. Intenta de nuevo.");
+                    }
+                  } catch (error) {
+                    console.error("Error al guardar:", error);
+                    alert("Ocurrió un error al guardar tus respuestas.");
+                  }
+                }}
                 className="flex-1 bg-gradient-to-r from-[#30588C] to-[#6093BF] hover:from-[#254559] hover:to-[#30588C] text-white py-3 text-lg font-medium shadow-lg"
               >
                 Ver Mis Resultados
               </Button>
-              <Button
-                onClick={() => router.push('/dashboard')}
-                variant="outline"
-                className="px-6 py-3 border-[#30588C]/30 text-[#30588C] hover:bg-[#30588C]/5"
-              >
-                Ir al Dashboard
-              </Button>
+
             </div>
             
             <p className="text-xs text-gray-500">

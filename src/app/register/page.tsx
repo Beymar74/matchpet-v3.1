@@ -227,11 +227,18 @@ export default function RegisterPage() {
       const result = await response.json();
   
       if (result.success) {
+        // Guardar datos simulando sesión iniciada
+        localStorage.setItem("idUsuario", result.idUsuario || ""); // si lo devuelves desde backend
+        localStorage.setItem("nombreUsuario", formData.name);
+        localStorage.setItem("rolUsuario", activeTab === 'usuario' ? 'Adoptante' : 'Refugio');
+        localStorage.setItem("fotoPerfil", fotoPerfilUrl);
+      
         setSuccessMessage('¡Registro exitoso! Redirigiendo...');
         setTimeout(() => {
           window.location.href = activeTab === 'usuario' ? '/compatibilidad' : '/dashboard-refugio';
         }, 2000);
-      } else {
+      }
+       else {
         throw new Error(result.error || 'Error en el registro');
       }
     } catch (error) {

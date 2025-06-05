@@ -53,7 +53,12 @@ export async function POST(request: Request) {
       .input('IDRol', sql.Int, idRol)
       .query(`INSERT INTO Usuarios_Roles (ID_Usuario, ID_Rol) VALUES (@IDUsuario, @IDRol)`);
 
-    return NextResponse.json({ success: true, message: 'Usuario registrado correctamente' });
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Usuario registrado correctamente', 
+        idUsuario: nuevoID 
+      });
+      
   } catch (error) {
     console.error('Error al registrar:', error);
     return NextResponse.json({ success: false, error: 'Error en el registro' }, { status: 500 });
