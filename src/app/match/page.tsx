@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Filter, Sparkles, Shield, Home, Clock, Heart } from 'lucide-react';
-import HeaderUsuario from '@/components/layout/HeaderUsuario';
+import HeaderMain from "@/components/layout/HeaderMain";
 
 // Importar componentes atómicos
 import { Button } from './atoms/Button';
@@ -100,7 +100,7 @@ export default function PantallaMatch() {
   if (!mascota) {
     return (
       <>
-        <HeaderUsuario />
+        <HeaderMain />
         <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 pt-20 px-4 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">
@@ -121,7 +121,7 @@ export default function PantallaMatch() {
 
   return (
     <>
-      <HeaderUsuario />
+      <HeaderMain />
 
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 pt-20 px-4 relative overflow-hidden">
         

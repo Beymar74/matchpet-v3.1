@@ -253,20 +253,18 @@ export default function AdoptionProcess() {
 
         {/* Call to action */}
         <div className={`text-center mt-16 transform transition-all duration-1000 delay-700 ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        }`}>
-          <div className="inline-flex flex-col sm:flex-row gap-4">
-      <Link href="/login" passHref legacyBehavior>
-        <button
-          type="button"
+                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}>
+              <div className="inline-flex flex-col sm:flex-row gap-4">
+        <Link 
+          href="/login"
           className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#BF3952] to-pink-600 hover:from-[#8B2B3B] hover:to-pink-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
         >
           <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
           Comenzar adopción
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </button>
-      </Link>
-    </div>
+        </Link>
+      </div>
           
           <p className="text-gray-500 mt-6 max-w-md mx-auto">
             ¿Tienes preguntas? Nuestro equipo está aquí para ayudarte en cada paso del proceso.

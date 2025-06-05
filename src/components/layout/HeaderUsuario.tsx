@@ -4,11 +4,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, User, Heart, LogOut, Bell, Settings, Sparkles, Search } from 'lucide-react';
+interface HeaderProps {
+  nombre?: string | null;
+  foto?: string | null;
+}
 
-export default function HeaderUsuario() {
+export default function HeaderUsuario({ nombre, foto }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [fotoPerfil, setFotoPerfil] = useState('/Perfil/Usuario1.jpeg');
-  const [nombreUsuario, setNombreUsuario] = useState('');
   const [notificaciones, setNotificaciones] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -24,12 +26,6 @@ export default function HeaderUsuario() {
     window.location.href = '/';
   };
 
-  useEffect(() => {
-    const foto = localStorage.getItem('fotoPerfil');
-    const nombre = localStorage.getItem('nombreUsuario');
-    if (foto) setFotoPerfil(foto);
-    if (nombre) setNombreUsuario(nombre);
-  }, []);
 
   // Cierra los menús si se hace clic fuera de ellos
   useEffect(() => {
@@ -46,6 +42,9 @@ export default function HeaderUsuario() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, showNotifications]);
+
+  const fotoPerfil = foto || '/Perfil/Usuario1.jpeg';
+  const nombreUsuario = nombre || 'Usuario';
 
   const mockNotifications = [
     { id: 1, message: "¡Nuevo match con Luna!", time: "Hace 5 min", type: "match" },
@@ -107,15 +106,15 @@ export default function HeaderUsuario() {
               href="/favoritos" 
               className="px-4 py-2 rounded-xl text-gray-700 hover:text-[#BF3952] hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 transition-all duration-300 transform hover:scale-105"
             >
-              Favoritos
+             
             </Link>
           </nav>
 
           {/* Área de usuario mejorada */}
           <div className="flex items-center gap-3">
             
-            {/* Notificaciones */}
-            <div className="relative hidden md:block" ref={notifRef}>
+            {/* Notificaciones desktop */}
+            <div className="relative hidden lg:block" ref={notifRef}>
               <button
                 onClick={toggleNotifications}
                 className="relative p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300 transform hover:scale-110 focus:outline-none"
@@ -164,7 +163,7 @@ export default function HeaderUsuario() {
             {/* Perfil + Menú mejorado */}
             <div className="relative flex items-center gap-3" ref={menuRef}>
               <div className="hidden lg:flex flex-col items-end">
-                <span className="font-semibold text-sm text-gray-800">{nombreUsuario}</span>
+                <span className="font-semibold text-sm text-gray-800">{nombre || 'Usuario'}</span>
                 <span className="text-xs text-gray-500">Usuario activo</span>
               </div>
               
@@ -175,7 +174,7 @@ export default function HeaderUsuario() {
                 <div className="relative">
                   <Image
                     src={fotoPerfil}
-                    alt="Perfil"
+                    alt={nombre || 'Usuario Perfil'}
                     width={44}
                     height={44}
                     className="rounded-full border-3 border-white shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105"
@@ -193,13 +192,13 @@ export default function HeaderUsuario() {
                     <div className="flex flex-col items-center">
                       <div className="relative">
                         <Image
-                          src={fotoPerfil}
-                          alt="Perfil"
+                          src={foto || '/Perfil/Usuario1.jpeg'}
+                          alt={nombre || 'Usuario Perfil'}
                           width={70}
                           height={70}
                           className="rounded-full border-3 border-white shadow-lg"
                         />
-                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        {/* <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div> */}
                       </div>
                       <h3 className="mt-3 font-bold text-lg">{nombreUsuario}</h3>
                       <p className="text-sm text-white/80">Miembro desde 2024</p>
@@ -294,7 +293,7 @@ export default function HeaderUsuario() {
             </div>
 
             {/* Menú móvil */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button 
                 onClick={toggleMenu} 
                 aria-label="Abrir menú"
@@ -308,7 +307,7 @@ export default function HeaderUsuario() {
 
         {/* Menú móvil expandido */}
         {isOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 animate-slide-down">
+          <div className="lg:hidden bg-white border-t border-gray-200 animate-slide-down">
             <nav className="px-4 py-4 space-y-2">
               <Link 
                 href="/Match" 

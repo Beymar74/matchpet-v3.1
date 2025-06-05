@@ -29,11 +29,31 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' }
       });
-
+  
       const data = await response.json();
-
-      if (data.success) {
-        window.location.href = '/match'; // redirige a la pantalla principal
+  
+      if (data.success && data.idUsuario) {
+        // Guardar ID de usuario
+        localStorage.setItem('idUsuario', data.idUsuario);
+  
+        // Obtener el rol
+        const rolResponse = await fetch(`/api/obtener-rol?idUsuario=${data.idUsuario}`);
+        const rolData = await rolResponse.json();
+  
+        if (rolData.rol) {
+          localStorage.setItem("rolUsuario", rolData.rol);
+  
+          // Redirigir según rol
+          if (rolData.rol === 'Administrador') {
+            window.location.href = '/admin-dashboard';
+          } else if (rolData.rol === 'Refugio') {
+            window.location.href = '/dashboard-refugio';
+          } else {
+            window.location.href = '/match';
+          }
+        } else {
+          alert("No se pudo obtener el rol del usuario.");
+        }
       } else {
         setErrorLogin(true);
       }
@@ -42,7 +62,7 @@ export default function LoginPage() {
       setErrorLogin(true);
     }
   };
-
+  
   return (
     <section className="flex min-h-screen items-center justify-center bg-white px-4 py-12">
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 bg-white shadow-xl p-8 md:p-12 rounded-3xl">
