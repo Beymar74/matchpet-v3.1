@@ -37,7 +37,7 @@ import {
   UserCog,
   PawPrint
 } from 'lucide-react';
-
+import ReportesPage from '@/app/MenuReportes/page';
 const AdminDashboard = () => {
   const [activeModule, setActiveModule] = useState('dashboard');
 
@@ -229,7 +229,7 @@ const AdminDashboard = () => {
 
   const renderModuleContent = () => {
     if (activeModule === 'dashboard') return renderDashboard();
-    
+    if (activeModule === 'reports') return <ReportesPage />;
     const activeModuleData = modules.find(m => m.id === activeModule); // Find the module data
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
