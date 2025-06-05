@@ -36,7 +36,7 @@ type DatosFicticios = {
   [anio: string]: Region;
 };
 const datosFicticios: Record<string, Record<string, Record<string, Record<string, { mes: string; adopciones: number; }[]>>>> = {
-  "2023": {
+  "2025": {
     "LaPaz": {
       "Refugio Esperanza": {
         "Perro": [
@@ -103,7 +103,7 @@ const datosFicticios: Record<string, Record<string, Record<string, Record<string
 };
 
 const ComparativaAdopciones = () => {
-  const [anio, setAnio] = useState("2023");
+  const [anio, setAnio] = useState("2025");
   const [region, setRegion] = useState("LaPaz");
   const [refugio, setRefugio] = useState("Refugio Esperanza");
   const [tipoMascota, setTipoMascota] = useState("Perro");
@@ -125,40 +125,41 @@ const ComparativaAdopciones = () => {
 
           {/* Filtros */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <select
-              value={anio}
-              onChange={(e) => setAnio(e.target.value)}
-              className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-pink-200"
-            >
-              <option value="2023">Año 2023</option>
-            </select>
+  <select
+    value={anio}
+    onChange={(e) => setAnio(e.target.value)}
+    className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-pink-200 text-[#BF3952]"
+  >
+    <option value="2025">Año 2025</option>
+  </select>
 
-            <select
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-              className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-indigo-200"
-            >
-              <option value="LaPaz">Región La Paz</option>
-            </select>
+  <select
+    value={region}
+    onChange={(e) => setRegion(e.target.value)}
+    className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 text-[#BF3952]"
+  >
+    <option value="LaPaz">Región La Paz</option>
+  </select>
 
-            <select
-              value={refugio}
-              onChange={(e) => setRefugio(e.target.value)}
-              className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-            >
-              <option value="Refugio Esperanza">Refugio Esperanza</option>
-              <option value="Refugio Huellitas">Refugio Huellitas</option>
-            </select>
+  <select
+    value={refugio}
+    onChange={(e) => setRefugio(e.target.value)}
+    className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-blue-200 text-[#BF3952]"
+  >
+    <option value="Refugio Esperanza">Refugio Esperanza</option>
+    <option value="Refugio Huellitas">Refugio Huellitas</option>
+  </select>
 
-            <select
-              value={tipoMascota}
-              onChange={(e) => setTipoMascota(e.target.value)}
-              className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-purple-200"
-            >
-              <option value="Perro">Perros</option>
-              <option value="Gato">Gatos</option>
-            </select>
-          </div>
+  <select
+    value={tipoMascota}
+    onChange={(e) => setTipoMascota(e.target.value)}
+    className="p-2 text-sm border rounded-lg shadow-sm focus:ring focus:ring-purple-200 text-[#BF3952]"
+  >
+    <option value="Perro">Perros</option>
+    <option value="Gato">Gatos</option>
+  </select>
+</div>
+
 
           {/* Gráfico */}
           <div className="w-full h-[360px] bg-white rounded-lg border border-gray-200">

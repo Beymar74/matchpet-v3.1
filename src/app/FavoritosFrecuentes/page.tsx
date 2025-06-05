@@ -1,7 +1,7 @@
-// src/app/Modulo7/FavoritosFrecuentes/page.tsx
 "use client";
 
 import React, { useState } from "react";
+
 const mascotasFavoritas = [
   {
     id: 1,
@@ -65,70 +65,100 @@ export default function FavoritosFrecuentes() {
   const [filtroColor, setFiltroColor] = useState("Todos");
   const [filtroRaza, setFiltroRaza] = useState("Todos");
 
-  const tipos = ["Todos", ...new Set(mascotasFavoritas.map(m => m.tipo))];
-  const colores = ["Todos", ...new Set(mascotasFavoritas.map(m => m.color))];
-  const razas = ["Todos", ...new Set(mascotasFavoritas.map(m => m.raza))];
+  const tipos = ["Todos", ...new Set(mascotasFavoritas.map((m) => m.tipo))];
+  const colores = ["Todos", ...new Set(mascotasFavoritas.map((m) => m.color))];
+  const razas = ["Todos", ...new Set(mascotasFavoritas.map((m) => m.raza))];
 
-  const filtradas = mascotasFavoritas.filter(m => 
-    (filtroTipo === "Todos" || m.tipo === filtroTipo) &&
-    (filtroColor === "Todos" || m.color === filtroColor) &&
-    (filtroRaza === "Todos" || m.raza === filtroRaza)
+  const filtradas = mascotasFavoritas.filter(
+    (m) =>
+      (filtroTipo === "Todos" || m.tipo === filtroTipo) &&
+      (filtroColor === "Todos" || m.color === filtroColor) &&
+      (filtroRaza === "Todos" || m.raza === filtroRaza)
   );
 
-  const totalPerros = mascotasFavoritas.filter(m => m.tipo === "Perro").length;
-  const totalGatos = mascotasFavoritas.filter(m => m.tipo === "Gato").length;
+  const totalPerros = mascotasFavoritas.filter((m) => m.tipo === "Perro").length;
+  const totalGatos = mascotasFavoritas.filter((m) => m.tipo === "Gato").length;
 
   return (
-    <>
-      <div className="p-6 bg-white shadow-xl rounded-2xl max-w-7xl mx-auto mt-6">
-        <h2 className="text-2xl font-semibold mb-6 text-center text-[#A672E3]">
-          Mascotas Más Favoritas
-        </h2>
+    <div className="p-6 bg-white shadow-2xl rounded-2xl max-w-7xl mx-auto mt-6 border border-[#264653]">
+      <h2 className="text-3xl font-bold mb-6 text-center text-[#BF3952]">
+        Mascotas Más Favoritas
+      </h2>
 
-        <div className="flex flex-wrap gap-4 justify-center mb-6">
-          <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)} className="border rounded px-3 py-1">
-            {tipos.map((tipo, i) => <option key={i} value={tipo}>{tipo}</option>)}
-          </select>
-          <select value={filtroColor} onChange={(e) => setFiltroColor(e.target.value)} className="border rounded px-3 py-1">
-            {colores.map((color, i) => <option key={i} value={color}>{color}</option>)}
-          </select>
-          <select value={filtroRaza} onChange={(e) => setFiltroRaza(e.target.value)} className="border rounded px-3 py-1">
-            {razas.map((raza, i) => <option key={i} value={raza}>{raza}</option>)}
-          </select>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filtradas.map((mascota) => (
-            <div
-              key={mascota.id}
-              className="bg-gradient-to-br from-[#FDCBFA] to-[#A672E3] rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <img
-                src={mascota.imagen}
-                alt={mascota.nombre}
-                className="w-full h-52 object-cover rounded-t-2xl"
-              />
-              <div className="p-4 bg-white rounded-b-2xl">
-                <h3 className="text-lg font-bold text-[#A672E3] mb-1">
-                  {mascota.nombre}
-                </h3>
-                <p className="text-gray-600 text-sm">{mascota.tipo} - {mascota.edad}</p>
-                <p className="text-gray-600 text-sm">Raza: {mascota.raza}</p>
-                <p className="text-gray-600 text-sm mb-2">Color: {mascota.color}</p>
-                <p className="text-gray-600 text-sm mb-2">{mascota.refugio}</p>
-                <p className="text-pink-600 font-semibold text-sm">
-                  ❤️ {mascota.favoritos} favoritos
-                </p>
-              </div>
-            </div>
+      {/* Filtros */}
+      <div className="flex flex-wrap gap-4 justify-center mb-8">
+        <select
+          value={filtroTipo}
+          onChange={(e) => setFiltroTipo(e.target.value)}
+          className="border border-[#264653] rounded px-4 py-2 text-[#0D1B2A] bg-[#C9D6DF] focus:ring-2 focus:ring-[#BF3952]"
+        >
+          {tipos.map((tipo, i) => (
+            <option key={i} value={tipo}>
+              {tipo}
+            </option>
           ))}
-        </div>
-
-        <div className="mt-8 text-center text-sm text-gray-700">
-          <p>Total de perros favoritos: <strong>{totalPerros}</strong></p>
-          <p>Total de gatos favoritos: <strong>{totalGatos}</strong></p>
-        </div>
+        </select>
+        <select
+          value={filtroColor}
+          onChange={(e) => setFiltroColor(e.target.value)}
+          className="border border-[#264653] rounded px-4 py-2 text-[#0D1B2A] bg-[#C9D6DF] focus:ring-2 focus:ring-[#BF3952]"
+        >
+          {colores.map((color, i) => (
+            <option key={i} value={color}>
+              {color}
+            </option>
+          ))}
+        </select>
+        <select
+          value={filtroRaza}
+          onChange={(e) => setFiltroRaza(e.target.value)}
+          className="border border-[#264653] rounded px-4 py-2 text-[#0D1B2A] bg-[#C9D6DF] focus:ring-2 focus:ring-[#BF3952]"
+        >
+          {razas.map((raza, i) => (
+            <option key={i} value={raza}>
+              {raza}
+            </option>
+          ))}
+        </select>
       </div>
-    </>
+
+      {/* Tarjetas */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {filtradas.map((mascota) => (
+          <div
+            key={mascota.id}
+            className="bg-white border border-[#C9D6DF] rounded-2xl shadow-md hover:shadow-xl transition duration-300"
+          >
+            <img
+              src={mascota.imagen}
+              alt={mascota.nombre}
+              className="w-full h-52 object-cover rounded-t-2xl"
+            />
+            <div className="p-4">
+              <h3 className="text-xl font-bold text-[#30588C] mb-1">{mascota.nombre}</h3>
+              <p className="text-[#0D1B2A] text-sm">
+                {mascota.tipo} - {mascota.edad}
+              </p>
+              <p className="text-sm text-[#264653]">Raza: {mascota.raza}</p>
+              <p className="text-sm text-[#264653]">Color: {mascota.color}</p>
+              <p className="text-sm text-[#264653] mb-2">{mascota.refugio}</p>
+              <p className="text-[#BF3952] font-semibold text-sm">
+                ❤️ {mascota.favoritos} favoritos
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Resumen */}
+      <div className="mt-10 text-center text-sm text-[#0D1B2A]">
+        <p>
+          Total de perros favoritos: <strong>{totalPerros}</strong>
+        </p>
+        <p>
+          Total de gatos favoritos: <strong>{totalGatos}</strong>
+        </p>
+      </div>
+    </div>
   );
 }

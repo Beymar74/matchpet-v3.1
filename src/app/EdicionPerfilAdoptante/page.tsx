@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import HeaderUsuario from '@/components/layout/HeaderUsuario';
+import HeaderMain from "@/components/layout/HeaderMain";
 
 import Cropper from 'react-easy-crop';
 import getCroppedImg from './cropImage.ts'; // función auxiliar para extraer imagen recortada
@@ -106,7 +106,7 @@ const EdicionPerfilAdoptante: React.FC = () => {
 
   return (
     <>
-      <HeaderUsuario />
+ <HeaderMain />
       <div className="min-h-screen bg-white flex justify-center items-center px-6 py-12 pt-24">
         <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-3xl shadow-lg p-10">
           <h2 className="text-3xl font-bold text-center text-[#30588C] mb-8">

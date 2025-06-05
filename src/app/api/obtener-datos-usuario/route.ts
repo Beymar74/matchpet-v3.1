@@ -7,7 +7,7 @@ const config = {
   server: 'matchpetdb01.database.windows.net',
   database: 'matchpetdb01',
   options: {
-    encrypt: true, // Azure requiere conexión cifrada
+    encrypt: true,
     trustServerCertificate: false
   }
 };
@@ -22,21 +22,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await sql.connect(config);
 
-    const result = await sql.query(`
-      SELECT r.NombreRol
+    const result = await sql.query`
+      SELECT 
+        u.ID_Usuario,
+        u.Nombre AS NombreUsuario,
+        u.Foto_Perfil,
+        r.NombreRol
       FROM Usuarios u
       JOIN Usuarios_Roles ur ON u.ID_Usuario = ur.ID_Usuario
       JOIN Roles r ON ur.ID_Rol = r.ID_Rol
       WHERE u.ID_Usuario = ${idUsuario}
-    `);
+    `;
 
     if (result.recordset.length === 0) {
-      return res.status(404).json({ error: 'Rol no encontrado' });
+      return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    return res.status(200).json({ rol: result.recordset[0].NombreRol });
+    const usuario = result.recordset[0];
+
+    return res.status(200).json({
+      rol: usuario.NombreRol,
+      nombre: usuario.NombreUsuario,
+      foto: usuario.Foto_Perfil ?? '/Perfil/Usuario1.jpeg'
+    });
+
   } catch (error) {
-    console.error('Error al consultar rol:', error);
-    return res.status(500).json({ error: 'Error al conectar a la base de datos', detalle: error });
+    console.error('Error al obtener datos del usuario:', error);
+    return res.status(500).json({
+      error: 'Error interno al consultar la base de datos',
+      detalle: (error as Error).message
+    });
   }
 }

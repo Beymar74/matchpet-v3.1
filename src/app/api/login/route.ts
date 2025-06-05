@@ -15,10 +15,8 @@ export async function POST(request: Request) {
   const { email, password } = await request.json();
 
   try {
-    // conectar a la base de datos
     await sql.connect(config);
 
-    // consulta para validar el usuario
     const result = await sql.query`
       SELECT * FROM Usuarios 
       WHERE Correo = ${email} AND Contrasena = ${password}
@@ -26,7 +24,8 @@ export async function POST(request: Request) {
 
     if (result.recordset.length > 0) {
       const usuario = result.recordset[0];
-      return NextResponse.json({ success: true, usuario });
+      // 👉 Solo enviamos el ID_Usuario
+      return NextResponse.json({ success: true, idUsuario: usuario.ID_Usuario });
     } else {
       return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 });
     }

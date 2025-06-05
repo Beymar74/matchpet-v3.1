@@ -166,78 +166,82 @@ export default function ExploreSection() {
               <Link 
                 key={index}
                 href={option.href}
-                className="block group"
+                className={`block group relative bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl border border-white/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-4 ${
+                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                }`}
+                style={{ transitionDelay: `${index * 200}ms` }}
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
               >
-                <div
-                  className={`relative bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl border border-white/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-4 ${
-                    isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                  }`}
-                  style={{ transitionDelay: `${index * 200}ms` }}
-                  onMouseEnter={() => setHoveredCard(index)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  {/* Fondo gradiente */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${option.cardBg} opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
-                  {/* Badge flotante */}
-                  <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    {option.badge}
+                {/* Fondo gradiente */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${option.cardBg} opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
+                
+                {/* Badge flotante */}
+                <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  {option.badge}
+                </div>
+                
+                {/* Contenido principal */}
+                <div className="relative z-10 p-8">
+                  {/* Icono principal */}
+                  <div className="mb-6">
+                    <div className={`w-20 h-20 ${option.iconBg} rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent className="w-10 h-10 text-white" strokeWidth={1.5} />
+                    </div>
                   </div>
-                  {/* Contenido principal */}
-                  <div className="relative z-10 p-8">
-                    {/* Icono principal */}
-                    <div className="mb-6">
-                      <div className={`w-20 h-20 ${option.iconBg} rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <IconComponent className="w-10 h-10 text-white" strokeWidth={1.5} />
+                  
+                  {/* Título y descripción */}
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-[#30588C] transition-colors duration-300">
+                      {option.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {option.description}
+                    </p>
+                  </div>
+                  
+                  {/* Información adicional */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 text-gray-500">
+                        <Clock className="w-4 h-4" />
+                        {option.time}
+                      </div>
+                      <div className="text-[#30588C] font-semibold">
+                        {option.stats}
                       </div>
                     </div>
-                    {/* Título y descripción */}
-                    <div className="text-center mb-6">
-                      <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-[#30588C] transition-colors duration-300">
-                        {option.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {option.description}
-                      </p>
-                    </div>
-                    {/* Información adicional */}
-                    <div className="space-y-4 mb-6">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <Clock className="w-4 h-4" />
-                          {option.time}
+                    
+                    {/* Características */}
+                    <div className="space-y-2">
+                      {option.features.map((feature, featureIndex) => (
+                        <div key={featureIndex} className="flex items-center gap-2 text-sm text-gray-600">
+                          <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          <span>{feature}</span>
                         </div>
-                        <div className="text-[#30588C] font-semibold">
-                          {option.stats}
-                        </div>
-                      </div>
-                      {/* Características */}
-                      <div className="space-y-2">
-                        {option.features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-center gap-2 text-sm text-gray-600">
-                            <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    {/* Call to action */}
-                    <div className="text-center">
-                      <div className={`inline-flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r ${option.bgGradient} ${option.hoverColor} text-white font-semibold rounded-2xl shadow-lg transition-all duration-300 transform group-hover:shadow-xl`}>
-                        {index === 0 && <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />}
-                        {index === 1 && <HandHeart className="w-5 h-5 group-hover:scale-110 transition-transform" />}
-                        {index === 2 && <DollarSign className="w-5 h-5 group-hover:scale-110 transition-transform" />}
-                        {option.cta}
-                      </div>
+                      ))}
                     </div>
                   </div>
-                  {/* Efecto de brillo en hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000 ease-out"></div>
-                  {/* Elementos decorativos */}
-                  <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full ${option.iconBg} flex items-center justify-center shadow-lg transition-all duration-300 ${
-                    isHovered ? 'scale-110 animate-bounce' : 'scale-0'
-                  }`}>
-                    <Star className="w-4 h-4 text-white" />
+                  
+                  {/* Call to action */}
+                  <div className="text-center">
+                    <div className={`inline-flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r ${option.bgGradient} ${option.hoverColor} text-white font-semibold rounded-2xl shadow-lg transition-all duration-300 transform group-hover:shadow-xl`}>
+                      {index === 0 && <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+                      {index === 1 && <HandHeart className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+                      {index === 2 && <DollarSign className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+                      {option.cta}
+                    </div>
                   </div>
+                </div>
+                
+                {/* Efecto de brillo en hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000 ease-out"></div>
+                
+                {/* Elementos decorativos */}
+                <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full ${option.iconBg} flex items-center justify-center shadow-lg transition-all duration-300 ${
+                  isHovered ? 'scale-110 animate-bounce' : 'scale-0'
+                }`}>
+                  <Star className="w-4 h-4 text-white" />
                 </div>
               </Link>
             );
@@ -259,11 +263,12 @@ export default function ExploreSection() {
               Únete a nuestra comunidad y sé parte del cambio que necesitan nuestros amigos peludos.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/login" passHref legacyBehavior>
-                <a className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#30588C] to-blue-600 hover:from-[#254559] hover:to-blue-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                  <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  Programar visita
-                </a>
+              <Link 
+                href="/login"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#30588C] to-blue-600 hover:from-[#254559] hover:to-blue-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              >
+                <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                Programar visita
               </Link>
             </div>
           </div>
