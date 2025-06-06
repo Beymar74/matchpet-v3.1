@@ -98,15 +98,6 @@ const VerPerfilRefugioPage = () => {
         </div>
 
         <div className="max-w-6xl mx-auto py-8 relative z-10">
-          
-          {/* Header de la página */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#4E9F3D] to-[#30588C] bg-clip-text text-transparent mb-2">
-              Perfil del Refugio
-            </h1>
-            <p className="text-gray-600">Gestiona la información de tu refugio</p>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Tarjeta principal del refugio */}

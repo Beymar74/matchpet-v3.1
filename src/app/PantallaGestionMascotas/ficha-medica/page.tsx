@@ -59,5 +59,10 @@ export default function TodasLasFichasPage() {
         </div>
       </main>
     </div>
+
   );
 }
+
+  )
+}
+
