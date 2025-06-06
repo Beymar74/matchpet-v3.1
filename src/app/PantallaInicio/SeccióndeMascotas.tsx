@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Heart, MapPin, Calendar, Info } from 'lucide-react';
-import { Badge } from '../components/ui/badge';
+import { Badge } from '../../components/ui/badge';
 
 const pets = [
   {
