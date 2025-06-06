@@ -60,7 +60,6 @@ body {
     color: var(--color-foreground);
     font-family: var(--font-sans);
 }
-<<<<<<< HEAD
 
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
@@ -142,10 +141,8 @@ body {
     @apply bg-background text-foreground;
     }
 }
-=======
 input,
 select,
 textarea {
   color: #1f2937; /* equivalente a Tailwind's text-gray-800 */
 }
->>>>>>> 8313d69e270e3a1954e3c7168c56f44234f54fa2
