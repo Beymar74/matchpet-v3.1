@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
+import Header from '@/components/layout/HeaderMain';
 
 const ComunicacionPrincipal = () => {
   const router = useRouter();
@@ -12,7 +12,7 @@ const ComunicacionPrincipal = () => {
     {
       titulo: 'Chat',
       descripcion: 'Comunícate directamente con los refugios.',
-      imagen: '/img/chat.png',
+      imagen: '/chat.png',
       ruta: '/pantallaComunicacion/Chat', // asegúrate que sea correcto
     },
     {
