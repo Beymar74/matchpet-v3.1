@@ -12,6 +12,19 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
   const handleBackdropClick = () => onClose()
   const stopClickPropagation = (e: React.MouseEvent) => e.stopPropagation()
 
+  const getEstadoColor = (estado: string) => {
+    switch (estado) {
+      case 'Disponible':
+        return 'bg-green-100 text-green-800'
+      case 'En proceso':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'Adoptado':
+        return 'bg-blue-100 text-blue-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50"
@@ -28,24 +41,41 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           ✕
         </button>
 
-        {/* Mostrar emoji/icono como foto */}
-        <div className="text-6xl text-center mb-4">{mascota.foto}</div>
-
-        <h2 className="text-2xl font-bold mb-2 text-center">{mascota.nombre}</h2>
-        <p className="text-sm text-gray-700 mb-2 text-center">{mascota.descripcion}</p>
-
-        <div className="space-y-2 text-sm">
-          <p><strong>Especie:</strong> {mascota.especie}</p>
-          <p><strong>Raza:</strong> {mascota.raza}</p>
-          <p><strong>Edad:</strong> {mascota.edad}</p>
-          <p><strong>Estado:</strong> {mascota.estado}</p>
-          <p><strong>Ingreso:</strong> {mascota.fechaIngreso ?? 'No registrado'}</p>
-          <p><strong>Compatibilidad:</strong> {mascota.compatibilidad ?? 0}%</p>
-          <p><strong>Solicitudes:</strong> {mascota.solicitudes ?? 0}</p>
+        {/* Encabezado */}
+        <div className="flex justify-between items-start mb-2">
+          <div className="text-6xl">{mascota.foto}</div>
+          <span
+            className={`text-sm px-3 py-1 rounded-full font-semibold ${getEstadoColor(
+              mascota.estado
+            )}`}
+          >
+            {mascota.estado}
+          </span>
         </div>
 
-        <div className="mt-4 flex flex-wrap justify-between gap-2">
-          <Link href={`/PantallaGestionMascotas/editar/${mascota.id}`}>
+        <h2 className="text-2xl font-bold mb-2">{mascota.nombre}</h2>
+
+        <div className="text-sm text-gray-700 space-y-1 mb-3">
+          <p><span className="font-medium">Especie:</span> {mascota.especie}</p>
+          <p><span className="font-medium">Raza:</span> {mascota.raza}</p>
+          <p><span className="font-medium">Edad:</span> {mascota.edad}</p>
+          <p><span className="font-medium">Ingreso:</span> {mascota.fechaIngreso}</p>
+        </div>
+
+        <div className="flex justify-between text-sm font-medium mb-4">
+          <p>
+            Compatibilidad promedio:{' '}
+            <span className="text-[#30588C] font-bold">{mascota.compatibilidad ?? 0}%</span>
+          </p>
+          <p>
+            Solicitudes:{' '}
+            <span className="text-[#BF3952] font-bold">{mascota.solicitudes ?? 0}</span>
+          </p>
+        </div>
+
+        {/* Botones */}
+        <div className="flex flex-wrap justify-between gap-2">
+          <Link href={`@/app/refugio/componentes/mascotas/EditarMascota`}>
             <button className="bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-auto">
               Editar
             </button>
@@ -65,4 +95,5 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
     </div>
   )
 }
+
 
