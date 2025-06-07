@@ -21,7 +21,7 @@ export default function ChatSimuladoPage() {
       
     }
   };
-
+}
 
 export default function ChatUsuario() {
   const userId = "usuario_123"; // 🔁 Reemplázalo luego por el ID real del usuario autenticado
