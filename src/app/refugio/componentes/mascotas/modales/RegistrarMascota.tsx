@@ -1,16 +1,31 @@
 'use client'
 
-import Link from 'next/link'
+import { useState } from 'react'
 import { Mascota } from '../../tipos'
+import EditarMascota from './EditarMascota'
+import FichaMedica from './FichaMedica'
+import CrearFichamedica from './CreaarFichamedica'
 
 interface ModalMascotaProps {
   mascota: Mascota
   onClose: () => void
 }
 
+// Simulación de fichas existentes
+const fichasRegistradas = ['1', '2']
+
 export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
-  const handleBackdropClick = () => onClose()
-  const stopClickPropagation = (e: React.MouseEvent) => e.stopPropagation()
+  const [mostrarEditar, setMostrarEditar] = useState(false)
+  const [mostrarFicha, setMostrarFicha] = useState(false)
+  const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
+
+  const handleFichaClick = () => {
+    if (fichasRegistradas.includes(mascota.id.toString())) {
+      setMostrarFicha(true)
+    } else {
+      setMostrarCrearFicha(true)
+    }
+  }
 
   const getEstadoColor = (estado: string) => {
     switch (estado) {
@@ -28,11 +43,11 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
   return (
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+      onClick={onClose}
     >
       <div
         className="bg-white text-gray-900 rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative"
-        onClick={stopClickPropagation}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -44,11 +59,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
         {/* Encabezado */}
         <div className="flex justify-between items-start mb-2">
           <div className="text-6xl">{mascota.foto}</div>
-          <span
-            className={`text-sm px-3 py-1 rounded-full font-semibold ${getEstadoColor(
-              mascota.estado
-            )}`}
-          >
+          <span className={`text-sm px-3 py-1 rounded-full font-semibold ${getEstadoColor(mascota.estado)}`}>
             {mascota.estado}
           </span>
         </div>
@@ -59,7 +70,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           <p><span className="font-medium">Especie:</span> {mascota.especie}</p>
           <p><span className="font-medium">Raza:</span> {mascota.raza}</p>
           <p><span className="font-medium">Edad:</span> {mascota.edad}</p>
-          <p><span className="font-medium">Ingreso:</span> {mascota.fechaIngreso}</p>
+          <p><span className="font-medium">Ingreso:</span> {mascota.fechaIngreso ?? 'No registrado'}</p>
         </div>
 
         <div className="flex justify-between text-sm font-medium mb-4">
@@ -75,25 +86,43 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
 
         {/* Botones */}
         <div className="flex flex-wrap justify-between gap-2">
-          <Link href={`@/app/refugio/componentes/mascotas/EditarMascota`}>
-            <button className="bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-auto">
-              Editar
-            </button>
-          </Link>
-          <Link href={`/PantallaGestionMascotas/ficha-medica/${mascota.id}`}>
-            <button className="bg-[#6093BF] text-white px-4 py-2 rounded hover:bg-[#30588C] w-full sm:w-auto">
-              Ficha Médica
-            </button>
-          </Link>
-          <Link href={`/PantallaGestionMascotas/eliminar/${mascota.id}`}>
-            <button className="bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-auto">
-              Eliminar
-            </button>
-          </Link>
+          <button
+            onClick={() => setMostrarEditar(true)}
+            className="bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-auto"
+          >
+            ✏️ Editar
+          </button>
+          <button
+            onClick={handleFichaClick}
+            className="bg-[#6093BF] text-white px-4 py-2 rounded hover:bg-[#30588C] w-full sm:w-auto"
+          >
+            🩺 Ficha Médica
+          </button>
+          <button
+            onClick={() => alert('Mascota marcada como borrada (simulado)')}
+            className="bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-auto"
+          >
+            🗑️ Poner como Borrado
+          </button>
         </div>
+
+        {/* Modales internos */}
+        {mostrarEditar && (
+          <div className="mt-6">
+            <EditarMascota id={mascota.id} />
+          </div>
+        )}
+        {mostrarFicha && (
+          <div className="mt-6">
+            <FichaMedica id={mascota.id} />
+          </div>
+        )}
+        {mostrarCrearFicha && (
+          <div className="mt-6">
+            <CrearFichamedica id={mascota.id} />
+          </div>
+        )}
       </div>
     </div>
   )
 }
-
-

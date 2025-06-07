@@ -1,19 +1,15 @@
-// src/app/refugio/componentes/mascotas/GestionMascotas.tsx
-import React, { useState } from 'react'
-import { PlusCircle } from 'lucide-react'
-import FiltrosBusqueda from './FiltrosBusqueda'
-import TarjetaMascota from './TarjetaMascota'
-import ModalMascota from './ModalMascota'
-import RegistrarMascota from './RegistrarMascota'
-import { Mascota } from '../../tipos'
+'use client';
 
-interface GestionMascotasProps {
-  mascotas: Mascota[]
-}
+import React, { useState } from 'react';
+import { PlusCircle } from 'lucide-react';
+import FiltrosBusqueda from './FiltrosBusqueda';
+import TarjetaMascota from './TarjetaMascota';
+import RegistrarMascota from './modales/RegistrarMascota';
+import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 
-const GestionMascotas: React.FC<GestionMascotasProps> = ({ mascotas }) => {
-  const [mascotaSeleccionada, setMascotaSeleccionada] = useState<Mascota | null>(null)
-  const [modalRegistroAbierto, setModalRegistroAbierto] = useState(false)
+const GestionMascotas: React.FC = () => {
+  const [mascotaSeleccionadaId, setMascotaSeleccionadaId] = useState<number | null>(null);
+  const [modalRegistroAbierto, setModalRegistroAbierto] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -32,27 +28,22 @@ const GestionMascotas: React.FC<GestionMascotasProps> = ({ mascotas }) => {
       <FiltrosBusqueda />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mascotas.map((mascota) => (
+        {mascotasSimuladas.map((mascota) => (
           <TarjetaMascota
             key={mascota.id}
-            mascota={mascota}
-            onClick={() => setMascotaSeleccionada(mascota)}
+            id={mascota.id}
+            onClick={() => setMascotaSeleccionadaId(mascota.id)}
           />
         ))}
       </div>
 
-      {mascotaSeleccionada && (
-        <ModalMascota
-          mascota={mascotaSeleccionada}
-          onClose={() => setMascotaSeleccionada(null)}
-        />
-      )}
-
+      {/* Modal de registro */}
       {modalRegistroAbierto && (
         <RegistrarMascota onClose={() => setModalRegistroAbierto(false)} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default GestionMascotas
+export default GestionMascotas;
+

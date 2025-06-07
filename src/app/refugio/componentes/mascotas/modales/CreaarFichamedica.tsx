@@ -1,6 +1,7 @@
-"use client"
+'use client'
 
 import React, { useState } from "react"
+import { registrarFichaMedica } from '@/data/fichasMedicasSimuladas'
 
 interface FichaMedica {
   vacunas: string
@@ -13,7 +14,7 @@ interface FichaMedica {
 interface CrearFichaMedicaProps {
   isOpen: boolean
   onClose: () => void
-  mascotaId?: number // opcional si luego quieres usarlo
+  mascotaId?: number
 }
 
 export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: CrearFichaMedicaProps) {
@@ -25,7 +26,7 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
     notas: "",
   })
 
-  if (!isOpen) return null
+  if (!isOpen || !mascotaId) return null
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -34,7 +35,7 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("✅ Ficha médica registrada para mascota:", mascotaId, ficha)
+    registrarFichaMedica(mascotaId, ficha)
     alert("Ficha médica registrada correctamente (simulado)")
     onClose()
   }
@@ -129,3 +130,4 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
     </div>
   )
 }
+
