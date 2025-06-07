@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Header from '@/components/Header';
+import { useRouter } from 'next/navigation';
 import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas';
 import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
+import Header from '@/components/Header';
 
-export default function EditarMascotaPage() {
-  const { id } = useParams();
+interface EditarMascotaProps {
+  id: string | number;
+}
+
+export default function EditarMascota({ id }: EditarMascotaProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState<Mascota | null>(null);
@@ -77,14 +80,9 @@ export default function EditarMascotaPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
-
       <main className="max-w-4xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-8 text-[#BF3952]">✏️ Editar Mascota</h1>
-
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5"
-        >
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 space-y-4">
               <InputField label="Nombre *" name="nombre" value={formData.nombre} error={errores.nombre} onChange={handleChange} />
@@ -99,7 +97,6 @@ export default function EditarMascotaPage() {
                   value={formData.estado}
                   onChange={handleChange}
                   className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.estado ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                  required
                 >
                   <option value="Disponible">Disponible</option>
                   <option value="Adoptado">Adoptado</option>
@@ -124,24 +121,14 @@ export default function EditarMascotaPage() {
                 <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#30588C] dark:bg-[#6093BF] text-white rounded shadow hover:opacity-90">
                   Seleccionar archivo
                 </label>
-                <input
-                  id="fileInput"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
+                <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                 {subiendo && <p className="text-xs mt-2 text-yellow-400">Subiendo imagen...</p>}
               </div>
             </div>
 
             {formData.foto && (
               <div className="flex-1">
-                <img
-                  src={formData.foto}
-                  alt="Vista previa"
-                  className="w-full h-full max-h-[400px] object-cover rounded-lg shadow"
-                />
+                <img src={formData.foto} alt="Vista previa" className="w-full h-full max-h-[400px] object-cover rounded-lg shadow" />
               </div>
             )}
           </div>
@@ -160,7 +147,7 @@ export default function EditarMascotaPage() {
   );
 }
 
-// Componente auxiliar para inputs
+// Input reutilizable
 function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
   return (
     <div>
