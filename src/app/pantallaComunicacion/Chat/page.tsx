@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 
+
 export default function ChatSimuladoPage() {
   const [mensajes, setMensajes] = useState([
     { id: 1, texto: 'Hola, estoy interesado en adoptar a Luna 🐶', autor: 'usuario' },
@@ -20,6 +21,12 @@ export default function ChatSimuladoPage() {
       
     }
   };
+
+
+export default function ChatUsuario() {
+  const userId = "usuario_123"; // 🔁 Reemplázalo luego por el ID real del usuario autenticado
+  const [conversacionActiva, setConversacionActiva] = useState<string | null>(null);
+
 
   return (
     <div className="pt-[80px] min-h-screen bg-white dark:bg-[#0F172A] text-[#011526] dark:text-white">
