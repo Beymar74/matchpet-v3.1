@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 
+
 const logsFicticios = [
   { id: 1, usuario: "admin01", accion: "Editó mascota", tipo: "Mascota", fecha: "2025-05-30", hora: "10:15" },
   { id: 2, usuario: "refugio02", accion: "Registró adopción", tipo: "Adopción", fecha: "2025-05-30", hora: "10:25" },
@@ -37,6 +38,7 @@ export default function LogsAuditorias() {
   });
 
   const botonesModulo7 = [
+    { nombre: 'Inicio', ruta: '/admin' },
     { nombre: 'Comparativa', ruta: '/ComparativaAdopciones' },
     { nombre: 'Evolución', ruta: '/EvolucionHistorica' },
     { nombre: 'Región', ruta: '/ActividadRegion' },

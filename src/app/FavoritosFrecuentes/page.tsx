@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 const botonesModulo7 = [
+  { nombre: 'Inicio', ruta: '/admin' },
   { nombre: "Comparativa", ruta: "/ComparativaAdopciones" },
   { nombre: "Evolución", ruta: "/EvolucionHistorica" },
   { nombre: "Región", ruta: "/ActividadRegion" },

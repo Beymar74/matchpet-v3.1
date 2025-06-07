@@ -14,6 +14,7 @@ import {
 
 // Menú superior
 const botonesModulo7 = [
+  { nombre: 'Inicio', ruta: '/admin' },
   { nombre: 'Comparativa', ruta: '/ComparativaAdopciones' },
   { nombre: 'Evolución', ruta: '/EvolucionHistorica' },
   { nombre: 'Región', ruta: '/ActividadRegion' },

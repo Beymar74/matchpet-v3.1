@@ -20,13 +20,7 @@ import {
 } from "recharts";
 
 const colores = ["#BF3952", "#30588C", "#4EDCD8", "#C9D6DF"];
-const botonesModulo7 = [
-  { nombre: "Comparativa", ruta: "/ComparativaAdopciones" },
-  { nombre: "Evolución", ruta: "/EvolucionHistorica" },
-  { nombre: "Región", ruta: "/ActividadRegion" },
-  { nombre: "Favoritos", ruta: "/FavoritosFrecuentes" },
-  { nombre: "Logs", ruta: "/LogsAuditorias" },
-];
+
 const datosMascotas = [
   { nombre: "Luna", tipo: "Perro", especie: "Canino", favoritos: 82, estado: "Adoptado", fecha: "2025-06-01" },
   { nombre: "Max", tipo: "Gato", especie: "Felino", favoritos: 75, estado: "Disponible", fecha: "2025-06-03" },
@@ -84,21 +78,7 @@ export default function ReportesRefugioGraficos() {
 
   return (
     <div className="bg-white min-h-screen p-6">
-      <div className="flex flex-wrap justify-center gap-2 mb-6">
-        {botonesModulo7.map((btn, i) => (
-          <Link
-            key={i}
-            href={btn.ruta}
-            className={`px-3 py-1 text-sm rounded-full transition font-medium ${
-              btn.nombre === 'Exportar'
-                ? 'bg-[#30588C] text-white'
-                : 'bg-[#BF3952] text-white hover:bg-[#a82f46]'
-            }`}
-          >
-            {btn.nombre}
-          </Link>
-        ))}
-      </div>
+      
       <h2 className="text-3xl font-bold text-center text-[#BF3952] mb-2">
         Reportes y Estadísticas de Mascotas
       </h2>
