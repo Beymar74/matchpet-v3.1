@@ -49,16 +49,6 @@ export default function LoginPage() {
       setPasswordError('');
     }
   };
-
-  // Cargar datos guardados si existe "recordarme"
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMe(true);
-    }
-  }, []);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -96,18 +86,37 @@ export default function LoginPage() {
   
         if (rolData.rol) {
           localStorage.setItem("rolUsuario", rolData.rol);
-  
-          // Pequeña animación antes de redirigir
-          setTimeout(() => {
-            if (rolData.rol === 'Administrador') {
-              window.location.href = '/admin-dashboard';
-            } else if (rolData.rol === 'Refugio') {
-              window.location.href = '/refugio';
-            } else {
-              window.location.href = '/match';
+        
+          if (rolData.rol === 'Refugio') {
+            try {
+              const refugioResponse = await fetch(`/api/obtener-id-refugio?idUsuario=${data.idUsuario}`);
+              const refugioData = await refugioResponse.json();
+        
+              if (refugioData.success && refugioData.idRefugio) {
+                localStorage.setItem('idRefugio', refugioData.idRefugio);
+                setTimeout(() => {
+                  window.location.href = '/refugio';
+                }, 500);
+              } else {
+                console.error('No se pudo obtener el ID del refugio');
+                setErrorLogin(true);
+                setIsLoading(false);
+              }
+            } catch (error) {
+              console.error('Error al obtener el ID del refugio:', error);
+              setErrorLogin(true);
+              setIsLoading(false);
             }
-          }, 500);
-        } else {
+          } else if (rolData.rol === 'Administrador') {
+            setTimeout(() => {
+              window.location.href = '/admin';
+            }, 500);
+          } else {
+            setTimeout(() => {
+              window.location.href = '/match';
+            }, 500);
+          }
+         } else {
           setErrorLogin(true);
           setIsLoading(false);
         }
@@ -119,9 +128,10 @@ export default function LoginPage() {
       console.error('Error en login:', err);
       setErrorLogin(true);
       setIsLoading(false);
-    }
-  };
+    } // ⬅️ ESTE CIERRE FALTABA
+  }; // ⬅️ Este también cierra correctamente la función handleLogin
 
+        
   const handleSocialLogin = (provider: string) => {
     // Placeholder para login social
     console.log(`Login con ${provider}`);
