@@ -1,47 +1,78 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Header from '@/components/Header';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
+import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import { especies, razasPorEspecie } from "@/data/especiesRazas";
+import { agregarMascota } from "@/data/mascotasSimuladas";
 
 export default function RegistrarMascotaPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nombre: '',
-    especie: '',
-    raza: '',
-    edad: '',
-    estado: '',
-    descripcion: '',
-    foto: '',
+    nombre: "",
+    especie: "",
+    raza: "",
+    edad: "",
+    estado: "",
+    descripcion: "",
+    foto: "",
   });
+
+  const [uploading, setUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const url = await uploadToCloudinary(file);
+    if (url) {
+      setFormData((prev) => ({ ...prev, foto: url }));
+      setPreviewImage(url);
+    }
+    setUploading(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado) {
-      alert('⚠️ Por favor, completa los campos obligatorios.');
+      alert("⚠️ Por favor, completa los campos obligatorios.");
       return;
     }
 
-    console.log('Mascota registrada (simulada):', formData);
-    alert('✅ Mascota registrada correctamente (simulado)');
-    router.push('/PantallaGestionMascotas');
+    agregarMascota({
+      nombre: formData.nombre,
+      especie: formData.especie,
+      raza: formData.raza,
+      edad: Number(formData.edad),
+      estado: formData.estado,
+      descripcion: formData.descripcion,
+      foto: formData.foto,
+    });
+
+    alert("✅ Mascota registrada correctamente (simulado)");
+    router.push("/PantallaGestionMascotas");
   };
 
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500 ">
+    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-12 px-6">
-        <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">➕ Registrar Nueva Mascota</h1>
+        <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">
+          ➕ Registrar Nueva Mascota
+        </h1>
 
         <form
           onSubmit={handleSubmit}
@@ -61,27 +92,36 @@ export default function RegistrarMascotaPage() {
 
           <div>
             <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Especie *</label>
-            <input
-              type="text"
+            <select
               name="especie"
               value={formData.especie}
               onChange={handleChange}
-              placeholder="Perro, Gato, etc."
               className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               required
-            />
+            >
+              <option value="">Selecciona una especie</option>
+              {especies.map((esp) => (
+                <option key={esp} value={esp}>{esp}</option>
+              ))}
+            </select>
           </div>
 
-          <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Raza</label>
-            <input
-              type="text"
-              name="raza"
-              value={formData.raza}
-              onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
-            />
-          </div>
+          {formData.especie && (
+            <div>
+              <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Raza</label>
+              <select
+                name="raza"
+                value={formData.raza}
+                onChange={handleChange}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              >
+                <option value="">Selecciona una raza</option>
+                {razasPorEspecie[formData.especie]?.map((raza) => (
+                  <option key={raza} value={raza}>{raza}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Edad (años) *</label>
@@ -121,19 +161,27 @@ export default function RegistrarMascotaPage() {
               onChange={handleChange}
               className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
               rows={3}
-            ></textarea>
+            />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Foto (URL)</label>
+            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Foto</label>
             <input
-              type="text"
-              name="foto"
-              value={formData.foto}
-              onChange={handleChange}
-              placeholder="/img/mascotas/luna.jpg"
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0 file:text-sm file:font-semibold
+                file:bg-[#30588C] file:text-white hover:file:opacity-80"
             />
+            {uploading && <p className="text-xs mt-2 text-yellow-500">Subiendo imagen...</p>}
+            {previewImage && (
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="mt-2 w-40 h-40 object-cover rounded-xl border"
+              />
+            )}
           </div>
 
           <div className="flex justify-end pt-4">

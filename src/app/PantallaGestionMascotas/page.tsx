@@ -3,54 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import HeaderRefugio from '@/components/layout/HeaderRefugio';
-
-interface Mascota {
-  id: string;
-  nombre: string;
-  especie: string;
-  raza: string;
-  edad: number;
-  estado: string;
-  descripcion: string;
-  foto: string;
-}
-
-const mockMascotas: Mascota[] = [
-  
-  {
-    id: '1',
-    nombre: 'Luna',
-    especie: 'Perro',
-    raza: 'Labrador',
-    edad: 3,
-    estado: 'Disponible',
-    descripcion: 'Luna es amigable y le encanta jugar.',
-    foto: 'Perros/labrador.jpg',
-  },
-  {
-    id: '2',
-    nombre: 'Milo',
-    especie: 'Gato',
-    raza: 'Persa',
-    edad: 2,
-    estado: 'Adoptado',
-    descripcion: 'Milo es tranquilo y cariñoso.',
-    foto: 'Gatos/persa.jpg',
-  },
-  {
-    id: '3',
-    nombre: 'Toby',
-    especie: 'Perro',
-    raza: 'Beagle',
-    edad: 4,
-    estado: 'En tratamiento',
-    descripcion: 'Toby se está recuperando de una lesión.',
-    foto: 'Perros/beagle.jpg',
-  },
-];
+import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas';
 
 export default function GestionMascotas() {
-  const [mascotas, setMascotas] = useState<Mascota[]>(mockMascotas);
+  const [mascotas, setMascotas] = useState<Mascota[]>([]);
   const [mascotaSeleccionada, setMascotaSeleccionada] = useState<Mascota | null>(null);
 
   useEffect(() => {
@@ -59,6 +15,9 @@ export default function GestionMascotas() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    // Simula carga inicial
+    setMascotas([...mascotasSimuladas]);
   }, []);
 
   return (
@@ -70,6 +29,7 @@ export default function GestionMascotas() {
           <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🐾 Gestión de Mascotas</h1>
           <p className="mb-6 text-lg text-gray-700 dark:text-white/80">Selecciona una funcionalidad:</p>
 
+          {/* Opciones superiores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {[
               { href: '/Registrar', icon: '➕', label: 'Registrar Nueva Mascota' },
@@ -87,16 +47,23 @@ export default function GestionMascotas() {
             ))}
           </div>
 
+          {/* Lista de mascotas */}
           <h2 className="text-3xl font-bold mb-6">Mascotas Registradas</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mascotas.map((mascota) => (
+            {mascotas.length === 0 ? (
+              <p className="col-span-full text-center text-gray-500 dark:text-white/60">No hay mascotas registradas.</p>
+            ) : mascotas.map((mascota) => (
               <div
                 key={mascota.id}
                 onClick={() => setMascotaSeleccionada(mascota)}
                 className="cursor-pointer bg-[#254559] text-white rounded-lg shadow-lg hover:shadow-xl transition p-4"
               >
-                <img src={mascota.foto} alt={mascota.nombre} className="w-full h-48 object-cover rounded-md mb-4" />
+                <img
+                  src={mascota.foto || "/img/no-image.jpg"}
+                  alt={mascota.nombre}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
                 <h2 className="text-xl font-semibold">{mascota.nombre}</h2>
                 <p className="text-sm text-white/80">{mascota.especie} • {mascota.raza}</p>
                 <p className="text-sm text-white/80">Edad: {mascota.edad} años</p>
@@ -111,6 +78,7 @@ export default function GestionMascotas() {
           </div>
         </main>
 
+        {/* Modal de detalles */}
         {mascotaSeleccionada && (
           <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
             <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative">
