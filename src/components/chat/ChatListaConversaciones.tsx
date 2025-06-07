@@ -11,6 +11,7 @@ interface Conversacion {
   ultimoMensaje: string;
 }
 
+
 interface Props {
   userId: string;
   setConversacionActiva: (id: string) => void;

@@ -6,6 +6,7 @@ import ChatMensajes from "@/components/chat/ChatMensajes";
 import ChatEntradaMensaje from "@/components/chat/ChatEntradaMensaje";
 import "@/styles/chat.css";
 
+
 export default function ChatUsuario() {
   const userId = "usuario_123"; // 🔁 Reemplázalo luego por el ID real del usuario autenticado
   const [conversacionActiva, setConversacionActiva] = useState<string | null>(null);

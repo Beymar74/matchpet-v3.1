@@ -13,6 +13,7 @@ interface Props {
   emisor: string;
 }
 
+
 export default function ChatEntradaMensaje({ conversacionId, emisor }: Props) {
   const [mensaje, setMensaje] = useState("");
 

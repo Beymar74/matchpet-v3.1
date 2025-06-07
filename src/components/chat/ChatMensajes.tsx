@@ -4,6 +4,7 @@ import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import "@/styles/chat.css";
 
 
+
 export default function ChatMensajes({ conversacionId }) {
   const [mensajes, setMensajes] = useState([]);
 

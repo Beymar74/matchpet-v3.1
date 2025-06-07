@@ -7,6 +7,7 @@ import ChatEntradaMensaje from "@/components/chat/ChatEntradaMensaje";
 import "@/styles/chat.css";
 
 
+
 export default function ChatRefugio() {
   const refugioId = "refugio_123"; // 🔁 Cambia por el ID real del refugio autenticado
   const [conversacionActiva, setConversacionActiva] = useState<string | null>(null);

@@ -6,7 +6,7 @@ const firebaseConfig = {
   authDomain: "chatmatchpet.firebaseapp.com",
   databaseURL: "https://chatmatchpet-default-rtdb.firebaseio.com",
   projectId: "chatmatchpet",
-  storageBucket: "chatmatchpet.firebasestorage.com",
+  storageBucket: "chatmatchpet.firebasestorage.app",
   messagingSenderId: "176080576812",
   appId: "1:176080576812:web:e1daa710cdec0c16c94c89"
 };
