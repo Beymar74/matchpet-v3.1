@@ -1,120 +1,25 @@
 // src/components/admin-dashboard/modulos/GestionMascotas.tsx
+// src/components/admin-dashboard/modulos/GestionMascotas.tsx
+
+"use client"
+
 import React, { useState } from 'react';
 import { 
-  Heart,
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Edit,
-  CheckCircle,
-  XCircle,
-  Clock,
-  MapPin,
-  Shield,
-  Settings,
-  PawPrint,
-  Camera,
-  Star
+  Heart, Plus, Search, Filter, Download, Eye, Edit,
+  CheckCircle, XCircle, Clock, MapPin, Shield,
+  Settings, PawPrint, Camera, Star
 } from 'lucide-react';
+import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 
 const GestionMascotas = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
 
   const estadisticasMascotas = [
-    {
-      titulo: 'Total Mascotas',
-      valor: 856,
-      cambio: '+23 esta semana',
-      color: 'red',
-      icon: Heart
-    },
-    {
-      titulo: 'Disponibles',
-      valor: 634,
-      cambio: 'Para adopción',
-      color: 'green',
-      icon: CheckCircle
-    },
-    {
-      titulo: 'En Proceso',
-      valor: 142,
-      cambio: 'Adoptándose',
-      color: 'blue',
-      icon: Clock
-    },
-    {
-      titulo: 'Pendientes Revisión',
-      valor: 12,
-      cambio: 'Requieren aprobación',
-      color: 'yellow',
-      icon: XCircle
-    }
-  ];
-
-  const mascotasRecientes = [
-    {
-      id: 1,
-      nombre: 'Max',
-      tipo: 'Perro',
-      raza: 'Golden Retriever',
-      edad: '3 años',
-      refugio: 'Hogar Peludo',
-      estado: 'Disponible',
-      fecha: '2024-06-01',
-      imagen: '🐕',
-      rating: 4.9
-    },
-    {
-      id: 2,
-      nombre: 'Luna',
-      tipo: 'Gato',
-      raza: 'Persa',
-      edad: '2 años',
-      refugio: 'Patitas Felices',
-      estado: 'En Proceso',
-      fecha: '2024-06-02',
-      imagen: '🐱',
-      rating: 4.8
-    },
-    {
-      id: 3,
-      nombre: 'Rocky',
-      tipo: 'Perro',
-      raza: 'Pastor Alemán',
-      edad: '5 años',
-      refugio: 'Refugio Central',
-      estado: 'Disponible',
-      fecha: '2024-06-03',
-      imagen: '🐕‍🦺',
-      rating: 4.7
-    },
-    {
-      id: 4,
-      nombre: 'Bella',
-      tipo: 'Gato',
-      raza: 'Siamés',
-      edad: '1 año',
-      refugio: 'Amor Animal',
-      estado: 'Pendiente',
-      fecha: '2024-06-04',
-      imagen: '🐈',
-      rating: 4.6
-    },
-    {
-      id: 5,
-      nombre: 'Charlie',
-      tipo: 'Perro',
-      raza: 'Labrador',
-      edad: '4 años',
-      refugio: 'Casa Canina',
-      estado: 'Adoptado',
-      fecha: '2024-06-05',
-      imagen: '🦮',
-      rating: 5.0
-    }
+    { titulo: 'Total Mascotas', valor: 856, cambio: '+23 esta semana', color: 'red', icon: Heart },
+    { titulo: 'Disponibles', valor: 634, cambio: 'Para adopción', color: 'green', icon: CheckCircle },
+    { titulo: 'En Proceso', valor: 142, cambio: 'Adoptándose', color: 'blue', icon: Clock },
+    { titulo: 'Pendientes Revisión', valor: 12, cambio: 'Requieren aprobación', color: 'yellow', icon: XCircle }
   ];
 
   const filtros = [
@@ -147,7 +52,7 @@ const GestionMascotas = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header del Módulo */}
+      {/* Header */}
       <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
@@ -167,7 +72,7 @@ const GestionMascotas = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div>
             <button className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
               <Plus className="h-4 w-4" />
               <span>Nueva Mascota</span>
@@ -181,11 +86,7 @@ const GestionMascotas = () => {
         {estadisticasMascotas.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={stat.titulo}
-              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
+            <div key={stat.titulo} className="bg-white rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">{stat.titulo}</p>
@@ -201,43 +102,15 @@ const GestionMascotas = () => {
         })}
       </div>
 
-      {/* Acciones Rápidas */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors group">
-            <CheckCircle className="h-8 w-8 text-red-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-red-900">Aprobar Mascotas</span>
-            <span className="text-xs text-red-600 mt-1">12 pendientes</span>
-          </button>
-          <button className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group">
-            <Camera className="h-8 w-8 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-blue-900">Actualizar Fotos</span>
-            <span className="text-xs text-blue-600 mt-1">23 sin foto</span>
-          </button>
-          <button className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group">
-            <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-green-900">Estado de Salud</span>
-            <span className="text-xs text-green-600 mt-1">5 revisiones</span>
-          </button>
-          <button className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group">
-            <MapPin className="h-8 w-8 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-purple-900">Por Ubicación</span>
-            <span className="text-xs text-purple-600 mt-1">Ver mapa</span>
-          </button>
-        </div>
-      </div>
-
       {/* Lista de Mascotas */}
       <div className="bg-white rounded-xl shadow-md p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 mb-6">
           <div className="flex items-center space-x-2">
             <h2 className="text-lg font-semibold text-gray-900">Lista de Mascotas</h2>
             <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-              {mascotasRecientes.length} resultados
+              {mascotasSimuladas.length} resultados
             </span>
           </div>
-          
           <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -260,7 +133,7 @@ const GestionMascotas = () => {
           </div>
         </div>
 
-        {/* Filtros */}
+        {/* Filtros Rápidos */}
         <div className="flex flex-wrap gap-2 mb-6">
           {filtros.map((filtro) => (
             <button
@@ -278,79 +151,68 @@ const GestionMascotas = () => {
           ))}
         </div>
 
-        {/* Grid de Mascotas */}
+        {/* Tarjetas de Mascotas con filtros aplicados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {mascotasRecientes.map((mascota, index) => (
-            <div
-              key={mascota.id}
-              className="border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="relative">
-                <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center text-4xl">
-                  {mascota.imagen}
-                </div>
-                <div className={`absolute top-2 right-2 inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(mascota.estado)}`}>
-                  {getEstadoIcon(mascota.estado)}
-                  <span>{mascota.estado}</span>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{mascota.nombre}</h3>
-                    <p className="text-sm text-gray-600">{mascota.raza}</p>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-gray-600">{mascota.rating}</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-1 text-sm text-gray-600 mb-4">
-                  <p>🎂 {mascota.edad}</p>
-                  <p>🏠 {mascota.refugio}</p>
-                  <p>📅 {new Date(mascota.fecha).toLocaleDateString('es-ES')}</p>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">{mascota.tipo}</span>
-                  <div className="flex space-x-2">
-                    <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+          {mascotasSimuladas
+            .filter((mascota) => {
+              const texto = busqueda.toLowerCase();
+              const coincideTexto =
+                mascota.nombre.toLowerCase().includes(texto) ||
+                mascota.raza.toLowerCase().includes(texto);
 
-      {/* Configuración */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Configuración del Módulo
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Personaliza las funcionalidades del módulo de gestión de mascotas.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-              <Settings className="h-5 w-5" />
-              <span>Configurar Campos</span>
-            </button>
-            <button className="inline-flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              <PawPrint className="h-5 w-5" />
-              <span>Criterios de Aprobación</span>
-            </button>
-          </div>
+              const coincideEstado =
+                filtroActivo === 'todos' ||
+                (filtroActivo === 'disponibles' && mascota.estado === 'Disponible') ||
+                (filtroActivo === 'proceso' && mascota.estado === 'En Proceso') ||
+                (filtroActivo === 'adoptadas' && mascota.estado === 'Adoptado') ||
+                (filtroActivo === 'pendientes' && mascota.estado === 'Pendiente');
+
+              return coincideTexto && coincideEstado;
+            })
+            .map((mascota, index) => (
+              <div key={mascota.id} className="border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                <div className="relative">
+                  <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center text-4xl">
+                    {mascota.foto || '🐾'}
+                  </div>
+                  <div className={`absolute top-2 right-2 inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(mascota.estado)}`}>
+                    {getEstadoIcon(mascota.estado)}
+                    <span>{mascota.estado}</span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{mascota.nombre}</h3>
+                      <p className="text-sm text-gray-600">{mascota.raza}</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="text-sm text-gray-600">{mascota.compatibilidad ?? 5.0}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1 text-sm text-gray-600 mb-4">
+                    <p>🎂 {mascota.edad} años</p>
+                    <p>🏠 {mascota.refugio ?? 'Refugio Central'}</p>
+                    <p>📅 {new Date(mascota.fechaIngreso ?? '').toLocaleDateString('es-ES')}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">{mascota.especie}</span>
+                    <div className="flex space-x-2">
+                      <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          ))}
         </div>
       </div>
     </div>
