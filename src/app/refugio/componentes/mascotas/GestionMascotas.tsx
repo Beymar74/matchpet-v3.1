@@ -1,15 +1,20 @@
 // src/app/refugio/componentes/mascotas/GestionMascotas.tsx
-import React from 'react';
-import { PlusCircle } from 'lucide-react';
-import FiltrosBusqueda from './FiltrosBusqueda';
-import TarjetaMascota from './TarjetaMascota';
-import { Mascota } from '../../tipos';
+'use client'
+
+import React, { useState } from 'react'
+import { PlusCircle } from 'lucide-react'
+import FiltrosBusqueda from './FiltrosBusqueda'
+import TarjetaMascota from './TarjetaMascota'
+import ModalMascota from './ModalMascota'
+import { Mascota } from '../../tipos'
 
 interface GestionMascotasProps {
-  mascotas: Mascota[];
+  mascotas: Mascota[]
 }
 
 const GestionMascotas: React.FC<GestionMascotasProps> = ({ mascotas }) => {
+  const [mascotaSeleccionada, setMascotaSeleccionada] = useState<Mascota | null>(null)
+
   return (
     <div className="space-y-6">
       {/* Header con botón agregar */}
@@ -27,11 +32,23 @@ const GestionMascotas: React.FC<GestionMascotasProps> = ({ mascotas }) => {
       {/* Lista de mascotas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mascotas.map((mascota) => (
-          <TarjetaMascota key={mascota.id} mascota={mascota} />
+          <TarjetaMascota
+            key={mascota.id}
+            mascota={mascota}
+            onClick={() => setMascotaSeleccionada(mascota)}
+          />
         ))}
       </div>
-    </div>
-  );
-};
 
-export default GestionMascotas;
+      {/* Modal */}
+      {mascotaSeleccionada && (
+        <ModalMascota
+          mascota={mascotaSeleccionada}
+          onClose={() => setMascotaSeleccionada(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+export default GestionMascotas
