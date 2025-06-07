@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 import { useRouter } from "next/navigation";
+import RegistrarMascota from "@/app/refugio/componentes/mascotas/modales/RegistrarMascota";
+
 
 const GestionMascotas = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
@@ -75,11 +77,14 @@ const GestionMascotas = () => {
             </div>
           </div>
           <div>
-            <button onClick={() => router.push("")}
-             className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+            <button
+              onClick={() => setMostrarModal(true)}
+              className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
               <Plus className="h-4 w-4" />
               <span>Nueva Mascota</span>
             </button>
+
           </div>
         </div>
       </div>
@@ -246,6 +251,7 @@ const GestionMascotas = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 

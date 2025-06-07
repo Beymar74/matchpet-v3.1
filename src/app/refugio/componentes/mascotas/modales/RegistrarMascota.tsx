@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Mascota } from '../../tipos'
+import { Mascota } from '../../../tipos'
 import EditarMascota from './EditarMascota'
 import FichaMedica from './FichaMedica'
 import CrearFichamedica from './CreaarFichamedica'
