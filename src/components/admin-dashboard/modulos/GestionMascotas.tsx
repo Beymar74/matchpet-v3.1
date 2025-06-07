@@ -1,5 +1,4 @@
 // src/components/admin-dashboard/modulos/GestionMascotas.tsx
-// src/components/admin-dashboard/modulos/GestionMascotas.tsx
 
 "use client"
 
@@ -10,10 +9,13 @@ import {
   Settings, PawPrint, Camera, Star
 } from 'lucide-react';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
+import { useRouter } from "next/navigation";
 
 const GestionMascotas = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
+  const router = useRouter();
+
 
   const estadisticasMascotas = [
     { titulo: 'Total Mascotas', valor: 856, cambio: '+23 esta semana', color: 'red', icon: Heart },
@@ -73,7 +75,8 @@ const GestionMascotas = () => {
             </div>
           </div>
           <div>
-            <button className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+            <button onClick={() => router.push("")}
+             className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
               <Plus className="h-4 w-4" />
               <span>Nueva Mascota</span>
             </button>
@@ -100,6 +103,32 @@ const GestionMascotas = () => {
             </div>
           );
         })}
+      </div>
+      {/* Acciones Rápidas */}
+      <div className="bg-white rounded-xl shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button className="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors group">
+            <CheckCircle className="h-8 w-8 text-red-600 mb-2 group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-medium text-red-900">Aprobar Mascotas</span>
+            <span className="text-xs text-red-600 mt-1">12 pendientes</span>
+          </button>
+          <button className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group">
+            <Camera className="h-8 w-8 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-medium text-blue-900">Actualizar Fotos</span>
+            <span className="text-xs text-blue-600 mt-1">23 sin foto</span>
+          </button>
+          <button className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group">
+            <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-medium text-green-900">Estado de Salud</span>
+            <span className="text-xs text-green-600 mt-1">5 revisiones</span>
+          </button>
+          <button className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group">
+            <MapPin className="h-8 w-8 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-medium text-purple-900">Por Ubicación</span>
+            <span className="text-xs text-purple-600 mt-1">Ver mapa</span>
+          </button>
+        </div>
       </div>
 
       {/* Lista de Mascotas */}
@@ -150,6 +179,7 @@ const GestionMascotas = () => {
             </button>
           ))}
         </div>
+        
 
         {/* Tarjetas de Mascotas con filtros aplicados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

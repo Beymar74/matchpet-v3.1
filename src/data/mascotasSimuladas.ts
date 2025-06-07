@@ -12,9 +12,38 @@ export interface Mascota {
   fechaIngreso?: string;
   compatibilidad?: number;
   solicitudes?: number;
+  refugioId?: number;
+}
+
+export interface Refugio {
+  id: number;
+  nombre: string;
+  direccion: string;
+  responsable: string;
 }
 
 // Simulación de base de datos en memoria
+export const refugiosSimulados: Refugio[] = [
+  {
+    id: 1,
+    nombre: "Hogar Peludo",
+    direccion: "Calle 12 #456, Zona Sur",
+    responsable: "María López"
+  },
+  {
+    id: 2,
+    nombre: "Patitas Felices",
+    direccion: "Av. Siempre Viva 123",
+    responsable: "Carlos Pérez"
+  },
+  {
+    id: 3,
+    nombre: "Refugio Central",
+    direccion: "Av. Libertad y Calle 5",
+    responsable: "Ana Rivera"
+  }
+];
+
 export const mascotasSimuladas: Mascota[] = [
   {
     id: 1,
@@ -24,10 +53,11 @@ export const mascotasSimuladas: Mascota[] = [
     edad: 3,
     estado: "Disponible",
     descripcion: "Perro juguetón y amigable",
-    foto: "🐶", // o usa una URL como "/Perros/beagle.jpg"
+    foto: "🐶",
     fechaIngreso: "2024-05-15",
     compatibilidad: 85,
     solicitudes: 2,
+    refugioId: 1,
   },
   {
     id: 2,
@@ -37,10 +67,11 @@ export const mascotasSimuladas: Mascota[] = [
     edad: 2,
     estado: "Adoptado",
     descripcion: "Gato curioso y tranquilo",
-    foto: "🐱", // o usa una URL como "/Gatos/persa.jpg"
+    foto: "🐱",
     fechaIngreso: "2024-04-22",
     compatibilidad: 90,
     solicitudes: 3,
+    refugioId: 2,
   },
 ];
 
