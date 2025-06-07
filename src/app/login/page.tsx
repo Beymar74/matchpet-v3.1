@@ -102,7 +102,7 @@ export default function LoginPage() {
             if (rolData.rol === 'Administrador') {
               window.location.href = '/admin-dashboard';
             } else if (rolData.rol === 'Refugio') {
-              window.location.href = '/dashboard-refugio';
+              window.location.href = '/refugio';
             } else {
               window.location.href = '/match';
             }
