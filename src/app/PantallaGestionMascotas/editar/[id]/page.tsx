@@ -3,59 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-
-interface Mascota {
-  id: string;
-  nombre: string;
-  especie: string;
-  raza: string;
-  edad: number;
-  estado: string;
-  descripcion: string;
-  foto: string;
-}
-
-const mockMascotas: Mascota[] = [
-  {
-    id: '1',
-    nombre: 'Luna',
-    especie: 'Perro',
-    raza: 'Labrador',
-    edad: 3,
-    estado: 'Disponible',
-    descripcion: 'Luna es amigable y le encanta jugar.',
-    foto: 'Perros/labrador.jpg',
-  },
-  {
-    id: '2',
-    nombre: 'Milo',
-    especie: 'Gato',
-    raza: 'Persa',
-    edad: 2,
-    estado: 'Adoptado',
-    descripcion: 'Milo es tranquilo y cariñoso.',
-    foto: 'Gatos/persa.jpg',
-  },
-  {
-    id: '3',
-    nombre: 'Toby',
-    especie: 'Perro',
-    raza: 'Beagle',
-    edad: 4,
-    estado: 'En tratamiento',
-    descripcion: 'Toby se está recuperando de una lesión.',
-    foto: 'Perros/beagle.jpg',
-  },
-];
+import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas';
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
 
 export default function EditarMascotaPage() {
   const { id } = useParams();
   const router = useRouter();
+
   const [formData, setFormData] = useState<Mascota | null>(null);
   const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
+  const [subiendo, setSubiendo] = useState(false);
 
   useEffect(() => {
-    const mascota = mockMascotas.find((m) => m.id === id);
+    const mascota = mascotasSimuladas.find((m) => m.id === Number(id));
     if (mascota) setFormData({ ...mascota });
   }, [id]);
 
@@ -67,40 +27,44 @@ export default function EditarMascotaPage() {
     setErrores({ ...errores, [e.target.name]: false });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !formData) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData({ ...formData, foto: reader.result as string });
-    };
-    reader.readAsDataURL(file);
+    setSubiendo(true);
+    const url = await uploadToCloudinary(file);
+    if (url) {
+      setFormData({ ...formData, foto: url });
+    }
+    setSubiendo(false);
   };
 
   const validarFormulario = () => {
     if (!formData) return false;
-    const camposRequeridos = ['nombre', 'especie', 'edad', 'estado'];
-    const nuevosErrores: any = {};
-    camposRequeridos.forEach((campo) => {
-      if (!formData[campo as keyof Mascota]) nuevosErrores[campo] = true;
+    const campos = ['nombre', 'especie', 'edad', 'estado'];
+    const errores: any = {};
+    campos.forEach((campo) => {
+      if (!formData[campo as keyof Mascota]) errores[campo] = true;
     });
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
+    setErrores(errores);
+    return Object.keys(errores).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validarFormulario()) return;
+    if (!validarFormulario() || !formData) return;
 
-    console.log('Mascota actualizada (simulado):', formData);
-    alert('✅ Mascota actualizada correctamente (simulado)');
-    router.push('/PantallaGestionMascotas');
+    const index = mascotasSimuladas.findIndex((m) => m.id === Number(id));
+    if (index !== -1) {
+      mascotasSimuladas[index] = { ...formData };
+      alert("✅ Mascota actualizada correctamente (simulado)");
+      router.push('/PantallaGestionMascotas');
+    }
   };
 
   if (!formData) {
     return (
-      <div className=" pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+      <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white">
         <Header />
         <main className="max-w-3xl mx-auto py-10 px-6">
           <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
@@ -123,52 +87,10 @@ export default function EditarMascotaPage() {
         >
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Nombre *</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.nombre ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Especie *</label>
-                <input
-                  type="text"
-                  name="especie"
-                  value={formData.especie}
-                  onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.especie ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Raza</label>
-                <input
-                  type="text"
-                  name="raza"
-                  value={formData.raza}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Edad *</label>
-                <input
-                  type="number"
-                  name="edad"
-                  value={formData.edad}
-                  onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.edad ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                  required
-                />
-              </div>
+              <InputField label="Nombre *" name="nombre" value={formData.nombre} error={errores.nombre} onChange={handleChange} />
+              <InputField label="Especie *" name="especie" value={formData.especie} error={errores.especie} onChange={handleChange} />
+              <InputField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
+              <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
 
               <div>
                 <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Estado *</label>
@@ -198,7 +120,7 @@ export default function EditarMascotaPage() {
               </div>
 
               <div>
-                <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Subir nueva imagen</label>
+                <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Actualizar imagen</label>
                 <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#30588C] dark:bg-[#6093BF] text-white rounded shadow hover:opacity-90">
                   Seleccionar archivo
                 </label>
@@ -209,6 +131,7 @@ export default function EditarMascotaPage() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
+                {subiendo && <p className="text-xs mt-2 text-yellow-400">Subiendo imagen...</p>}
               </div>
             </div>
 
@@ -233,6 +156,23 @@ export default function EditarMascotaPage() {
           </div>
         </form>
       </main>
+    </div>
+  );
+}
+
+// Componente auxiliar para inputs
+function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${error ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+        required={label.includes('*')}
+      />
     </div>
   );
 }
