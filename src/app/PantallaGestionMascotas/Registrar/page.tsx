@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Header from "@/components/Header";
-import { useRouter } from "next/navigation";
-import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
-import { especies, razasPorEspecie } from "@/data/especiesRazas";
-import { agregarMascota } from "@/data/mascotasSimuladas";
+import React, { useState } from 'react';
+import Header from '@/components/Header';
+import { useRouter } from 'next/navigation';
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
+import { especies, razasPorEspecie } from '@/data/especiesRazas';
+import { agregarMascota } from '@/data/mascotasSimuladas';
 
 export default function RegistrarMascotaPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nombre: "",
-    especie: "",
-    raza: "",
-    edad: "",
-    estado: "",
-    descripcion: "",
-    foto: "",
+    nombre: '',
+    especie: '',
+    raza: '',
+    edad: '',
+    estado: '',
+    descripcion: '',
+    foto: '',
   });
 
   const [uploading, setUploading] = useState(false);
@@ -47,7 +47,7 @@ export default function RegistrarMascotaPage() {
     e.preventDefault();
 
     if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado) {
-      alert("⚠️ Por favor, completa los campos obligatorios.");
+      alert('⚠️ Por favor, completa los campos obligatorios.');
       return;
     }
 
@@ -61,88 +61,90 @@ export default function RegistrarMascotaPage() {
       foto: formData.foto,
     });
 
-    alert("✅ Mascota registrada correctamente (simulado)");
-    router.push("/PantallaGestionMascotas");
+    alert('✅ Mascota registrada correctamente (simulado)');
+    router.push('/PantallaGestionMascotas');
   };
 
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-12 px-6">
-        <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">
-          ➕ Registrar Nueva Mascota
-        </h1>
+        <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">➕ Registrar Nueva Mascota</h1>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5"
+          className="bg-white text-gray-900 p-6 rounded-xl shadow-xl space-y-5"
         >
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Nombre *</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Nombre *</label>
             <input
               type="text"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Especie *</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Especie *</label>
             <select
               name="especie"
               value={formData.especie}
               onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               required
             >
               <option value="">Selecciona una especie</option>
               {especies.map((esp) => (
-                <option key={esp} value={esp}>{esp}</option>
+                <option key={esp} value={esp}>
+                  {esp}
+                </option>
               ))}
             </select>
           </div>
 
           {formData.especie && (
             <div>
-              <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Raza</label>
+              <label className="block font-semibold text-[#30588C] text-sm">Raza</label>
               <select
                 name="raza"
                 value={formData.raza}
                 onChange={handleChange}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+                className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               >
                 <option value="">Selecciona una raza</option>
                 {razasPorEspecie[formData.especie]?.map((raza) => (
-                  <option key={raza} value={raza}>{raza}</option>
+                  <option key={raza} value={raza}>
+                    {raza}
+                  </option>
                 ))}
               </select>
             </div>
           )}
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Edad (años) *</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Edad (años) *</label>
             <input
               type="number"
               name="edad"
               value={formData.edad}
               onChange={handleChange}
               min={0}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Estado *</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Estado *</label>
             <select
               name="estado"
               value={formData.estado}
               onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               required
             >
               <option value="">Selecciona un estado</option>
@@ -154,18 +156,18 @@ export default function RegistrarMascotaPage() {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Descripción</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Descripción</label>
             <textarea
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 mt-1 bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 bg-white"
               rows={3}
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] text-sm">Foto</label>
+            <label className="block font-semibold text-[#30588C] text-sm">Foto</label>
             <input
               type="file"
               accept="image/*"
@@ -174,7 +176,9 @@ export default function RegistrarMascotaPage() {
                 file:rounded-full file:border-0 file:text-sm file:font-semibold
                 file:bg-[#30588C] file:text-white hover:file:opacity-80"
             />
-            {uploading && <p className="text-xs mt-2 text-yellow-500">Subiendo imagen...</p>}
+            {uploading && (
+              <p className="text-xs mt-2 text-yellow-500">Subiendo imagen...</p>
+            )}
             {previewImage && (
               <img
                 src={previewImage}
@@ -197,3 +201,4 @@ export default function RegistrarMascotaPage() {
     </div>
   );
 }
+
