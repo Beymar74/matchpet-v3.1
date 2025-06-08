@@ -12,39 +12,10 @@ export interface Mascota {
   fechaIngreso?: string;
   compatibilidad?: number;
   solicitudes?: number;
-  refugioId?: number;
 }
 
-export interface Refugio {
-  id: number;
-  nombre: string;
-  direccion: string;
-  responsable: string;
-}
-
-// Simulación de base de datos en memoria
-export const refugiosSimulados: Refugio[] = [
-  {
-    id: 1,
-    nombre: "Hogar Peludo",
-    direccion: "Calle 12 #456, Zona Sur",
-    responsable: "María López"
-  },
-  {
-    id: 2,
-    nombre: "Patitas Felices",
-    direccion: "Av. Siempre Viva 123",
-    responsable: "Carlos Pérez"
-  },
-  {
-    id: 3,
-    nombre: "Refugio Central",
-    direccion: "Av. Libertad y Calle 5",
-    responsable: "Ana Rivera"
-  }
-];
-
-export const mascotasSimuladas: Mascota[] = [
+// 🐾 Datos por defecto (si localStorage está vacío)
+const baseInicial: Mascota[] = [
   {
     id: 1,
     nombre: "Firulais",
@@ -57,7 +28,6 @@ export const mascotasSimuladas: Mascota[] = [
     fechaIngreso: "2024-05-15",
     compatibilidad: 85,
     solicitudes: 2,
-    refugioId: 1,
   },
   {
     id: 2,
@@ -71,19 +41,45 @@ export const mascotasSimuladas: Mascota[] = [
     fechaIngreso: "2024-04-22",
     compatibilidad: 90,
     solicitudes: 3,
-    refugioId: 2,
   },
-];
+]
 
-// Simular la inserción de una nueva mascota
-export function agregarMascota(nueva: Omit<Mascota, "id">) {
+// 🧠 Cargar desde localStorage si existe
+function cargarMascotas(): Mascota[] {
+  if (typeof window === 'undefined') return baseInicial
+  const data = localStorage.getItem('mascotas')
+  return data ? JSON.parse(data) : baseInicial
+}
+
+// 🐶 Exportar el arreglo de mascotas actual
+export const mascotasSimuladas: Mascota[] = cargarMascotas()
+
+// ✅ Guardar en localStorage después de cualquier cambio
+function guardarMascotas() {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('mascotas', JSON.stringify(mascotasSimuladas))
+  }
+}
+
+// ➕ Agregar una nueva mascota
+export function agregarMascota(nueva: Omit<Mascota, 'id'>): Mascota {
   const nuevaMascota: Mascota = {
-    id: mascotasSimuladas.length + 1,
+    id: Date.now(),
     ...nueva,
     fechaIngreso: nueva.fechaIngreso ?? new Date().toISOString().split("T")[0],
     compatibilidad: nueva.compatibilidad ?? 0,
     solicitudes: nueva.solicitudes ?? 0,
-  };
-  mascotasSimuladas.push(nuevaMascota);
-  console.log("📦 Mascota agregada:", nuevaMascota);
+  }
+  mascotasSimuladas.push(nuevaMascota)
+  guardarMascotas()
+  console.log('📦 Mascota agregada:', nuevaMascota)
+  return nuevaMascota
+}
+
+// 🧽 (opcional) Limpiar mascotas simuladas
+export function limpiarMascotas() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('mascotas')
+    window.location.reload()
+  }
 }

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 import { useRouter } from "next/navigation";
-import RegistrarMascota from "@/app/refugio/componentes/mascotas/modales/RegistrarMascota";
+import RegistrarMascota from "@/components/GestionMascotas/modales/RegistrarMascota";
 
 
 const GestionMascotas = () => {

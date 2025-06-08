@@ -3,13 +3,16 @@
 import React, { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
 import FiltrosBusqueda from './FiltrosBusqueda';
-import TarjetaMascota from './TarjetaMascota';
-import RegistrarMascota from './modales/RegistrarMascota';
+import TarjetaMascota from '../../../../components/GestionMascotas/TarjetaMascota';
+import ModalMascota from '../../../../components/GestionMascotas/modales/ModalMascota';
+import RegistrarMascota from '../../../../components/GestionMascotas/modales/RegistrarMascota';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 
 const GestionMascotas: React.FC = () => {
   const [mascotaSeleccionadaId, setMascotaSeleccionadaId] = useState<number | null>(null);
   const [modalRegistroAbierto, setModalRegistroAbierto] = useState(false);
+
+  const mascotaSeleccionada = mascotasSimuladas.find(m => m.id === mascotaSeleccionadaId);
 
   return (
     <div className="space-y-6">
@@ -37,7 +40,15 @@ const GestionMascotas: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal de registro */}
+      {/* Modal de detalles de mascota */}
+      {mascotaSeleccionada && (
+        <ModalMascota
+          mascota={mascotaSeleccionada}
+          onClose={() => setMascotaSeleccionadaId(null)}
+        />
+      )}
+
+      {/* Modal de registrar nueva mascota */}
       {modalRegistroAbierto && (
         <RegistrarMascota onClose={() => setModalRegistroAbierto(false)} />
       )}
@@ -46,4 +57,3 @@ const GestionMascotas: React.FC = () => {
 };
 
 export default GestionMascotas;
-
