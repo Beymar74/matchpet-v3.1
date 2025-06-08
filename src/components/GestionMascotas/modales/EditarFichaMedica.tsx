@@ -1,71 +1,61 @@
-"use client"
+'use client'
 
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from 'react'
 
 interface FichaMedica {
   idMascota: string
   vacunas: string
   alergias: string
   enfermedades: string
-  esterilizado: string
+  esterilizado: boolean
   notas: string
 }
 
 interface EditarFichaMedicaProps {
-  isOpen: boolean
+  mascotaId: number
   onClose: () => void
-  mascotaId: string
 }
 
-const mockFichas: FichaMedica[] = [
-  {
-    idMascota: "1",
-    vacunas: "Rabia, Moquillo",
-    alergias: "Polen",
-    enfermedades: "Ninguna",
-    esterilizado: "Sí",
-    notas: "Revisión mensual",
-  },
-  {
-    idMascota: "2",
-    vacunas: "Triple felina",
-    alergias: "Pollo",
-    enfermedades: "Dermatitis",
-    esterilizado: "No",
-    notas: "Usar shampoo especial",
-  },
-]
-
-export default function EditarFichaMedicaModal({ isOpen, onClose, mascotaId }: EditarFichaMedicaProps) {
+export default function EditarFichaMedicaModal({ mascotaId, onClose }: EditarFichaMedicaProps) {
   const [ficha, setFicha] = useState<FichaMedica | null>(null)
 
   useEffect(() => {
-    if (isOpen) {
-      const encontrada = mockFichas.find((f) => f.idMascota === mascotaId)
-      if (encontrada) setFicha({ ...encontrada })
-    }
-  }, [isOpen, mascotaId])
+    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
+    if (encontrada) setFicha({ ...encontrada })
+  }, [mascotaId])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!ficha) return
     const { name, value } = e.target
-    setFicha((prev) => prev ? { ...prev, [name]: value } : null)
+    setFicha({ ...ficha, [name]: value })
+  }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!ficha) return
+    const { checked } = e.target
+    setFicha({ ...ficha, esterilizado: checked })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!ficha) return
 
-    console.log("✅ Ficha médica actualizada:", ficha)
-    alert("Ficha médica actualizada correctamente (simulado)")
-    onClose()
+    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+    const index = fichas.findIndex((f: any) => f.idMascota === mascotaId.toString())
+    if (index !== -1) {
+      fichas[index] = ficha
+      localStorage.setItem('fichasMedicas', JSON.stringify(fichas))
+      alert('✅ Ficha médica actualizada correctamente.')
+      onClose()
+    }
   }
 
-  if (!isOpen || !ficha) return null
+  if (!ficha) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
+      <div className="bg-white text-gray-900 p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
 
         <button
           onClick={onClose}
@@ -113,17 +103,16 @@ export default function EditarFichaMedicaModal({ isOpen, onClose, mascotaId }: E
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">¿Está esterilizado?</label>
-            <select
-              name="esterilizado"
-              value={ficha.esterilizado}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
-            >
-              <option value="">Seleccionar una opción</option>
-              <option value="Sí">Sí</option>
-              <option value="No">No</option>
-            </select>
+            <label className="block font-semibold text-[#30588C] text-sm mb-1">¿Está esterilizado?</label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={ficha.esterilizado}
+                onChange={handleCheckboxChange}
+                className="accent-[#BF3952] w-5 h-5"
+              />
+              <span className="text-sm text-gray-700">Sí</span>
+            </label>
           </div>
 
           <div>
