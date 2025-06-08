@@ -1,11 +1,27 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Heart, Plus, Search, Filter, Download, Eye, Edit,
-  CheckCircle, XCircle, Clock, Star
+import { 
+  Heart,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Edit,
+  CheckCircle,
+  XCircle,
+  Clock,
+  MapPin,
+  Shield,
+  Settings,
+  PawPrint,
+  Camera,
+  Star
 } from 'lucide-react';
-import { mascotasSimuladas } from '@/data/mascotasSimuladas'; // tu arreglo base de simulación
+
+import { mascotasSimuladas } from '@/data/mascotasSimuladas'; 
+import { useRouter } from "next/navigation";
 
 export default function GestionMascotas() {
   const [filtroActivo, setFiltroActivo] = useState('todos');
@@ -55,6 +71,39 @@ export default function GestionMascotas() {
       default: return <Clock className="h-3 w-3" />;
     }
   };
+
+const estadisticasMascotas = [
+  {
+    titulo: 'Total Mascotas',
+    valor: mascotasSimuladas.length,
+    cambio: '+23 esta semana',
+    color: 'red',
+    icon: Heart,
+  },
+  {
+    titulo: 'Disponibles',
+    valor: mascotasSimuladas.filter(m => m.estado === 'Disponible').length,
+    cambio: '+10',
+    color: 'green',
+    icon: CheckCircle,
+  },
+  {
+    titulo: 'Adoptadas',
+    valor: mascotasSimuladas.filter(m => m.estado === 'Adoptado').length,
+    cambio: '+5',
+    color: 'blue',
+    icon: PawPrint,
+  },
+  {
+    titulo: 'Pendientes',
+    valor: mascotasSimuladas.filter(m => m.estado === 'Pendiente').length,
+    cambio: '+2',
+    color: 'yellow',
+    icon: Clock,
+  },
+];
+
+ const router = useRouter();
   return (
     <div className="space-y-6">
       {/* Header del Módulo */}
@@ -78,7 +127,10 @@ export default function GestionMascotas() {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+            <button
+              onClick={() => router.push('/PantallaGestionMascotas/Registrar')}
+              className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
               <Plus className="h-4 w-4" />
               <span>Nueva Mascota</span>
             </button>

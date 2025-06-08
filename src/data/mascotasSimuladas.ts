@@ -12,6 +12,10 @@ export interface Mascota {
   fechaIngreso?: string;
   compatibilidad?: number;
   solicitudes?: number;
+   rating?: number;
+  refugio?: string;
+  fecha?: string;
+  tipo?: string;
 }
 
 // 🐾 Datos por defecto (si localStorage está vacío)
