@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import "@/styles/chat.css";
-
 
 
 export default function ChatMensajes({ conversacionId }) {

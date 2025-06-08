@@ -1,5 +1,6 @@
 // src/components/admin-dashboard/modulos/GestionComunicacion.tsx
 import React, { useState } from 'react';
+import { useRouter } from "next/navigation";
 import { 
   MessageCircle,
   Plus,
@@ -257,6 +258,11 @@ const GestionComunicacion = () => {
       default: return 'bg-gray-400';
     }
   };
+  const router = useRouter();
+
+  const manejarClickNuevoTicket = () => {
+    router.push("/pantallaComunicacion/Chat/admin/conversacion/nueva");
+  };
 
   return (
     <div className="space-y-6">
@@ -281,7 +287,10 @@ const GestionComunicacion = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <button
+              onClick={manejarClickNuevoTicket}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
               <Plus className="h-4 w-4" />
               <span>Nuevo Ticket</span>
             </button>

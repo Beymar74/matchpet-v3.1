@@ -5,18 +5,18 @@ import ChatListaConversaciones from "@/components/chat/ChatListaConversaciones";
 import ChatMensajes from "@/components/chat/ChatMensajes";
 import ChatEntradaMensaje from "@/components/chat/ChatEntradaMensaje";
 
-
-export default function ChatUsuario() {
-  const userId = "usuario_123"; // 🔁 Reemplázalo luego por el ID real del usuario autenticado
+export default function ChatAdmin() {
+  const adminId = "admin_001"; // Luego reemplaza por el ID real del administrador logueado
   const [conversacionActiva, setConversacionActiva] = useState<string | null>(null);
 
   return (
     <div
       className="chat-container"
-      style={{ display: "flex", height: "100vh", backgroundColor: "#eee" }}
+      style={{ display: "flex", height: "100vh", backgroundColor: "#f8f9fa" }}
     >
+      {/* Lista de conversaciones del admin */}
       <ChatListaConversaciones
-        userId={userId}
+        userId={adminId}
         setConversacionActiva={setConversacionActiva}
       />
 
@@ -27,11 +27,12 @@ export default function ChatUsuario() {
             width: "70%",
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "#fff",
+            backgroundColor: "#ffffff",
+            borderLeft: "1px solid #dee2e6",
           }}
         >
           <ChatMensajes conversacionId={conversacionActiva} />
-          <ChatEntradaMensaje conversacionId={conversacionActiva} emisor={userId} />
+          <ChatEntradaMensaje conversacionId={conversacionActiva} emisor={adminId} />
         </div>
       ) : (
         <div
@@ -40,11 +41,11 @@ export default function ChatUsuario() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#777",
+            color: "#6c757d",
             fontStyle: "italic",
           }}
         >
-          Selecciona una conversación para comenzar
+          Selecciona una conversación con un usuario o refugio para comenzar
         </div>
       )}
     </div>

@@ -4,7 +4,6 @@ import { useState } from "react";
 import ChatListaConversaciones from "@/components/chat/ChatListaConversaciones";
 import ChatMensajes from "@/components/chat/ChatMensajes";
 import ChatEntradaMensaje from "@/components/chat/ChatEntradaMensaje";
-import "@/styles/chat.css";
 
 
 

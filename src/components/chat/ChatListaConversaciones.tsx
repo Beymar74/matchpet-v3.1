@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import "@/styles/chat.css";
 
 
 interface Conversacion {
