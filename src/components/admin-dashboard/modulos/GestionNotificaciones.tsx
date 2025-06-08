@@ -1,5 +1,8 @@
 // src/components/admin-dashboard/modulos/GestionNotificaciones.tsx
 import React, { useState } from 'react';
+import type { ReactElement } from 'react';
+import { useRouter } from 'next/navigation';
+
 import { 
   Bell,
   Plus,
@@ -230,7 +233,7 @@ const GestionNotificaciones = () => {
     }
   };
 
-  const getTipoIcon = (tipo: TipoNotificacion): JSX.Element => {
+  const getTipoIcon = (tipo: TipoNotificacion): ReactElement => {
     switch (tipo) {
       case 'Email': return <Mail className="h-4 w-4 text-blue-500" />;
       case 'SMS': return <MessageSquare className="h-4 w-4 text-green-500" />;
@@ -239,7 +242,7 @@ const GestionNotificaciones = () => {
     }
   };
 
-  const getEstadoIcon = (estado: EstadoCampana): JSX.Element => {
+  const getEstadoIcon = (estado: EstadoCampana): ReactElement => {
     switch (estado) {
       case 'Activa': return <Play className="h-3 w-3" />;
       case 'Programada': return <Clock className="h-3 w-3" />;
@@ -249,6 +252,27 @@ const GestionNotificaciones = () => {
       default: return <Clock className="h-3 w-3" />;
     }
   };
+  const router = useRouter();
+
+const manejarRedireccion = (tipo: string) => {
+  switch (tipo) {
+    case 'Notificación Rápida':
+      router.push('/GestionNotificaciones/notificacion-rapida');
+      break;
+    case 'Campaña Email':
+      router.push('/GestionNotificaciones/campana-email');
+      break;
+    case 'SMS Masivo':
+      router.push('/GestionNotificaciones/sms-masivo');
+      break;
+    case 'Push Notification':
+      router.push('/GestionNotificaciones/push-notificacion');
+      break;
+    default:
+      break;
+  }
+};
+
 
   return (
     <div className="space-y-6">
@@ -271,12 +295,6 @@ const GestionNotificaciones = () => {
                 <span className="text-sm text-green-600 font-medium">Disponible</span>
               </div>
             </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              <Plus className="h-4 w-4" />
-              <span>Nueva Campaña</span>
-            </button>
           </div>
         </div>
       </div>
@@ -317,6 +335,7 @@ const GestionNotificaciones = () => {
             return (
               <button
                 key={accion.titulo}
+                onClick={() => manejarRedireccion(accion.titulo)}
                 className={`flex flex-col items-center p-4 bg-${accion.color}-50 rounded-lg hover:bg-${accion.color}-100 transition-colors group relative`}
               >
                 {accion.badge && (
