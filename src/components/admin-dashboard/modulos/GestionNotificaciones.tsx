@@ -230,7 +230,7 @@ const GestionNotificaciones = () => {
     }
   };
 
-  const getTipoIcon = (tipo: TipoNotificacion): JSX.Element => {
+  const getTipoIcon = (tipo: TipoNotificacion): ReactElement => {
     switch (tipo) {
       case 'Email': return <Mail className="h-4 w-4 text-blue-500" />;
       case 'SMS': return <MessageSquare className="h-4 w-4 text-green-500" />;
@@ -239,7 +239,7 @@ const GestionNotificaciones = () => {
     }
   };
 
-  const getEstadoIcon = (estado: EstadoCampana): JSX.Element => {
+  const getEstadoIcon = (estado: EstadoCampana): ReactElement => {
     switch (estado) {
       case 'Activa': return <Play className="h-3 w-3" />;
       case 'Programada': return <Clock className="h-3 w-3" />;

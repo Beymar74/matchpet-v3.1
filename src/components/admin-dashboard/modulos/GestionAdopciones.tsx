@@ -1,5 +1,5 @@
-// src/components/admin-dashboard/modulos/GestionAdopciones.tsx
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   UserCheck,
   Plus,
@@ -24,6 +24,7 @@ import {
 const GestionAdopciones = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
+  const router = useRouter(); // Hook para el manejo de la navegación
 
   const estadisticasAdopciones = [
     {
@@ -169,6 +170,37 @@ const GestionAdopciones = () => {
     }
   };
 
+  const handleClick = (tipo: string) => {
+    switch (tipo) {
+      case 'Proceso de Adopción':
+        router.push('/GestionAdopciones/proceso-adopcion');
+        break;
+      case 'Templates de Documentos':
+        router.push('/GestionAdopciones/templates-documentos');
+        break;
+      default:
+        break;
+    }
+  };
+  const handleQuickActionClick = (accion: string) => {
+    switch (accion) {
+      case 'Aprobar Solicitudes':
+        router.push('/GestionAdopciones/aprobar-solicitudes');
+        break;
+      case 'Programar Visitas':
+        router.push('/GestionAdopciones/programar-visitas');
+        break;
+      case 'Seguimiento':
+        router.push('/GestionAdopciones/seguimiento');
+        break;
+      case 'Documentos':
+        router.push('/GestionAdopciones/documentos');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header del Módulo */}
@@ -192,9 +224,12 @@ const GestionAdopciones = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+            <button
+              onClick={() => handleClick('/GestionAdopciones/proceso-adopcion')}
+              className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
               <Plus className="h-4 w-4" />
-              <span>Nueva Adopción</span>
+              <span>Nuevo Proceso de Adopción</span>
             </button>
           </div>
         </div>
@@ -234,6 +269,7 @@ const GestionAdopciones = () => {
             return (
               <button
                 key={accion.titulo}
+                onClick={() => handleQuickActionClick(accion.titulo)}
                 className={`flex flex-col items-center p-4 bg-${accion.color}-50 rounded-lg hover:bg-${accion.color}-100 transition-colors group relative`}
               >
                 {accion.badge && (
