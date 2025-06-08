@@ -1,4 +1,4 @@
-'use client'
+''use client'
 
 import React, { useState } from 'react'
 import Header from '@/components/Header'
@@ -23,24 +23,24 @@ export default function MarcarBorradorPage() {
   }
 
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
 
       <main className="max-w-xl mx-auto py-12 px-6">
         <h1 className="text-3xl font-bold mb-4 text-[#BF3952]">
           📝 Marcar Publicación como Borrador
         </h1>
-        <p className="text-sm text-gray-700 dark:text-white/80 mb-6">
+        <p className="text-sm text-gray-700 mb-6">
           Usa esta opción para ocultar temporalmente una mascota que aún no deseas mostrar al público.
         </p>
 
-        <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-lg space-y-5">
+        <div className="bg-white text-gray-900 p-6 rounded-xl shadow-lg space-y-5 border border-gray-200">
           <div>
-            <label className="block font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">
+            <label className="block font-semibold text-[#30588C] mb-1">
               Selecciona una mascota
             </label>
             <select
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-[#2a2a2a]"
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white"
               value={mascotaSeleccionada}
               onChange={(e) => setMascotaSeleccionada(e.target.value)}
             >
@@ -64,8 +64,8 @@ export default function MarcarBorradorPage() {
             <div
               className={`mt-4 text-sm font-medium rounded p-3 ${
                 mensaje.startsWith('✅')
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-700'
               }`}
             >
               {mensaje}
@@ -82,4 +82,3 @@ export default function MarcarBorradorPage() {
     </div>
   )
 }
-

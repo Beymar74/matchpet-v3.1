@@ -51,36 +51,35 @@ export default function FichaMedicaPage() {
   const mascota = mockMascotas.find((m) => m.id === mascotaId);
 
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-6 text-[#BF3952]">🩺 Ficha Médica de la Mascota</h1>
 
         {mascota ? (
-          <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-lg p-6 space-y-4">
+          <div className="bg-white text-gray-900 rounded-xl shadow-lg p-6 space-y-4 border border-gray-200">
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Nombre:</strong> {mascota.nombre}
+              <strong className="text-[#30588C]">Nombre:</strong> {mascota.nombre}
             </div>
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Especie:</strong> {mascota.especie}
+              <strong className="text-[#30588C]">Especie:</strong> {mascota.especie}
             </div>
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Edad:</strong> {mascota.edad} años
+              <strong className="text-[#30588C]">Edad:</strong> {mascota.edad} años
             </div>
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Estado de salud:</strong> {mascota.estadoSalud}
+              <strong className="text-[#30588C]">Estado de salud:</strong> {mascota.estadoSalud}
             </div>
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Vacunas:</strong> {mascota.vacunas.join(', ')}
+              <strong className="text-[#30588C]">Vacunas:</strong> {mascota.vacunas.join(', ')}
             </div>
             <div>
-              <strong className="text-[#30588C] dark:text-[#6093BF]">Esterilizado:</strong>{' '}
-              {mascota.esterilizado ? 'Sí' : 'No'}
+              <strong className="text-[#30588C]">Esterilizado:</strong> {mascota.esterilizado ? 'Sí' : 'No'}
             </div>
           </div>
         ) : (
-          <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-6 rounded-xl shadow-md">
+          <div className="bg-red-100 text-red-800 p-6 rounded-xl shadow-md border border-red-300">
             Mascota no encontrada.
           </div>
         )}

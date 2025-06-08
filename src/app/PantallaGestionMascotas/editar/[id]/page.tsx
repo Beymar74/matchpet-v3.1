@@ -64,7 +64,7 @@ export default function EditarMascotaPage() {
 
   if (!formData) {
     return (
-      <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white">
+      <div className="pt-[80px] min-h-screen bg-white text-gray-900">
         <Header />
         <main className="max-w-3xl mx-auto py-10 px-6">
           <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
@@ -75,7 +75,7 @@ export default function EditarMascotaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
 
       <main className="max-w-4xl mx-auto py-10 px-6">
@@ -83,7 +83,7 @@ export default function EditarMascotaPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-xl space-y-5"
+          className="bg-white text-gray-900 p-6 rounded-xl shadow-xl space-y-5 border border-gray-200"
         >
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 space-y-4">
@@ -93,12 +93,12 @@ export default function EditarMascotaPage() {
               <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
 
               <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Estado *</label>
+                <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
                 <select
                   name="estado"
                   value={formData.estado}
                   onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${errores.estado ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white ${errores.estado ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 >
                   <option value="Disponible">Disponible</option>
@@ -109,19 +109,19 @@ export default function EditarMascotaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">Descripción</label>
+                <label className="block text-sm font-semibold text-[#30588C]">Descripción</label>
                 <textarea
                   name="descripcion"
                   value={formData.descripcion}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded mt-1 bg-white"
                   rows={3}
                 />
               </div>
 
               <div>
-                <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF] mb-1">Actualizar imagen</label>
-                <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#30588C] dark:bg-[#6093BF] text-white rounded shadow hover:opacity-90">
+                <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] mb-1">Actualizar imagen</label>
+                <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#30588C] text-white rounded shadow hover:opacity-90">
                   Seleccionar archivo
                 </label>
                 <input
@@ -131,7 +131,7 @@ export default function EditarMascotaPage() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
-                {subiendo && <p className="text-xs mt-2 text-yellow-400">Subiendo imagen...</p>}
+                {subiendo && <p className="text-xs mt-2 text-yellow-600">Subiendo imagen...</p>}
               </div>
             </div>
 
@@ -164,15 +164,16 @@ export default function EditarMascotaPage() {
 function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#30588C] dark:text-[#6093BF]">{label}</label>
+      <label className="block text-sm font-semibold text-[#30588C]">{label}</label>
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-[#2a2a2a] ${error ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+        className={`w-full border px-3 py-2 rounded mt-1 bg-white ${error ? 'border-red-500' : 'border-gray-300'}`}
         required={label.includes('*')}
       />
     </div>
   );
 }
+

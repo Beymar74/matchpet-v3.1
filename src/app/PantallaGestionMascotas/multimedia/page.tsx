@@ -26,7 +26,7 @@ export default function GestionMultimediaPage() {
   }
 
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white  text-gray-900  transition-colors duration-500">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
@@ -35,13 +35,13 @@ export default function GestionMultimediaPage() {
           Aquí puedes cargar fotos o documentos relevantes sobre la mascota.
         </p>
 
-        <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-6 rounded-xl shadow-lg space-y-4">
+        <div className="bg-white  text-gray-900 p-6 rounded-xl shadow-lg space-y-4">
           <input
             type="file"
             accept="image/*,.pdf"
             multiple
             onChange={handleArchivo}
-            className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-[#2a2a2a]"
+            className="w-full border border-gray-300  p-2 rounded bg-white "
           />
 
           <button
@@ -54,9 +54,9 @@ export default function GestionMultimediaPage() {
           {vistaPrevia.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-4">
               {vistaPrevia.map((src, i) => (
-                <div key={i} className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-[#2a2a2a] text-center">
+                <div key={i} className="border border-gray-300  rounded-lg p-2 bg-gray-50  text-center">
                   {src.endsWith('.pdf') ? (
-                    <p className="text-sm text-gray-700 dark:text-white/80">📄 Documento PDF</p>
+                    <p className="text-sm text-gray-700 ">📄 Documento PDF</p>
                   ) : (
                     <img
                       src={src}

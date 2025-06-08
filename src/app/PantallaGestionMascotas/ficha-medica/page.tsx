@@ -6,17 +6,17 @@ import Link from 'next/link'
 
 export default function FichaMedicaPage() {
   return (
-    <div className="pt-[80px] min-h-screen bg-gradient-to-br from-[#011526] via-[#254559] to-[#30588C] text-white">
+    <div className="pt-[80px] min-h-screen bg-[#f9fafb] text-gray-900">
       <Header />
 
       <main className="max-w-3xl mx-auto py-10 px-6">
         <h1 className="text-4xl font-bold mb-4 text-[#BF3952]">🩺 Ficha Médica de la Mascota</h1>
-        <p className="mb-6 text-white/80 text-sm">
+        <p className="mb-6 text-gray-700 text-sm">
           Aquí se muestra la información médica básica registrada para cada mascota.
         </p>
 
         {/* Ficha médica simulada */}
-        <div className="bg-white text-gray-800 rounded-xl shadow-lg p-6 space-y-4">
+        <div className="bg-white text-gray-800 rounded-xl shadow-lg p-6 space-y-4 border border-gray-200">
           <div>
             <strong className="text-[#30588C]">Nombre:</strong> Max
           </div>
