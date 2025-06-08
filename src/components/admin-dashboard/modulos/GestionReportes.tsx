@@ -19,6 +19,7 @@ import {
   Mail,
   Printer
 } from 'lucide-react';
+import Link from 'next/link';
 
 const GestionReportes = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
@@ -207,6 +208,15 @@ const GestionReportes = () => {
       default: return <FileText className="h-4 w-4 text-gray-500" />;
     }
   };
+const botonesModulo7 = [
+  { nombre: 'Inicio', ruta: '/admin' },
+  { nombre: 'Comparativa', ruta: '/ComparativaAdopciones' },
+  { nombre: 'Evolución', ruta: '/EvolucionHistorica' },
+  { nombre: 'Región', ruta: '/ActividadRegion' },
+  { nombre: 'Favoritos', ruta: '/FavoritosFrecuentes' },
+  { nombre: 'Logs', ruta: '/LogsAuditorias' },
+];
+
 
   return (
     <div className="space-y-6">
@@ -214,6 +224,21 @@ const GestionReportes = () => {
       <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+          {botonesModulo7.map((btn, i) => (
+            <Link
+              key={i}
+              href={btn.ruta}
+              className={`px-3 py-1 text-sm rounded-full transition font-medium ${
+                btn.nombre === 'Inicio'
+                  ? 'bg-[#30588C] text-white'
+                  : 'bg-[#BF3952] text-white hover:bg-[#a82f46]'
+              }`}
+            >
+              {btn.nombre}
+            </Link>
+          ))}
+        </div>
             <div className="p-3 bg-blue-100 rounded-2xl">
               <BarChart3 className="h-8 w-8 text-blue-600" />
             </div>
