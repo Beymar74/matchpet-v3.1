@@ -10,9 +10,10 @@ interface EditarMascotaProps {
   id: string | number
   modoModal?: boolean
   onClose?: () => void
+  onGuardar?: (mascotaActualizada: Mascota) => void
 }
 
-export default function EditarMascota({ id, modoModal = false, onClose }: EditarMascotaProps) {
+export default function EditarMascota({ id, modoModal = false, onClose, onGuardar }: EditarMascotaProps) {
   const router = useRouter()
   const [formData, setFormData] = useState<Mascota | null>(null)
   const [errores, setErrores] = useState<{ [key: string]: boolean }>({})
@@ -61,11 +62,14 @@ export default function EditarMascota({ id, modoModal = false, onClose }: Editar
     const index = mascotasSimuladas.findIndex((m) => m.id === Number(id))
     if (index !== -1) {
       mascotasSimuladas[index] = { ...formData }
+
+      alert('✅ Mascota actualizada correctamente (simulado)')
+
+      // 🔁 Llamar onGuardar si es modal
       if (modoModal) {
-        alert('✅ Mascota actualizada correctamente (simulado)')
+        onGuardar?.(formData)
         onClose?.()
       } else {
-        alert('✅ Mascota actualizada correctamente (simulado)')
         router.push('/PantallaGestionMascotas')
       }
     }
@@ -98,18 +102,34 @@ export default function EditarMascota({ id, modoModal = false, onClose }: Editar
         >
           ✕
         </button>
-        <ContenidoFormulario formData={formData} errores={errores} handleChange={handleChange} handleImageChange={handleImageChange} handleSubmit={handleSubmit} subiendo={subiendo} />
+        <ContenidoFormulario
+          formData={formData}
+          errores={errores}
+          handleChange={handleChange}
+          handleImageChange={handleImageChange}
+          handleSubmit={handleSubmit}
+          subiendo={subiendo}
+        />
       </div>
     </div>
   ) : (
     <div className="min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
       <main className="max-w-4xl mx-auto py-10 px-6">
-        <ContenidoFormulario formData={formData} errores={errores} handleChange={handleChange} handleImageChange={handleImageChange} handleSubmit={handleSubmit} subiendo={subiendo} />
+        <ContenidoFormulario
+          formData={formData}
+          errores={errores}
+          handleChange={handleChange}
+          handleImageChange={handleImageChange}
+          handleSubmit={handleSubmit}
+          subiendo={subiendo}
+        />
       </main>
     </div>
   )
 }
+
+// --- COMPONENTES DE FORMULARIO ---
 
 function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
   return (
@@ -198,3 +218,4 @@ function InputField({ label, name, value, onChange, error = false, type = 'text'
     </div>
   )
 }
+

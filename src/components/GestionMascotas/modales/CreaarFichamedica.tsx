@@ -1,48 +1,61 @@
 'use client'
 
-import React, { useState } from "react"
-import { registrarFichaMedica } from '@/data/fichasMedicasSimuladas'
-
-interface FichaMedica {
-  vacunas: string
-  alergias: string
-  enfermedades: string
-  esterilizado: string
-  notas: string
-}
+import React, { useState } from 'react'
 
 interface CrearFichaMedicaProps {
-  isOpen: boolean
+  mascotaId: number
   onClose: () => void
-  mascotaId?: number
+  onFichaGuardada: (ficha: any) => void
 }
 
-export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: CrearFichaMedicaProps) {
-  const [ficha, setFicha] = useState<FichaMedica>({
-    vacunas: "",
-    alergias: "",
-    enfermedades: "",
-    esterilizado: "",
-    notas: "",
-  })
+const vacunasOpciones = ['Rabia', 'Moquillo', 'Parvovirus', 'Triple felina']
+const alergiasOpciones = ['Polen', 'Pollo', 'Pescado', 'Lácteos']
+const enfermedadesOpciones = ['Ninguna', 'Dermatitis', 'Asma', 'Otitis']
 
-  if (!isOpen || !mascotaId) return null
+export default function CrearFichaMedicaModal({ mascotaId, onClose, onFichaGuardada }: CrearFichaMedicaProps) {
+  const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<string[]>([])
+  const [alergiasSeleccionadas, setAlergiasSeleccionadas] = useState<string[]>([])
+  const [enfermedadSeleccionada, setEnfermedadSeleccionada] = useState<string>('Ninguna')
+  const [esterilizado, setEsterilizado] = useState<string>('No')
+  const [notas, setNotas] = useState<string>('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFicha(prev => ({ ...prev, [name]: value }))
+  const toggleSeleccion = (valor: string, lista: string[], setLista: (val: string[]) => void) => {
+    if (lista.includes(valor)) {
+      setLista(lista.filter(v => v !== valor))
+    } else {
+      setLista([...lista, valor])
+    }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    registrarFichaMedica(mascotaId, ficha)
-    alert("Ficha médica registrada correctamente (simulado)")
-    onClose()
+  const handleGuardar = () => {
+    console.log('💾 Guardando ficha médica...')
+
+    const nuevaFicha = {
+      idMascota: mascotaId.toString(),
+      vacunas: vacunasSeleccionadas.join(', '),
+      alergias: alergiasSeleccionadas.join(', '),
+      enfermedades: enfermedadSeleccionada,
+      esterilizado,
+      notas,
+    }
+
+    try {
+      const fichasExistentes = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+      const nuevasFichas = fichasExistentes.filter((f: any) => f.idMascota !== nuevaFicha.idMascota)
+      nuevasFichas.push(nuevaFicha)
+      localStorage.setItem('fichasMedicas', JSON.stringify(nuevasFichas))
+
+      alert('Ficha médica registrada correctamente.')
+      onFichaGuardada(nuevaFicha) // Notifica al componente padre
+      onClose()
+    } catch (error) {
+      console.error('❌ Error guardando en localStorage:', error)
+    }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white text-gray-900 p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+      <div className="bg-white p-6 rounded-xl max-w-xl w-full text-gray-900 shadow-lg relative">
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-xl text-gray-500 hover:text-red-500"
@@ -50,84 +63,115 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
           ✕
         </button>
 
-        <h1 className="text-3xl font-bold mb-6 text-[#BF3952] text-center">
-          🩺 Crear Ficha Médica
-        </h1>
+        <h2 className="text-2xl font-bold mb-4 text-[#BF3952] text-center">
+          ➕ Nueva ficha médica para mascota #{mascotaId}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-4">
+          {/* Vacunas */}
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Vacunas aplicadas</label>
-            <textarea
-              name="vacunas"
-              value={ficha.vacunas}
-              onChange={handleChange}
-              rows={2}
-              className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Antirrábica, Parvovirus"
-            />
+            <label className="font-semibold text-[#30588C]">Vacunas:</label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {vacunasOpciones.map(v => (
+                <label key={v} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={vacunasSeleccionadas.includes(v)}
+                    onChange={() => toggleSeleccion(v, vacunasSeleccionadas, setVacunasSeleccionadas)}
+                  />
+                  {v}
+                </label>
+              ))}
+            </div>
           </div>
 
+          {/* Alergias */}
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Alergias conocidas</label>
-            <input
-              type="text"
-              name="alergias"
-              value={ficha.alergias}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Polen, Pollo"
-            />
+            <label className="font-semibold text-[#30588C]">Alergias:</label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {alergiasOpciones.map(a => (
+                <label key={a} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={alergiasSeleccionadas.includes(a)}
+                    onChange={() => toggleSeleccion(a, alergiasSeleccionadas, setAlergiasSeleccionadas)}
+                  />
+                  {a}
+                </label>
+              ))}
+            </div>
           </div>
 
+          {/* Enfermedades */}
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Enfermedades previas</label>
-            <input
-              type="text"
-              name="enfermedades"
-              value={ficha.enfermedades}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Moquillo, Dermatitis"
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold text-[#30588C] text-sm">¿Está esterilizado?</label>
+            <label className="font-semibold text-[#30588C]">Enfermedades:</label>
             <select
-              name="esterilizado"
-              value={ficha.esterilizado}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
+              value={enfermedadSeleccionada}
+              onChange={(e) => setEnfermedadSeleccionada(e.target.value)}
+              className="w-full mt-2 p-2 border rounded"
             >
-              <option value="">Seleccionar una opción</option>
-              <option value="Sí">Sí</option>
-              <option value="No">No</option>
+              {enfermedadesOpciones.map(e => (
+                <option key={e} value={e}>{e}</option>
+              ))}
             </select>
           </div>
 
+          {/* Esterilizado */}
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">Notas adicionales</label>
-            <textarea
-              name="notas"
-              value={ficha.notas}
-              onChange={handleChange}
-              rows={3}
-              className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Tiene miedo a ruidos fuertes, necesita revisión mensual."
-            />
+            <label className="font-semibold text-[#30588C]">¿Esterilizado?</label>
+            <div className="flex gap-4 mt-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="esterilizado"
+                  value="Sí"
+                  checked={esterilizado === 'Sí'}
+                  onChange={(e) => setEsterilizado(e.target.value)}
+                />
+                Sí
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="esterilizado"
+                  value="No"
+                  checked={esterilizado === 'No'}
+                  onChange={(e) => setEsterilizado(e.target.value)}
+                />
+                No
+              </label>
+            </div>
           </div>
 
-          <div className="flex justify-end pt-4">
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded"
-            >
-              Guardar Ficha Médica
-            </button>
+          {/* Notas */}
+          <div>
+            <label className="font-semibold text-[#30588C]">Notas adicionales:</label>
+            <textarea
+              className="w-full mt-2 p-2 border rounded resize-none"
+              rows={3}
+              placeholder="Escribe aquí las observaciones..."
+              value={notas}
+              onChange={(e) => setNotas(e.target.value)}
+            />
           </div>
-        </form>
+        </div>
+
+        {/* Botones */}
+        <div className="flex justify-end mt-6 space-x-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleGuardar}
+            className="px-4 py-2 rounded bg-[#30588C] text-white hover:bg-[#254559]"
+          >
+            Guardar
+          </button>
+        </div>
       </div>
     </div>
   )
 }
-
