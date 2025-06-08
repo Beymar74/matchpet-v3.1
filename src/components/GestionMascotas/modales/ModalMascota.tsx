@@ -14,17 +14,7 @@ interface ModalMascotaProps {
 const fichasRegistradas = ['1', '2']
 
 export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
-  const [mostrarEditar, setMostrarEditar] = useState(false)
-  const [mostrarFicha, setMostrarFicha] = useState(false)
-  const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
-
-  const handleFichaClick = () => {
-    if (fichasRegistradas.includes(mascota.id.toString())) {
-      setMostrarFicha(true)
-    } else {
-      setMostrarCrearFicha(true)
-    }
-  }
+  const [pantalla, setPantalla] = useState<'modal' | 'editar' | 'ficha' | 'crearFicha'>('modal')
 
   const getEstadoColor = (estado: string) => {
     switch (estado) {
@@ -39,9 +29,18 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
     }
   }
 
-  if (mostrarEditar) return <EditarMascota mascota={mascota} onClose={() => setMostrarEditar(false)} />
-  if (mostrarFicha) return <FichaMedica mascotaId={mascota.id} onClose={() => setMostrarFicha(false)} />
-  if (mostrarCrearFicha) return <CrearFichamedica mascota={mascota} onClose={() => setMostrarCrearFicha(false)} />
+  // Mostrar la pantalla correspondiente como modal
+  if (pantalla === 'editar') {
+    return <EditarMascota id={mascota.id} modoModal onClose={() => setPantalla('modal')} />
+  }
+
+  if (pantalla === 'ficha') {
+    return <FichaMedica mascotaId={mascota.id} onClose={() => setPantalla('modal')} />
+  }
+
+  if (pantalla === 'crearFicha') {
+    return <CrearFichamedica mascota={mascota} onClose={() => setPantalla('modal')} />
+  }
 
   return (
     <div
@@ -49,7 +48,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white text-gray-900 rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative"
+        className="bg-white text-gray-900  rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -59,7 +58,8 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           ✕
         </button>
 
-        <div className="relative mb-4 w-full h-70 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden">
+        {/* Imagen */}
+        <div className="relative mb-4 w-full h-70 bg-gray-100  flex items-center justify-center rounded-md overflow-hidden">
           {mascota.foto.startsWith('http') ? (
             <img
               src={mascota.foto}
@@ -79,15 +79,15 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
         <h2 className="text-2xl font-bold mb-2">{mascota.nombre}</h2>
 
         <div className="text-lg text-gray-700 space-y-1 mb-3">
-          <p><span className="text-lg">Especie:</span> {mascota.especie}</p>
-          <p><span className="text-lg">Raza:</span> {mascota.raza}</p>
-          <p><span className="text-lg">Edad:</span> {mascota.edad}</p>
-          <p><span className="text-lg">Ingreso:</span> {mascota.fechaIngreso ?? 'No registrado'}</p>
+          <p><strong>Especie:</strong> {mascota.especie}</p>
+          <p><strong>Raza:</strong> {mascota.raza}</p>
+          <p><strong>Edad:</strong> {mascota.edad}</p>
+          <p><strong>Ingreso:</strong> {mascota.fechaIngreso ?? 'No registrado'}</p>
         </div>
 
         <div className="flex justify-between text-lg font-medium mb-4">
           <p>
-            Compatibilidad promedio:{' '}
+            Compatibilidad:{' '}
             <span className="text-[#30588C] font-bold">{mascota.compatibilidad ?? 0}%</span>
           </p>
           <p>
@@ -98,25 +98,31 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
 
         <div className="flex flex-wrap sm:flex-nowrap gap-2 justify-between">
           <button
-            onClick={() => setMostrarEditar(true)}
+            onClick={() => setPantalla('editar')}
             className="flex items-center justify-center gap-2 bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-1/3"
           >
             <span>✏️</span>
             <span>Editar</span>
           </button>
           <button
-            onClick={handleFichaClick}
+            onClick={() => {
+              if (fichasRegistradas.includes(mascota.id.toString())) {
+                setPantalla('ficha')
+              } else {
+                setPantalla('crearFicha')
+              }
+            }}
             className="flex items-center justify-center gap-2 bg-[#6093BF] text-white px-4 py-2 rounded hover:bg-[#30588C] w-full sm:w-1/3"
           >
             <span>🩺</span>
             <span>Ficha Médica</span>
           </button>
           <button
-            onClick={() => alert('Funcionalidad de borrado pendiente')}
+            onClick={() => alert('🗑️ Esta funcionalidad se implementará más adelante')}
             className="flex items-center justify-center gap-2 bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-1/3"
           >
             <span>🗑️</span>
-            <span>Poner como Borrado</span>
+            <span>Borrar</span>
           </button>
         </div>
       </div>
