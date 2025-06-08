@@ -1,5 +1,5 @@
 // src/components/admin-dashboard/modulos/GestionUsuarios.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Users,
@@ -25,93 +25,160 @@ import {
 const GestionUsuarios = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [usuariosRecientes, setUsuariosRecientes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const estadisticasUsuarios = [
-    {
-      titulo: 'Total Usuarios',
-      valor: 1247,
-      cambio: '+15 este mes',
-      color: 'blue',
-      icon: Users
-    },
-    {
-      titulo: 'Usuarios Activos',
-      valor: 892,
-      cambio: '+12% vs mes anterior',
-      color: 'green',
-      icon: UserCheck
-    },
-    {
-      titulo: 'Nuevos Registros',
-      valor: 47,
-      cambio: 'Últimos 7 días',
-      color: 'purple',
-      icon: UserPlus
-    },
-    {
-      titulo: 'Pendientes Revisión',
-      valor: 8,
-      cambio: 'Requieren aprobación',
-      color: 'yellow',
-      icon: AlertTriangle
+  // Cargar usuarios desde la API
+  useEffect(() => {
+    fetch('/api/usuarios-ad/get')
+      .then(res => res.json())
+      .then(data => {
+        setUsuariosRecientes(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error al cargar usuarios:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  // Función para eliminar usuario
+  const eliminarUsuario = async (id: number) => {
+    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+      const res = await fetch('/api/usuarios-ad/delete', {
+        method: 'POST',
+        body: JSON.stringify({ idUsuario: id }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (res.ok) {
+        setUsuariosRecientes(usuariosRecientes.filter(u => u.ID_Usuario !== id));
+      } else {
+        alert('Error al eliminar usuario');
+      }
     }
-  ];
+  };
 
-  const usuariosRecientes = [
-    {
-      id: 1,
-      nombre: 'María García',
-      email: 'maria.garcia@email.com',
-      rol: 'Usuario',
-      estado: 'Activo',
-      fechaRegistro: '2024-06-01',
-      avatar: 'MG'
-    },
-    {
-      id: 2,
-      nombre: 'Carlos López',
-      email: 'carlos.lopez@email.com',
-      rol: 'Refugio',
-      estado: 'Pendiente',
-      fechaRegistro: '2024-06-02',
-      avatar: 'CL'
-    },
-    {
-      id: 3,
-      nombre: 'Ana Martínez',
-      email: 'ana.martinez@email.com',
-      rol: 'Usuario',
-      estado: 'Activo',
-      fechaRegistro: '2024-06-03',
-      avatar: 'AM'
-    },
-    {
-      id: 4,
-      nombre: 'Hogar Peludo',
-      email: 'contacto@hogarpeludo.org',
-      rol: 'Refugio',
-      estado: 'Verificado',
-      fechaRegistro: '2024-06-04',
-      avatar: 'HP'
-    },
-    {
-      id: 5,
-      nombre: 'Luis Rodríguez',
-      email: 'luis.rodriguez@email.com',
-      rol: 'Moderador',
-      estado: 'Activo',
-      fechaRegistro: '2024-06-05',
-      avatar: 'LR'
+  // Función para editar usuario
+  const editarUsuario = async (usuario: any) => {
+    const nuevoNombre = prompt('Nuevo nombre', usuario.Nombre);
+    if (nuevoNombre && nuevoNombre !== usuario.Nombre) {
+      const res = await fetch('/api/usuarios-ad/edit', {
+        method: 'POST',
+        body: JSON.stringify({
+          idUsuario: usuario.ID_Usuario,
+          nombre: nuevoNombre
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (res.ok) {
+        const actualizados = usuariosRecientes.map(u => 
+          u.ID_Usuario === usuario.ID_Usuario 
+            ? { ...u, Nombre: nuevoNombre } 
+            : u
+        );
+        setUsuariosRecientes(actualizados);
+      } else {
+        alert('Error al editar usuario');
+      }
     }
-  ];
+  };
 
-  const filtros = [
-    { id: 'todos', label: 'Todos', count: 1247 },
-    { id: 'usuarios', label: 'Usuarios', count: 892 },
-    { id: 'refugios', label: 'Refugios', count: 34 },
-    { id: 'moderadores', label: 'Moderadores', count: 12 },
-    { id: 'pendientes', label: 'Pendientes', count: 8 }
-  ];
+  // Función para crear usuario
+  const crearUsuario = async () => {
+    const nombre = prompt('Nombre completo');
+    const correo = prompt('Correo electrónico');
+    const telefono = prompt('Teléfono');
+    const contrasena = prompt('Contraseña');
+    const fotoPerfil = prompt('URL de foto (opcional)');
+    
+    if (nombre && correo && contrasena) {
+      const res = await fetch('/api/usuarios-ad/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          nombre,
+          correo,
+          telefono,
+          contrasena,
+          fotoPerfil
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (res.ok) {
+        // Recargar la lista de usuarios
+        window.location.reload();
+      } else {
+        alert('Error al crear usuario');
+      }
+    }
+  };
+
+  // Calcular estadísticas dinámicas
+  const calcularEstadisticas = () => {
+    const total = usuariosRecientes.length;
+    const activos = usuariosRecientes.filter(u => u.Estado === 'Activo').length;
+    const pendientes = usuariosRecientes.filter(u => u.Estado === 'Pendiente').length;
+    const nuevos = usuariosRecientes.filter(u => {
+      const fechaRegistro = new Date(u.Fecha_Registro);
+      const hace7Dias = new Date();
+      hace7Dias.setDate(hace7Dias.getDate() - 7);
+      return fechaRegistro >= hace7Dias;
+    }).length;
+
+    return [
+      {
+        titulo: 'Total Usuarios',
+        valor: total,
+        cambio: `+${nuevos} este mes`,
+        color: 'blue',
+        icon: Users
+      },
+      {
+        titulo: 'Usuarios Activos',
+        valor: activos,
+        cambio: `${Math.round((activos/total)*100)}% del total`,
+        color: 'green',
+        icon: UserCheck
+      },
+      {
+        titulo: 'Nuevos Registros',
+        valor: nuevos,
+        cambio: 'Últimos 7 días',
+        color: 'purple',
+        icon: UserPlus
+      },
+      {
+        titulo: 'Pendientes Revisión',
+        valor: pendientes,
+        cambio: 'Requieren aprobación',
+        color: 'yellow',
+        icon: AlertTriangle
+      }
+    ];
+  };
+
+  const estadisticasUsuarios = calcularEstadisticas();
+
+  // Calcular filtros dinámicos
+  const calcularFiltros = () => {
+    const total = usuariosRecientes.length;
+    const usuarios = usuariosRecientes.filter(u => u.NombreRol === 'Usuario').length;
+    const refugios = usuariosRecientes.filter(u => u.NombreRol === 'Refugio').length;
+    const moderadores = usuariosRecientes.filter(u => u.NombreRol === 'Moderador').length;
+    const pendientes = usuariosRecientes.filter(u => u.Estado === 'Pendiente').length;
+
+    return [
+      { id: 'todos', label: 'Todos', count: total },
+      { id: 'usuarios', label: 'Usuarios', count: usuarios },
+      { id: 'refugios', label: 'Refugios', count: refugios },
+      { id: 'moderadores', label: 'Moderadores', count: moderadores },
+      { id: 'pendientes', label: 'Pendientes', count: pendientes }
+    ];
+  };
+
+  const filtros = calcularFiltros();
 
   const getEstadoColor = (estado: string) => {
     switch (estado) {
@@ -131,6 +198,24 @@ const GestionUsuarios = () => {
       default: return <User className="h-4 w-4" />;
     }
   };
+
+  // Generar avatar desde el nombre
+  const getAvatar = (nombre: string) => {
+    if (!nombre) return '??';
+    const palabras = nombre.split(' ');
+    if (palabras.length >= 2) {
+      return (palabras[0][0] + palabras[1][0]).toUpperCase();
+    }
+    return nombre.substring(0, 2).toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Cargando usuarios...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -155,7 +240,10 @@ const GestionUsuarios = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+            <button 
+              onClick={crearUsuario}
+              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+            >
               <UserPlus className="h-4 w-4" />
               <span>Nuevo Usuario</span>
             </button>
@@ -263,44 +351,61 @@ const GestionUsuarios = () => {
             <tbody>
               {usuariosRecientes.map((usuario, index) => (
                 <tr
-                  key={usuario.id}
+                  key={usuario.ID_Usuario}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <td className="py-4 px-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                        {usuario.avatar}
-                      </div>
+                    <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-indigo-100 text-white font-semibold text-sm">
+                      {usuario.Foto_Perfil ? (
+                        <img
+                          src={usuario.Foto_Perfil}
+                          alt={usuario.Nombre}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        getAvatar(usuario.Nombre)
+                      )}
+                    </div>
                       <div>
-                        <p className="font-medium text-gray-900">{usuario.nombre}</p>
-                        <p className="text-sm text-gray-500">{usuario.email}</p>
+                        <p className="font-medium text-gray-900">{usuario.Nombre}</p>
+                        <p className="text-sm text-gray-500">{usuario.Correo}</p>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center space-x-2">
-                      {getRolIcon(usuario.rol)}
-                      <span className="text-sm text-gray-900">{usuario.rol}</span>
+                      {getRolIcon(usuario.NombreRol)}
+                      <span className="text-sm text-gray-900">{usuario.NombreRol}</span>
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(usuario.estado)}`}>
-                      {usuario.estado}
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(usuario.Estado)}`}>
+                      {usuario.Estado}
                     </span>
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-500">
-                    {new Date(usuario.fechaRegistro).toLocaleDateString('es-ES')}
+                    {new Date(usuario.Fecha_Registro).toLocaleDateString('es-ES')}
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center justify-end space-x-2">
-                      <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                      <button 
+                        onClick={() => alert(JSON.stringify(usuario, null, 2))}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                      >
                         <Eye className="h-4 w-4" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded">
+                      <button 
+                        onClick={() => editarUsuario(usuario)}
+                        className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                      <button 
+                        onClick={() => eliminarUsuario(usuario.ID_Usuario)}
+                        className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -311,10 +416,17 @@ const GestionUsuarios = () => {
           </table>
         </div>
 
+        {/* Mensaje si no hay usuarios */}
+        {usuariosRecientes.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No hay usuarios registrados</p>
+          </div>
+        )}
+
         {/* Paginación */}
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            Mostrando 1 a 5 de 1,247 usuarios
+            Mostrando 1 a {usuariosRecientes.length} de {usuariosRecientes.length} usuarios
           </p>
           <div className="flex items-center space-x-2">
             <button className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50 text-sm">
