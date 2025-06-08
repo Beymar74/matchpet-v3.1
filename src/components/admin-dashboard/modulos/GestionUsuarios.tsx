@@ -519,26 +519,26 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, loading, actionType, se
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
-        <div className="p-6">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all">
+        <div className="p-8">
           <div className="text-center">
-            <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+            <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${
               actionType === 'eliminar' ? 'bg-red-100' : 'bg-blue-100'
             }`}>
               {actionType === 'eliminar' ? (
-                <AlertTriangle className="w-8 h-8 text-red-600" />
+                <AlertTriangle className="w-10 h-10 text-red-600" />
               ) : (
-                <UserCheck className="w-8 h-8 text-blue-600" />
+                <UserCheck className="w-10 h-10 text-blue-600" />
               )}
             </div>
             
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
               {actionType === 'rol' && 'Cambiar Rol de Usuario'}
               {actionType === 'estado' && 'Cambiar Estado de Usuario'}
               {actionType === 'eliminar' && '¿Eliminar Usuario?'}
             </h3>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-8 leading-relaxed">
               {actionType === 'rol' && `¿Estás seguro de cambiar el rol de ${selectedUser.Nombre} a ${newValue}?`}
               {actionType === 'estado' && `¿Estás seguro de cambiar el estado de ${selectedUser.Nombre} a ${newValue}?`}
               {actionType === 'eliminar' && `Esta acción eliminará permanentemente a ${selectedUser.Nombre} del sistema.`}
@@ -548,21 +548,21 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, loading, actionType, se
               <button
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 Cancelar
               </button>
               <button
                 onClick={onConfirm}
                 disabled={loading}
-                className={`flex-1 px-4 py-2 rounded-lg text-white transition-colors disabled:opacity-50 flex items-center justify-center ${
+                className={`flex-1 px-6 py-3 rounded-xl font-medium text-white transition-colors disabled:opacity-50 flex items-center justify-center ${
                   actionType === 'eliminar' 
                     ? 'bg-red-600 hover:bg-red-700' 
                     : 'bg-indigo-600 hover:bg-indigo-700'
                 }`}
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   'Confirmar'
                 )}
@@ -636,8 +636,31 @@ const GestionUsuarios = () => {
       const res = await fetch('/api/usuarios-ad/get');
       const data = await res.json();
       setUsuariosRecientes(data);
+      
+      // Mostrar mensaje de éxito brevemente
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity';
+      toast.textContent = 'Lista de usuarios actualizada';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(toast), 300);
+      }, 2000);
+      
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
+      
+      // Mostrar mensaje de error
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      toast.textContent = 'Error al actualizar la lista';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(toast), 300);
+      }, 3000);
     } finally {
       setLoading(false);
     }
@@ -676,10 +699,6 @@ const GestionUsuarios = () => {
 
   // Función para eliminar usuario
   const eliminarUsuario = async (id) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-      return;
-    }
-
     try {
       const res = await fetch('/api/usuarios-ad/delete', {
         method: 'POST',
@@ -962,6 +981,14 @@ const GestionUsuarios = () => {
               <UserPlus className="h-4 w-4" />
               <span>Nuevo Usuario</span>
             </button>
+            <button 
+              onClick={cargarUsuarios}
+              className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+              title="Actualizar lista de usuarios"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Actualizar</span>
+            </button>
             <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
               <MoreVertical className="h-5 w-5" />
             </button>
@@ -1031,6 +1058,13 @@ const GestionUsuarios = () => {
             <button className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Upload className="h-4 w-4" />
               <span>Importar</span>
+            </button>
+            <button 
+              onClick={cargarUsuarios}
+              className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Actualizar</span>
             </button>
           </div>
         </div>
