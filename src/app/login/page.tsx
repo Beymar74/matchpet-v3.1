@@ -296,7 +296,7 @@ export default function LoginPage() {
                 <span className="text-gray-600">Recordarme</span>
               </label>
               <Link 
-                href="/RecuperacionContrasena" 
+                href="/recuperar-contrasena" 
                 className="text-[#30588C] hover:text-[#254559] transition-colors font-medium"
               >
                 ¿Olvidaste tu contraseña?
