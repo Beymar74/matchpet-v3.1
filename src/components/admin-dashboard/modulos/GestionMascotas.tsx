@@ -84,7 +84,7 @@ const GestionMascotas = () => {
           </div>
         </div>
       </div>
-
+      
       
 
       {/* Modal de Registrar Mascota */}
