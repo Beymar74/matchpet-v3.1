@@ -1,48 +1,62 @@
 'use client'
 
-import React, { useState } from "react"
-import { registrarFichaMedica } from '@/data/fichasMedicasSimuladas'
+import React, { useEffect, useState } from 'react'
 
 interface FichaMedica {
+  idMascota: string
   vacunas: string
   alergias: string
   enfermedades: string
-  esterilizado: string
+  esterilizado: boolean
   notas: string
 }
 
-interface CrearFichaMedicaProps {
-  isOpen: boolean
+interface EditarFichaMedicaProps {
+  mascotaId: number
   onClose: () => void
-  mascotaId?: number
 }
 
-export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: CrearFichaMedicaProps) {
-  const [ficha, setFicha] = useState<FichaMedica>({
-    vacunas: "",
-    alergias: "",
-    enfermedades: "",
-    esterilizado: "",
-    notas: "",
-  })
+export default function EditarFichaMedicaModal({ mascotaId, onClose }: EditarFichaMedicaProps) {
+  const [ficha, setFicha] = useState<FichaMedica | null>(null)
 
-  if (!isOpen || !mascotaId) return null
+  useEffect(() => {
+    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
+    if (encontrada) setFicha({ ...encontrada })
+  }, [mascotaId])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!ficha) return
     const { name, value } = e.target
-    setFicha(prev => ({ ...prev, [name]: value }))
+    setFicha({ ...ficha, [name]: value })
+  }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!ficha) return
+    const { checked } = e.target
+    setFicha({ ...ficha, esterilizado: checked })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    registrarFichaMedica(mascotaId, ficha)
-    alert("Ficha médica registrada correctamente (simulado)")
-    onClose()
+    if (!ficha) return
+
+    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+    const index = fichas.findIndex((f: any) => f.idMascota === mascotaId.toString())
+    if (index !== -1) {
+      fichas[index] = ficha
+      localStorage.setItem('fichasMedicas', JSON.stringify(fichas))
+      alert('✅ Ficha médica actualizada correctamente.')
+      onClose()
+    }
   }
+
+  if (!ficha) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white text-gray-900 p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
+
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-xl text-gray-500 hover:text-red-500"
@@ -51,7 +65,7 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
         </button>
 
         <h1 className="text-3xl font-bold mb-6 text-[#BF3952] text-center">
-          🩺 Crear Ficha Médica
+          ✏️ Editar Ficha Médica
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -63,7 +77,6 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
               onChange={handleChange}
               rows={2}
               className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Antirrábica, Parvovirus"
             />
           </div>
 
@@ -75,7 +88,6 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
               value={ficha.alergias}
               onChange={handleChange}
               className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Polen, Pollo"
             />
           </div>
 
@@ -87,22 +99,20 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
               value={ficha.enfermedades}
               onChange={handleChange}
               className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Moquillo, Dermatitis"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">¿Está esterilizado?</label>
-            <select
-              name="esterilizado"
-              value={ficha.esterilizado}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
-            >
-              <option value="">Seleccionar una opción</option>
-              <option value="Sí">Sí</option>
-              <option value="No">No</option>
-            </select>
+            <label className="block font-semibold text-[#30588C] text-sm mb-1">¿Está esterilizado?</label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={ficha.esterilizado}
+                onChange={handleCheckboxChange}
+                className="accent-[#BF3952] w-5 h-5"
+              />
+              <span className="text-sm text-gray-700">Sí</span>
+            </label>
           </div>
 
           <div>
@@ -113,7 +123,6 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
               onChange={handleChange}
               rows={3}
               className="w-full border rounded px-3 py-2 mt-1"
-              placeholder="Ej. Tiene miedo a ruidos fuertes, necesita revisión mensual."
             />
           </div>
 
@@ -122,7 +131,7 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
               type="submit"
               className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded"
             >
-              Guardar Ficha Médica
+              Guardar Cambios
             </button>
           </div>
         </form>
@@ -130,4 +139,3 @@ export default function CrearFichaMedicaModal({ isOpen, onClose, mascotaId }: Cr
     </div>
   )
 }
-
