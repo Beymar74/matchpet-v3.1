@@ -1,4 +1,3 @@
-// src/components/admin-dashboard/modulos/GestionUsuarios.tsx
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
@@ -19,14 +18,347 @@ import {
   AlertTriangle,
   Crown,
   User,
-  UserCheck
+  UserCheck,
+  X
 } from 'lucide-react';
+
+// Modal de Confirmación
+const ModalConfirmacion = ({ isOpen, onClose, onConfirm, titulo, mensaje, tipo = 'danger' }) => {
+  if (!isOpen) return null;
+
+  const getColors = () => {
+    switch (tipo) {
+      case 'danger':
+        return {
+          icon: <AlertTriangle className="h-8 w-8 text-red-600" />,
+          bg: 'bg-red-100',
+          confirmBtn: 'bg-red-600 hover:bg-red-700',
+          border: 'border-red-200'
+        };
+      case 'warning':
+        return {
+          icon: <AlertTriangle className="h-8 w-8 text-yellow-600" />,
+          bg: 'bg-yellow-100',
+          confirmBtn: 'bg-yellow-600 hover:bg-yellow-700',
+          border: 'border-yellow-200'
+        };
+      default:
+        return {
+          icon: <CheckCircle className="h-8 w-8 text-blue-600" />,
+          bg: 'bg-blue-100',
+          confirmBtn: 'bg-blue-600 hover:bg-blue-700',
+          border: 'border-blue-200'
+        };
+    }
+  };
+
+  const colors = getColors();
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in zoom-in duration-200">
+        <div className="p-6">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className={`p-3 rounded-full ${colors.bg} ${colors.border} border`}>
+              {colors.icon}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{titulo}</h3>
+            </div>
+          </div>
+          
+          <p className="text-gray-600 mb-6 leading-relaxed">{mensaje}</p>
+          
+          <div className="flex space-x-3 justify-end">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onConfirm}
+              className={`px-4 py-2 text-white rounded-lg transition-colors font-medium ${colors.confirmBtn}`}
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal de Input
+const ModalInput = ({ isOpen, onClose, onConfirm, titulo, placeholder, valor = '', tipo = 'text' }) => {
+  const [inputValue, setInputValue] = useState(valor);
+
+  useEffect(() => {
+    setInputValue(valor);
+  }, [valor]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in zoom-in duration-200">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">{titulo}</h3>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <div>
+            <div className="mb-6">
+              <input
+                type={tipo}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={placeholder}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                autoFocus
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && inputValue.trim()) {
+                    onConfirm(inputValue.trim());
+                  }
+                }}
+              />
+            </div>
+            
+            <div className="flex space-x-3 justify-end">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => inputValue.trim() && onConfirm(inputValue.trim())}
+                disabled={!inputValue.trim()}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 transition-colors font-medium"
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal de Formulario para Crear Usuario
+const ModalCrearUsuario = ({ isOpen, onClose, onConfirm }) => {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    correo: '',
+    telefono: '',
+    contrasena: '',
+    fotoPerfil: ''
+  });
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-4 animate-in zoom-in duration-200">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <UserPlus className="h-6 w-6 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">Crear Nuevo Usuario</h3>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <div>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                <input
+                  type="text"
+                  value={formData.nombre}
+                  onChange={(e) => handleChange('nombre', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Ingresa el nombre completo"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico *</label>
+                <input
+                  type="email"
+                  value={formData.correo}
+                  onChange={(e) => handleChange('correo', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="usuario@ejemplo.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                <input
+                  type="tel"
+                  value={formData.telefono}
+                  onChange={(e) => handleChange('telefono', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Número de teléfono"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                <input
+                  type="password"
+                  value={formData.contrasena}
+                  onChange={(e) => handleChange('contrasena', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Contraseña segura"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">URL de Foto de Perfil</label>
+                <input
+                  type="url"
+                  value={formData.fotoPerfil}
+                  onChange={(e) => handleChange('fotoPerfil', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="https://ejemplo.com/foto.jpg (opcional)"
+                />
+              </div>
+            </div>
+            
+            <div className="flex space-x-3 justify-end">
+              <button
+                onClick={onClose}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  if (formData.nombre && formData.correo && formData.contrasena) {
+                    onConfirm(formData);
+                    setFormData({ nombre: '', correo: '', telefono: '', contrasena: '', fotoPerfil: '' });
+                  }
+                }}
+                disabled={!formData.nombre || !formData.correo || !formData.contrasena}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 transition-colors font-medium"
+              >
+                Crear Usuario
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal de Alerta
+const ModalAlerta = ({ isOpen, onClose, titulo, mensaje, tipo = 'error' }) => {
+  if (!isOpen) return null;
+
+  const getColors = () => {
+    switch (tipo) {
+      case 'success':
+        return {
+          icon: <CheckCircle className="h-8 w-8 text-green-600" />,
+          bg: 'bg-green-100',
+          border: 'border-green-200',
+          button: 'bg-green-600 hover:bg-green-700'
+        };
+      case 'error':
+        return {
+          icon: <XCircle className="h-8 w-8 text-red-600" />,
+          bg: 'bg-red-100',
+          border: 'border-red-200',
+          button: 'bg-red-600 hover:bg-red-700'
+        };
+      case 'info':
+        return {
+          icon: <Eye className="h-8 w-8 text-blue-600" />,
+          bg: 'bg-blue-100',
+          border: 'border-blue-200',
+          button: 'bg-blue-600 hover:bg-blue-700'
+        };
+      default:
+        return {
+          icon: <AlertTriangle className="h-8 w-8 text-yellow-600" />,
+          bg: 'bg-yellow-100',
+          border: 'border-yellow-200',
+          button: 'bg-yellow-600 hover:bg-yellow-700'
+        };
+    }
+  };
+
+  const colors = getColors();
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in zoom-in duration-200">
+        <div className="p-6">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className={`p-3 rounded-full ${colors.bg} ${colors.border} border`}>
+              {colors.icon}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{titulo}</h3>
+            </div>
+          </div>
+          
+          <div className="mb-6">
+            {typeof mensaje === 'string' ? (
+              <p className="text-gray-600 leading-relaxed">{mensaje}</p>
+            ) : (
+              <pre className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg overflow-auto max-h-64">
+                {mensaje}
+              </pre>
+            )}
+          </div>
+          
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className={`px-6 py-2 text-white rounded-lg transition-colors font-medium ${colors.button}`}
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const GestionUsuarios = () => {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
   const [usuariosRecientes, setUsuariosRecientes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Estados para modales
+  const [modalConfirmacion, setModalConfirmacion] = useState({ isOpen: false, tipo: 'danger', titulo: '', mensaje: '', onConfirm: null });
+  const [modalInput, setModalInput] = useState({ isOpen: false, titulo: '', placeholder: '', valor: '', onConfirm: null });
+  const [modalCrearUsuario, setModalCrearUsuario] = useState(false);
+  const [modalAlerta, setModalAlerta] = useState({ isOpen: false, tipo: 'error', titulo: '', mensaje: '' });
 
   // Cargar usuarios desde la API
   useEffect(() => {
@@ -39,12 +371,28 @@ const GestionUsuarios = () => {
       .catch(error => {
         console.error('Error al cargar usuarios:', error);
         setLoading(false);
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'error',
+          titulo: 'Error de Conexión',
+          mensaje: 'No se pudieron cargar los usuarios. Verifica tu conexión e intenta nuevamente.'
+        });
       });
   }, []);
 
-  // Función para eliminar usuario
-  const eliminarUsuario = async (id: number) => {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+  // Función para eliminar usuario con modal personalizado
+  const eliminarUsuario = (usuario) => {
+    setModalConfirmacion({
+      isOpen: true,
+      tipo: 'danger',
+      titulo: 'Eliminar Usuario',
+      mensaje: `¿Estás seguro de que quieres eliminar a "${usuario.Nombre}"? Esta acción no se puede deshacer.`,
+      onConfirm: () => confirmarEliminarUsuario(usuario.ID_Usuario)
+    });
+  };
+
+  const confirmarEliminarUsuario = async (id) => {
+    try {
       const res = await fetch('/api/usuarios-ad/delete', {
         method: 'POST',
         body: JSON.stringify({ idUsuario: id }),
@@ -52,67 +400,150 @@ const GestionUsuarios = () => {
       });
       
       if (res.ok) {
-        setUsuariosRecientes(usuariosRecientes.filter(u => u.ID_Usuario !== id));
+        setUsuariosRecientes(prev => prev.filter(u => u.ID_Usuario !== id));
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'success',
+          titulo: 'Usuario Eliminado',
+          mensaje: 'El usuario ha sido eliminado exitosamente.'
+        });
       } else {
-        alert('Error al eliminar usuario');
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'error',
+          titulo: 'Error al Eliminar',
+          mensaje: 'Hubo un problema al eliminar el usuario. Por favor, intenta nuevamente.'
+        });
       }
-    }
-  };
-
-  // Función para editar usuario
-  const editarUsuario = async (usuario: any) => {
-    const nuevoNombre = prompt('Nuevo nombre', usuario.Nombre);
-    if (nuevoNombre && nuevoNombre !== usuario.Nombre) {
-      const res = await fetch('/api/usuarios-ad/edit', {
-        method: 'POST',
-        body: JSON.stringify({
-          idUsuario: usuario.ID_Usuario,
-          nombre: nuevoNombre
-        }),
-        headers: { 'Content-Type': 'application/json' },
+    } catch (error) {
+      console.error('Error al eliminar usuario:', error);
+      setModalAlerta({
+        isOpen: true,
+        tipo: 'error',
+        titulo: 'Error de Conexión',
+        mensaje: 'No se pudo conectar con el servidor. Verifica tu conexión e intenta nuevamente.'
       });
-      
-      if (res.ok) {
-        const actualizados = usuariosRecientes.map(u => 
-          u.ID_Usuario === usuario.ID_Usuario 
-            ? { ...u, Nombre: nuevoNombre } 
-            : u
-        );
-        setUsuariosRecientes(actualizados);
-      } else {
-        alert('Error al editar usuario');
-      }
     }
+    setModalConfirmacion({ ...modalConfirmacion, isOpen: false });
   };
 
-  // Función para crear usuario
-  const crearUsuario = async () => {
-    const nombre = prompt('Nombre completo');
-    const correo = prompt('Correo electrónico');
-    const telefono = prompt('Teléfono');
-    const contrasena = prompt('Contraseña');
-    const fotoPerfil = prompt('URL de foto (opcional)');
-    
-    if (nombre && correo && contrasena) {
+  // Función para editar usuario con modal personalizado
+  const editarUsuario = (usuario) => {
+    setModalInput({
+      isOpen: true,
+      titulo: 'Editar Usuario',
+      placeholder: 'Ingresa el nuevo nombre',
+      valor: usuario.Nombre,
+      onConfirm: (nuevoNombre) => confirmarEditarUsuario(usuario, nuevoNombre)
+    });
+  };
+
+  const confirmarEditarUsuario = async (usuario, nuevoNombre) => {
+    if (nuevoNombre !== usuario.Nombre) {
+      try {
+        const res = await fetch('/api/usuarios-ad/edit', {
+          method: 'POST',
+          body: JSON.stringify({
+            idUsuario: usuario.ID_Usuario,
+            nombre: nuevoNombre
+          }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+        
+        if (res.ok) {
+          const actualizados = usuariosRecientes.map(u => 
+            u.ID_Usuario === usuario.ID_Usuario 
+              ? { ...u, Nombre: nuevoNombre } 
+              : u
+          );
+          setUsuariosRecientes(actualizados);
+          
+          setModalAlerta({
+            isOpen: true,
+            tipo: 'success',
+            titulo: 'Usuario Actualizado',
+            mensaje: 'El nombre del usuario ha sido actualizado exitosamente.'
+          });
+        } else {
+          setModalAlerta({
+            isOpen: true,
+            tipo: 'error',
+            titulo: 'Error al Editar',
+            mensaje: 'Hubo un problema al actualizar el usuario. Por favor, intenta nuevamente.'
+          });
+        }
+      } catch (error) {
+        console.error('Error al editar usuario:', error);
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'error',
+          titulo: 'Error de Conexión',
+          mensaje: 'No se pudo conectar con el servidor. Verifica tu conexión e intenta nuevamente.'
+        });
+      }
+    }
+    setModalInput({ ...modalInput, isOpen: false });
+  };
+
+  // Función para crear usuario con modal personalizado
+  const crearUsuario = () => {
+    setModalCrearUsuario(true);
+  };
+
+  const confirmarCrearUsuario = async (formData) => {
+    try {
       const res = await fetch('/api/usuarios-ad/create', {
         method: 'POST',
         body: JSON.stringify({
-          nombre,
-          correo,
-          telefono,
-          contrasena,
-          fotoPerfil
+          nombre: formData.nombre,
+          correo: formData.correo,
+          telefono: formData.telefono,
+          contrasena: formData.contrasena,
+          fotoPerfil: formData.fotoPerfil
         }),
         headers: { 'Content-Type': 'application/json' },
       });
       
       if (res.ok) {
+        setModalCrearUsuario(false);
+        
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'success',
+          titulo: 'Usuario Creado',
+          mensaje: 'El nuevo usuario ha sido creado exitosamente.'
+        });
+        
         // Recargar la lista de usuarios
         window.location.reload();
       } else {
-        alert('Error al crear usuario');
+        setModalAlerta({
+          isOpen: true,
+          tipo: 'error',
+          titulo: 'Error al Crear',
+          mensaje: 'Hubo un problema al crear el usuario. Por favor, intenta nuevamente.'
+        });
       }
+    } catch (error) {
+      console.error('Error al crear usuario:', error);
+      setModalAlerta({
+        isOpen: true,
+        tipo: 'error',
+        titulo: 'Error de Conexión',
+        mensaje: 'No se pudo conectar con el servidor. Verifica tu conexión e intenta nuevamente.'
+      });
     }
+  };
+
+  // Función para ver detalles del usuario
+  const verDetallesUsuario = (usuario) => {
+    const detalles = JSON.stringify(usuario, null, 2);
+    setModalAlerta({
+      isOpen: true,
+      tipo: 'info',
+      titulo: 'Detalles del Usuario',
+      mensaje: detalles
+    });
   };
 
   // Calcular estadísticas dinámicas
@@ -138,7 +569,7 @@ const GestionUsuarios = () => {
       {
         titulo: 'Usuarios Activos',
         valor: activos,
-        cambio: `${Math.round((activos/total)*100)}% del total`,
+        cambio: `${Math.round((activos/total)*100) || 0}% del total`,
         color: 'green',
         icon: UserCheck
       },
@@ -180,7 +611,7 @@ const GestionUsuarios = () => {
 
   const filtros = calcularFiltros();
 
-  const getEstadoColor = (estado: string) => {
+  const getEstadoColor = (estado) => {
     switch (estado) {
       case 'Activo': return 'bg-green-100 text-green-800';
       case 'Pendiente': return 'bg-yellow-100 text-yellow-800';
@@ -190,7 +621,7 @@ const GestionUsuarios = () => {
     }
   };
 
-  const getRolIcon = (rol: string) => {
+  const getRolIcon = (rol) => {
     switch (rol) {
       case 'Usuario': return <User className="h-4 w-4" />;
       case 'Refugio': return <Shield className="h-4 w-4" />;
@@ -200,7 +631,7 @@ const GestionUsuarios = () => {
   };
 
   // Generar avatar desde el nombre
-  const getAvatar = (nombre: string) => {
+  const getAvatar = (nombre) => {
     if (!nombre) return '??';
     const palabras = nombre.split(' ');
     if (palabras.length >= 2) {
@@ -219,6 +650,39 @@ const GestionUsuarios = () => {
 
   return (
     <div className="space-y-6">
+      {/* Modales */}
+      <ModalConfirmacion
+        isOpen={modalConfirmacion.isOpen}
+        onClose={() => setModalConfirmacion({ ...modalConfirmacion, isOpen: false })}
+        onConfirm={modalConfirmacion.onConfirm}
+        titulo={modalConfirmacion.titulo}
+        mensaje={modalConfirmacion.mensaje}
+        tipo={modalConfirmacion.tipo}
+      />
+
+      <ModalInput
+        isOpen={modalInput.isOpen}
+        onClose={() => setModalInput({ ...modalInput, isOpen: false })}
+        onConfirm={modalInput.onConfirm}
+        titulo={modalInput.titulo}
+        placeholder={modalInput.placeholder}
+        valor={modalInput.valor}
+      />
+
+      <ModalCrearUsuario
+        isOpen={modalCrearUsuario}
+        onClose={() => setModalCrearUsuario(false)}
+        onConfirm={confirmarCrearUsuario}
+      />
+
+      <ModalAlerta
+        isOpen={modalAlerta.isOpen}
+        onClose={() => setModalAlerta({ ...modalAlerta, isOpen: false })}
+        titulo={modalAlerta.titulo}
+        mensaje={modalAlerta.mensaje}
+        tipo={modalAlerta.tipo}
+      />
+
       {/* Header del Módulo */}
       <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
         <div className="flex items-start justify-between">
@@ -357,17 +821,17 @@ const GestionUsuarios = () => {
                 >
                   <td className="py-4 px-4">
                     <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-indigo-100 text-white font-semibold text-sm">
-                      {usuario.Foto_Perfil ? (
-                        <img
-                          src={usuario.Foto_Perfil}
-                          alt={usuario.Nombre}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        getAvatar(usuario.Nombre)
-                      )}
-                    </div>
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-indigo-100 text-indigo-600 font-semibold text-sm">
+                        {usuario.Foto_Perfil ? (
+                          <img
+                            src={usuario.Foto_Perfil}
+                            alt={usuario.Nombre}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          getAvatar(usuario.Nombre)
+                        )}
+                      </div>
                       <div>
                         <p className="font-medium text-gray-900">{usuario.Nombre}</p>
                         <p className="text-sm text-gray-500">{usuario.Correo}</p>
@@ -391,20 +855,23 @@ const GestionUsuarios = () => {
                   <td className="py-4 px-4">
                     <div className="flex items-center justify-end space-x-2">
                       <button 
-                        onClick={() => alert(JSON.stringify(usuario, null, 2))}
-                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                        onClick={() => verDetallesUsuario(usuario)}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                        title="Ver detalles"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => editarUsuario(usuario)}
-                        className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                        className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        title="Editar usuario"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button 
-                        onClick={() => eliminarUsuario(usuario.ID_Usuario)}
-                        className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                        onClick={() => eliminarUsuario(usuario)}
+                        className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Eliminar usuario"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
