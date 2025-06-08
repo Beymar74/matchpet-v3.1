@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 import { Mascota } from '../../app/refugio/tipos';
-import ModalMascota from './modales/ModalMascota';
+import ModalMascota from '@/components/GestionMascotas/modales/ModalMascota';
 
 interface TarjetaMascotaProps {
   id: number;

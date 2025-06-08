@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
 import { agregarMascota } from '@/data/mascotasSimuladas'
 import { especies, razasPorEspecie } from '@/data/especiesRazas'
-import CrearFichaMedica from '@/components/GestionMascotas/modales/CreaarFichamedica'
+import CrearFichaMedica from '/home/dash/pyoyecto6/modularizado/matchpet-v3.1/src/components/GestionMascotas/modales/CreaarFichamedica'
 
 interface Props {
   onClose: () => void

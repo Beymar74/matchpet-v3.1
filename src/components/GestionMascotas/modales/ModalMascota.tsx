@@ -1,7 +1,10 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Mascota } from '../../../app/refugio/tipos'
+import EditarMascota from './EditarMascota'
+import CrearFichamedica from './CreaarFichamedica'
+import FichaMedica from './FichaMedica'
 
 interface ModalMascotaProps {
   mascota: Mascota
@@ -11,10 +14,17 @@ interface ModalMascotaProps {
 const fichasRegistradas = ['1', '2']
 
 export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
-  const router = useRouter()
+  const [mostrarEditar, setMostrarEditar] = useState(false)
+  const [mostrarFicha, setMostrarFicha] = useState(false)
+  const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
 
-  const handleBackdropClick = () => onClose()
-  const stopClickPropagation = (e: React.MouseEvent) => e.stopPropagation()
+  const handleFichaClick = () => {
+    if (fichasRegistradas.includes(mascota.id.toString())) {
+      setMostrarFicha(true)
+    } else {
+      setMostrarCrearFicha(true)
+    }
+  }
 
   const getEstadoColor = (estado: string) => {
     switch (estado) {
@@ -29,30 +39,18 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
     }
   }
 
-  const handleEditarClick = () => {
-    router.push(`/PantallaGestionMascotas/editar/${mascota.id}`)
-  }
-
-  const handleFichaClick = () => {
-    if (fichasRegistradas.includes(mascota.id.toString())) {
-      router.push(`/PantallaGestionMascotas/ficha-medica/${mascota.id}`)
-    } else {
-      router.push(`/PantallaGestionMascotas/crear-ficha-medica/${mascota.id}`)
-    }
-  }
-
-  const handleBorradoClick = () => {
-    router.push(`/PantallaGestionMascotas/borrado/${mascota.id}`)
-  }
+  if (mostrarEditar) return <EditarMascota mascota={mascota} onClose={() => setMostrarEditar(false)} />
+  if (mostrarFicha) return <FichaMedica mascotaId={mascota.id} onClose={() => setMostrarFicha(false)} />
+  if (mostrarCrearFicha) return <CrearFichamedica mascota={mascota} onClose={() => setMostrarCrearFicha(false)} />
 
   return (
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+      onClick={onClose}
     >
       <div
         className="bg-white text-gray-900 rounded-xl p-6 w-[90%] max-w-lg shadow-xl relative"
-        onClick={stopClickPropagation}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -61,7 +59,6 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           ✕
         </button>
 
-        {/* Imagen con estado */}
         <div className="relative mb-4 w-full h-70 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden">
           {mascota.foto.startsWith('http') ? (
             <img
@@ -99,10 +96,9 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           </p>
         </div>
 
-        {/* Botones en una sola fila con icono + texto */}
         <div className="flex flex-wrap sm:flex-nowrap gap-2 justify-between">
           <button
-            onClick={handleEditarClick}
+            onClick={() => setMostrarEditar(true)}
             className="flex items-center justify-center gap-2 bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-1/3"
           >
             <span>✏️</span>
@@ -116,7 +112,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
             <span>Ficha Médica</span>
           </button>
           <button
-            onClick={handleBorradoClick}
+            onClick={() => alert('Funcionalidad de borrado pendiente')}
             className="flex items-center justify-center gap-2 bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-1/3"
           >
             <span>🗑️</span>
