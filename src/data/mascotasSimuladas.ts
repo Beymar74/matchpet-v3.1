@@ -13,7 +13,7 @@ export interface Mascota {
   compatibilidad?: number;
   solicitudes?: number;
    rating?: number;
-  refugio?: string;
+  refugioid?: string;
   fecha?: string;
   tipo?: string;
 }
