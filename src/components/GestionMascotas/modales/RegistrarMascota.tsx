@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
 import { agregarMascota } from '@/data/mascotasSimuladas'
 import { especies, razasPorEspecie } from '@/data/especiesRazas'
-import CrearFichaMedica from '/home/dash/pyoyecto6/modularizado/matchpet-v3.1/src/components/GestionMascotas/modales/CreaarFichamedica'
+import CrearFichaMedica from './CreaarFichamedica'
 
 interface Props {
   onClose: () => void
@@ -25,6 +25,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [agregarFicha, setAgregarFicha] = useState<'si' | 'no' | ''>('')
+
   const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
   const [idNuevaMascota, setIdNuevaMascota] = useState<number | null>(null)
 
@@ -82,9 +83,18 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
     }
   }
 
+  const handleFichaGuardada = () => {
+    alert('✅ Ficha médica registrada correctamente.')
+    onClose()
+  }
+
   if (mostrarCrearFicha && idNuevaMascota !== null) {
     return (
-      <CrearFichaMedica mascotaId={idNuevaMascota} onClose={onClose} />
+      <CrearFichaMedica
+        mascotaId={idNuevaMascota}
+        onClose={onClose}
+        onFichaGuardada={handleFichaGuardada}
+      />
     )
   }
 
@@ -106,11 +116,8 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nombre */}
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">
-              Nombre 🐾
-            </label>
+            <label className="block font-semibold text-[#30588C] text-sm">Nombre 🐾</label>
             <input
               type="text"
               name="nombre"
@@ -121,12 +128,9 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             />
           </div>
 
-          {/* Especie y Raza */}
           <div className="flex gap-4">
             <div className="w-1/2">
-              <label className="block font-semibold text-[#30588C] text-sm">
-                Especie 🐾
-              </label>
+              <label className="block font-semibold text-[#30588C] text-sm">Especie 🐾</label>
               <select
                 name="especie"
                 value={formData.especie}
@@ -157,12 +161,9 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             </div>
           </div>
 
-          {/* Edad y Estado */}
           <div className="flex gap-4">
             <div className="w-1/2">
-              <label className="block font-semibold text-[#30588C] text-sm">
-                Edad 🐾
-              </label>
+              <label className="block font-semibold text-[#30588C] text-sm">Edad 🐾</label>
               <input
                 type="number"
                 name="edad"
@@ -174,9 +175,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             </div>
 
             <div className="w-1/2">
-              <label className="block font-semibold text-[#30588C] text-sm">
-                Estado 🐾
-              </label>
+              <label className="block font-semibold text-[#30588C] text-sm">Estado 🐾</label>
               <select
                 name="estado"
                 value={formData.estado}
@@ -192,7 +191,6 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             </div>
           </div>
 
-          {/* Descripción */}
           <div>
             <label className="block font-semibold text-[#30588C] text-sm">Descripción</label>
             <textarea
@@ -204,7 +202,6 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             />
           </div>
 
-          {/* Foto */}
           <div>
             <label className="block font-semibold text-[#30588C] text-sm">Foto</label>
             <input
@@ -223,7 +220,6 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             )}
           </div>
 
-          {/* Historial médico */}
           <div>
             <label className="block font-semibold text-[#30588C] text-sm">
               ¿Deseas agregar historial médico ahora?
@@ -250,7 +246,6 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
             </div>
           </div>
 
-          {/* Botones */}
           <div className="flex justify-between pt-6">
             <button
               type="button"

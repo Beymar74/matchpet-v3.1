@@ -1,18 +1,33 @@
-'use client'
+'use client';
+
 import Link from 'next/link';
 
 interface CardOpcionProps {
-  href: string;
   icon: string;
   label: string;
+  href?: string;
+  onClick?: () => void;
 }
 
-export default function CardOpcion({ href, icon, label }: CardOpcionProps) {
+export default function CardOpcion({ icon, label, href, onClick }: CardOpcionProps) {
+  const contenido = (
+    <div className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition">
+      <span className="text-2xl">{icon}</span>
+      <span className="text-lg font-medium">{label}</span>
+    </div>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} passHref>
+        {contenido}
+      </Link>
+    );
+  }
+
   return (
-    <Link href={`/PantallaGestionMascotas${href}`}>
-      <div className="bg-gradient-to-r from-[#30588C] via-[#6093BF] to-[#254559] hover:from-[#BF3952] hover:to-[#30588C] text-white p-4 rounded-lg shadow-lg transition-all duration-300 text-center font-medium">
-        {icon} {label}
-      </div>
-    </Link>
+    <div className="cursor-pointer" onClick={onClick}>
+      {contenido}
+    </div>
   );
 }
