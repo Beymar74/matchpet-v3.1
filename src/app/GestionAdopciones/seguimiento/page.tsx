@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, MessageSquare, Phone, XCircle, Search } from 'lucide-react';
 
-// Definir el tipo para el seguimiento
+// Definir el tipo para el seguimiento post-adopción
 interface Seguimiento {
   id: number;
   adoptante: string;
@@ -14,14 +14,14 @@ interface Seguimiento {
   estado: 'Pendiente' | 'Completado';
 }
 
-const SeguimientoAdopciones = () => {
+const SeguimientoPostAdopcion = () => {
   const [seguimientos, setSeguimientos] = useState<Seguimiento[]>([
     {
       id: 1,
       adoptante: 'María García',
       mascota: 'Max',
       fechaUltimoSeguimiento: '2024-06-01',
-      comentarios: 'Todo en orden, Max se adapta bien a su nuevo hogar.',
+      comentarios: 'Max está muy feliz, necesita vacuna de refuerzo.',
       telefono: '+591 7123-4567',
       estado: 'Pendiente',
     },
@@ -30,7 +30,7 @@ const SeguimientoAdopciones = () => {
       adoptante: 'Carlos López',
       mascota: 'Luna',
       fechaUltimoSeguimiento: '2024-06-02',
-      comentarios: 'Luna está tomando la medicación correctamente.',
+      comentarios: 'Luna sigue muy activa, excelente comportamiento.',
       telefono: '+591 7234-5678',
       estado: 'Completado',
     },
@@ -39,7 +39,7 @@ const SeguimientoAdopciones = () => {
       adoptante: 'Ana Pérez',
       mascota: 'Rex',
       fechaUltimoSeguimiento: '2024-06-03',
-      comentarios: 'Rex necesita atención veterinaria para revisión.',
+      comentarios: 'Rex está con tratamiento veterinario, mejora.',
       telefono: '+591 7456-1234',
       estado: 'Pendiente',
     },
@@ -105,7 +105,7 @@ const SeguimientoAdopciones = () => {
 
       {/* Formulario para agregar nuevo seguimiento */}
       <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Agregar Seguimiento</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Agregar Seguimiento Post-Adopción</h2>
         <div className="flex flex-col space-y-4">
           <input
             type="text"
@@ -205,4 +205,4 @@ const SeguimientoAdopciones = () => {
   );
 };
 
-export default SeguimientoAdopciones;
+export default SeguimientoPostAdopcion;
