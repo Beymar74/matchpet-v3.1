@@ -63,7 +63,7 @@ const MENU_LINKS = [
   },
   { 
     id: "menu-gestionar-mascotas",
-    href: "/dashboard-refugio", 
+    href: "/PantallaGestionMascotas",  
     label: "Gestionar mascotas",
     description: "Ver, agregar y editar",
     icon: PawPrint,
