@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import HeaderRefugio from '@/components/layout/HeaderRefugio'
 import { mascotasSimuladas } from '@/data/mascotasSimuladas'
-import CardOpcion from '@/app/PantallaGestionMascotas/componentes/CardOpcion'
+import CardOpcion from '@/components/GestionMascotas/CardOpcion'
 import TarjetaMascota from '@/components/GestionMascotas/TarjetaMascota'
 import ModalMascota from '@/components/GestionMascotas/modales/ModalMascota'
 import RegistrarMascota from '@/components/GestionMascotas/modales/RegistrarMascota'

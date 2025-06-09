@@ -1,15 +1,11 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-
-interface FichaMedica {
-  idMascota: string
-  vacunas: string
-  alergias: string
-  enfermedades: string
-  esterilizado: boolean
-  notas: string
-}
+import {
+  fichasMedicasSimuladas,
+  obtenerFichaMedicaPorId,
+  FichaMedica
+} from '@/data/fichasMedicasSimuladas'
 
 interface EditarFichaMedicaProps {
   mascotaId: number
@@ -20,8 +16,7 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: EditarFic
   const [ficha, setFicha] = useState<FichaMedica | null>(null)
 
   useEffect(() => {
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
+    const encontrada = obtenerFichaMedicaPorId(mascotaId.toString())
     if (encontrada) setFicha({ ...encontrada })
   }, [mascotaId])
 
@@ -41,22 +36,21 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: EditarFic
     e.preventDefault()
     if (!ficha) return
 
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const index = fichas.findIndex((f: any) => f.idMascota === mascotaId.toString())
+    const index = fichasMedicasSimuladas.findIndex(f => f.idMascota === mascotaId.toString())
     if (index !== -1) {
-      fichas[index] = ficha
-      localStorage.setItem('fichasMedicas', JSON.stringify(fichas))
+      fichasMedicasSimuladas[index] = ficha
       alert('✅ Ficha médica actualizada correctamente.')
       onClose()
+    } else {
+      alert('⚠️ No se encontró ficha para editar.')
     }
   }
 
   if (!ficha) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-md z-50">
       <div className="bg-white text-gray-900 p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
-
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-xl text-gray-500 hover:text-red-500"
