@@ -63,20 +63,13 @@ const MENU_LINKS = [
   },
   { 
     id: "menu-gestionar-mascotas",
-    href: "/dashboard-refugio", 
+    href: "/PantallaGestionMascotas", 
     label: "Gestionar mascotas",
     description: "Ver, agregar y editar",
     icon: PawPrint,
     color: "blue"
   },
-  { 
-    id: "menu-agregar-mascota",
-    href: "/agregar-mascota", 
-    label: "Agregar mascota",
-    description: "Nueva mascota",
-    icon: Plus,
-    color: "purple"
-  },
+  
   { 
     id: "menu-solicitudes-adopcion",
     href: "/solicitudes-adopcion", 
