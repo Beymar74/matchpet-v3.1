@@ -8,6 +8,7 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import EditarFichaMedicaModal from '@/components/GestionMascotas/modales/EditarFichaMedica'
 import { obtenerFichaMedicaPorId, fichasMedicasSimuladas } from '@/data/fichasMedicasSimuladas'
+import { useRouter } from 'next/navigation'
 
 interface FichaMedica {
   idMascota: string
@@ -41,7 +42,7 @@ function FichaMedicaPage() {
       const fichaBase = obtenerFichaMedicaPorId(id)
 
       const mascota = mascotasLocal.find((m) => String(m.id) === id)
-
+      const router = useRouter()
       return {
         idMascota: id,
         vacunas: fichaBase?.vacunas || '',
@@ -175,9 +176,9 @@ function FichaMedicaPage() {
         )}
 
         <div className="mt-6 text-sm">
-          <Link href="/PantallaGestionMascotas" className="text-[#6093BF] hover:underline">
-            ← Volver a Gestión de Mascotas
-          </Link>
+          <button onClick={() => router.back()} className="text-[#6093BF] hover:underline">
+            ← Volver a la página anterior
+          </button>
         </div>
       </main>
     </div>
