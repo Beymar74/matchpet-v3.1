@@ -74,6 +74,7 @@ const VerPerfilRefugioPage = () => {
   const [notificationType, setNotificationType] = useState('success');
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [showStats, setShowStats] = useState(true);
   
   const fileInputRef = useRef(null);
@@ -81,6 +82,7 @@ const VerPerfilRefugioPage = () => {
   // Cargar datos iniciales
   useEffect(() => {
     loadProfileData();
+    loadStatistics();
     // Simular actualizaciones en tiempo real cada 30 segundos
     const interval = setInterval(() => {
       updateStatistics();
@@ -89,7 +91,48 @@ const VerPerfilRefugioPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const loadProfileData = () => {
+  const loadProfileData = async () => {
+    setIsLoadingProfile(true);
+    try {
+      const idUsuario = localStorage.getItem('ID_Usuario');
+      if (!idUsuario) {
+        showNotificationMessage('ID de usuario no encontrado', 'error');
+        loadDefaultProfileData();
+        return;
+      }
+
+      const response = await fetch(`/api/refugio-perfil/${idUsuario}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPerfil({
+          nombreRefugio: data.NombreRefugio || 'Refugio Esperanza',
+          correo: data.Email || 'contacto@refugioesperanza.com',
+          telefono: data.Contacto || '+591 2 234 5678',
+          direccion: data.Ubicacion || 'Av. 6 de Agosto #123, La Paz',
+          fotoRefugio: data.Foto_Perfil || '/api/placeholder/140/140',
+          fechaRegistro: localStorage.getItem('fechaRegistro') || '01/01/2024',
+          descripcion: data.Descripcion || 'Refugio dedicado al cuidado y bienestar animal con más de 5 años de experiencia rescatando y rehabilitando mascotas en situación de abandono.',
+          capacidad: parseInt(localStorage.getItem('capacidad')) || 50,
+          ubicacion: 'La Paz, Bolivia',
+          licencia: 'REF-LP-2024-001',
+          estado: 'Verificado'
+        });
+        showNotificationMessage('Perfil cargado correctamente');
+      } else {
+        // Si no existe el refugio en la API, cargar datos por defecto
+        loadDefaultProfileData();
+        showNotificationMessage('Usando datos locales', 'info');
+      }
+    } catch (error) {
+      console.error('Error cargando perfil:', error);
+      loadDefaultProfileData();
+      showNotificationMessage('Error de conexión. Usando datos locales.', 'error');
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
+  const loadDefaultProfileData = () => {
     const savedData = {
       nombreRefugio: localStorage.getItem('nombreRefugio') || 'Refugio Esperanza',
       correo: localStorage.getItem('email') || 'contacto@refugioesperanza.com',
@@ -105,7 +148,9 @@ const VerPerfilRefugioPage = () => {
     };
 
     setPerfil(savedData);
-    
+  };
+
+  const loadStatistics = () => {
     // Cargar estadísticas guardadas
     const savedStats = localStorage.getItem('refugioStats');
     if (savedStats) {
@@ -124,19 +169,73 @@ const VerPerfilRefugioPage = () => {
     setTimeout(() => setShowNotification(false), 3000);
   };
 
-  const toggleEditMode = (field) => {
+  const toggleEditMode = async (field) => {
     if (editMode[field]) {
       // Guardar cambios
       if (tempValues[field] !== undefined) {
-        const newPerfil = { ...perfil, [field]: tempValues[field] };
-        setPerfil(newPerfil);
-        saveToLocalStorage(field === 'nombreRefugio' ? 'nombreRefugio' : 
-                          field === 'correo' ? 'email' :
-                          field === 'telefono' ? 'telefono' :
-                          field === 'direccion' ? 'direccion' :
-                          field === 'descripcion' ? 'descripcionRefugio' :
-                          field === 'capacidad' ? 'capacidad' : field, tempValues[field]);
-        showNotificationMessage(`${field} actualizado correctamente`);
+        setIsLoading(true);
+        try {
+          const idUsuario = localStorage.getItem('ID_Usuario');
+          if (!idUsuario) {
+            throw new Error('ID_Usuario no encontrado');
+          }
+
+          // Preparar datos para la API
+          const updateData = {
+            Nombre: field === 'nombreRefugio' ? tempValues[field] : perfil.nombreRefugio,
+            Ubicacion: field === 'direccion' ? tempValues[field] : perfil.direccion,
+            Contacto: field === 'telefono' ? tempValues[field] : perfil.telefono,
+            Descripcion: field === 'descripcion' ? tempValues[field] : perfil.descripcion,
+            Email: field === 'correo' ? tempValues[field] : perfil.correo
+          };
+          
+
+          // Llamar a la API para actualizar
+          const response = await fetch(`/api/refugio-perfil/${idUsuario}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+          });
+
+          if (response.ok) {
+            // Actualizar estado local
+            const newPerfil = { ...perfil, [field]: tempValues[field] };
+            setPerfil(newPerfil);
+            
+            // También guardar en localStorage como respaldo
+            saveToLocalStorage(
+              field === 'nombreRefugio' ? 'nombreRefugio' : 
+              field === 'correo' ? 'email' :
+              field === 'telefono' ? 'telefono' :
+              field === 'direccion' ? 'direccion' :
+              field === 'descripcion' ? 'descripcionRefugio' : field, 
+              tempValues[field]
+            );
+            
+            showNotificationMessage(`${field} actualizado correctamente`);
+          } else {
+            throw new Error('Error al actualizar en la base de datos');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showNotificationMessage('Error al actualizar. Intentando guardar localmente...', 'error');
+          
+          // Fallback: guardar solo en localStorage
+          const newPerfil = { ...perfil, [field]: tempValues[field] };
+          setPerfil(newPerfil);
+          saveToLocalStorage(
+            field === 'nombreRefugio' ? 'nombreRefugio' : 
+            field === 'correo' ? 'email' :
+            field === 'telefono' ? 'telefono' :
+            field === 'direccion' ? 'direccion' :
+            field === 'descripcion' ? 'descripcionRefugio' : field, 
+            tempValues[field]
+          );
+        } finally {
+          setIsLoading(false);
+        }
       }
     } else {
       // Entrar en modo edición
@@ -155,43 +254,83 @@ const VerPerfilRefugioPage = () => {
     setTempValues({ ...tempValues, [field]: value });
   };
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        showNotificationMessage('La imagen debe ser menor a 5MB', 'error');
-        return;
-      }
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newImageUrl = e.target.result;
-        setPerfil({ ...perfil, fotoRefugio: newImageUrl });
-        saveToLocalStorage('fotoRefugio', newImageUrl);
-        showNotificationMessage('Foto actualizada correctamente');
-        setShowImageUpload(false);
-      };
-      reader.readAsDataURL(file);
+    if (file.size > 5 * 1024 * 1024) {
+      showNotificationMessage('La imagen debe ser menor a 5MB', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const formDataImg = new FormData();
+      formDataImg.append('file', file);
+      formDataImg.append('upload_preset', 'matchpetpreset'); // 👈 Asegúrate de que este preset exista en Cloudinary
+      formDataImg.append('cloud_name', 'duqzhng9e'); // 👈 Tu nombre de cuenta en Cloudinary
+
+      const res = await fetch('https://api.cloudinary.com/v1_1/duqzhng9e/image/upload', {
+        method: 'POST',
+        body: formDataImg,
+      });
+
+      const data = await res.json();
+      const nuevaFoto = data.secure_url;
+
+      const idUsuario = localStorage.getItem('ID_Usuario'); // 👈 Este debe estar guardado al iniciar sesión
+      if (!idUsuario) throw new Error('ID_Usuario no encontrado');
+
+      await fetch(`/api/refugio-perfil/${idUsuario}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Nombre: perfil.nombreRefugio,
+          Ubicacion: perfil.direccion,
+          Contacto: perfil.telefono,
+          Descripcion: perfil.descripcion,
+          Foto_Perfil: nuevaFoto
+        }),
+      });
+
+      setPerfil(prev => ({ ...prev, fotoRefugio: nuevaFoto }));
+      showNotificationMessage('Foto actualizada correctamente');
+    } catch (error) {
+      console.error(error);
+      showNotificationMessage('Error al subir la imagen', 'error');
+    } finally {
+      setShowImageUpload(false);
+      setIsLoading(false);
     }
   };
 
-  const updateStatistics = () => {
-    // Simular cambios aleatorios pequeños en las estadísticas
-    setEstadisticas(prev => {
-      const newStats = {
-        mascotasActuales: Math.max(0, prev.mascotasActuales + (Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0)),
-        adopcionesExitosas: prev.adopcionesExitosas + (Math.random() > 0.9 ? 1 : 0),
-        solicitudesPendientes: Math.max(0, prev.solicitudesPendientes + (Math.random() > 0.8 ? (Math.random() > 0.5 ? 1 : -1) : 0))
-      };
-      
-      // Guardar en localStorage
-      localStorage.setItem('refugioStats', JSON.stringify(newStats));
-      
-      // Verificar logros
-      checkAchievements(newStats);
-      
-      return newStats;
-    });
+  const updateStatistics = async () => {
+    try {
+      const idUsuario = localStorage.getItem('ID_Usuario');
+      if (idUsuario) {
+        // Aquí podrías hacer una llamada a una API para obtener estadísticas reales
+        // Por ahora, simularemos cambios locales
+        setEstadisticas(prev => {
+          const newStats = {
+            mascotasActuales: Math.max(0, prev.mascotasActuales + (Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0)),
+            adopcionesExitosas: prev.adopcionesExitosas + (Math.random() > 0.9 ? 1 : 0),
+            solicitudesPendientes: Math.max(0, prev.solicitudesPendientes + (Math.random() > 0.8 ? (Math.random() > 0.5 ? 1 : -1) : 0))
+          };
+          
+          // Guardar en localStorage
+          localStorage.setItem('refugioStats', JSON.stringify(newStats));
+          
+          // Verificar logros
+          checkAchievements(newStats);
+          
+          return newStats;
+        });
+      }
+    } catch (error) {
+      console.error('Error actualizando estadísticas:', error);
+    }
   };
 
   const checkAchievements = (stats) => {
@@ -225,13 +364,30 @@ const VerPerfilRefugioPage = () => {
     showNotificationMessage('Datos exportados correctamente');
   };
 
-  const refreshStats = () => {
+  const refreshStats = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      updateStatistics();
-      setIsLoading(false);
-      showNotificationMessage('Estadísticas actualizadas');
-    }, 1000);
+    try {
+      const idUsuario = localStorage.getItem('ID_Usuario');
+      if (idUsuario) {
+        // TODO: Implementar API para obtener estadísticas reales
+        // const response = await fetch(`/api/refugio-estadisticas/${idUsuario}`);
+        // if (response.ok) {
+        //   const data = await response.json();
+        //   setEstadisticas(data);
+        // }
+        
+        // Por ahora, actualizar estadísticas simuladas
+        await updateStatistics();
+        showNotificationMessage('Estadísticas actualizadas');
+      }
+    } catch (error) {
+      console.error('Error al actualizar estadísticas:', error);
+      showNotificationMessage('Error al actualizar estadísticas', 'error');
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+    }
   };
 
   const renderEditableField = (field, value, type = 'text', multiline = false) => {
@@ -244,6 +400,7 @@ const VerPerfilRefugioPage = () => {
               onChange={(e) => handleInputChange(field, e.target.value)}
               className="flex-1 p-2 border border-gray-300 rounded-lg resize-none"
               rows="3"
+              disabled={isLoading}
             />
           ) : (
             <input
@@ -251,17 +408,20 @@ const VerPerfilRefugioPage = () => {
               value={tempValues[field] || ''}
               onChange={(e) => handleInputChange(field, e.target.value)}
               className="flex-1 p-2 border border-gray-300 rounded-lg"
+              disabled={isLoading}
             />
           )}
           <button
             onClick={() => toggleEditMode(field)}
-            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            disabled={isLoading}
+            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save className="w-4 h-4" />
+            {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           </button>
           <button
             onClick={() => cancelEdit(field)}
-            className="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            disabled={isLoading}
+            className="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-4 h-4" />
           </button>
@@ -275,6 +435,7 @@ const VerPerfilRefugioPage = () => {
         <button
           onClick={() => toggleEditMode(field)}
           className="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-green-600 transition-all"
+          disabled={isLoading}
         >
           <Edit3 className="w-4 h-4" />
         </button>
@@ -287,6 +448,16 @@ const VerPerfilRefugioPage = () => {
       <HeaderRefugio />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-blue-50 pt-24 px-4 relative overflow-hidden">
+        
+        {/* Indicator de carga inicial */}
+        {isLoadingProfile && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl shadow-xl text-center">
+              <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-[#4E9F3D]" />
+              <p className="text-lg font-semibold text-gray-800">Cargando perfil del refugio...</p>
+            </div>
+          </div>
+        )}
         
         {/* Notificación */}
         {showNotification && (
