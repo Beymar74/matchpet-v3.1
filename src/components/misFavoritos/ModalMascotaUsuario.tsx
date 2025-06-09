@@ -3,6 +3,7 @@
 
 import React from 'react'
 import { Mascota } from '@/app/mis-favoritas/page'
+import ContactarButton from '@/components/chat/ContactarButton'
 
 interface Props {
   mascota: Mascota
@@ -47,9 +48,7 @@ const ModalMascotaUsuario: React.FC<Props> = ({ mascota, onClose }) => {
               <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
                 📨 Enviar solicitud de adopción
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                💬 Chatear con el refugio
-              </button>
+              <ContactarButton />
             </div>
           </div>
         </div>

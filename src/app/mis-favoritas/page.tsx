@@ -33,7 +33,7 @@ export default function PaginaFavoritas() {
         estado: 'Disponible',
         descripcion: 'Amigable y activo',
         refugio: 'Refugio Esperanza',
-        foto: '/mascotas/max.jpg'
+        foto: '/Perros/beagle.jpg'
       },
       {
         id: 2,
@@ -44,7 +44,7 @@ export default function PaginaFavoritas() {
         estado: 'Adoptado',
         descripcion: 'Tranquila y cariñosa',
         refugio: 'Refugio Felino',
-        foto: '/mascotas/luna.jpg'
+        foto: '/Gatos/persa.jpg'
       },
       {
         id: 3,
@@ -55,7 +55,7 @@ export default function PaginaFavoritas() {
         estado: 'En proceso',
         descripcion: 'Fuerte y protector',
         refugio: 'Refugio Patitas',
-        foto: '/mascotas/rocky.jpg'
+        foto: '/Perros/labrador.jpg'
       }
     ]
 
@@ -83,15 +83,17 @@ export default function PaginaFavoritas() {
               className="border rounded-xl shadow hover:shadow-lg transition p-4 bg-white cursor-pointer"
               onClick={() => setMascotaSeleccionada(mascota)}
             >
+              <div className="p-4">
               <img
                 src={mascota.foto || '/sin-foto.jpg'}
                 alt={mascota.nombre}
-                className="w-full h-48 object-cover rounded-md mb-3"
+                className="w-full h-48 object-cover rounded-md mb-3 "
               />
               <h3 className="text-lg font-semibold text-gray-900">{mascota.nombre}</h3>
               <p className="text-sm text-gray-600">{mascota.raza} • {mascota.especie}</p>
               <p className="text-sm text-gray-500">Edad: {mascota.edad} años</p>
               <p className="text-xs text-gray-400 mt-1">Refugio: {mascota.refugio}</p>
+            </div>
             </div>
           ))}
         </div>

@@ -5,21 +5,39 @@ import ChatListaConversaciones from "@/components/chat/ChatListaConversaciones";
 import ChatMensajes from "@/components/chat/ChatMensajes";
 import ChatEntradaMensaje from "@/components/chat/ChatEntradaMensaje";
 
-
 export default function ChatUsuario() {
-  const userId = "usuario_123"; // 🔁 Reemplázalo luego por el ID real del usuario autenticado
+  const userId = "usuario_123";
   const [conversacionActiva, setConversacionActiva] = useState<string | null>(null);
 
   return (
     <div
       className="chat-container"
-      style={{ display: "flex", height: "100vh", backgroundColor: "#eee" }}
+      style={{
+        display: "flex",
+        height: "80vh",
+        backgroundColor: "#eee",
+        paddingTop: "20px", // ✅ espacio para el header fijo
+        boxSizing: "border-box", // asegura que no se desborde
+      }}
     >
-      <ChatListaConversaciones
-        userId={userId}
-        setConversacionActiva={setConversacionActiva}
-      />
+      {/* Lista lateral */}
+      <div
+        style={{
+          width: "30%",
+          padding: "1rem",
+          borderRight: "1px solid #ccc",
+          backgroundColor: "#f9f9f9",
+          overflowY: "auto",
+        }}
+      >
+        <h2 className="text-gray-800 font-semibold mb-2">Conversaciones</h2>
+        <ChatListaConversaciones
+          userId={userId}
+          setConversacionActiva={setConversacionActiva}
+        />
+      </div>
 
+      {/* Panel de mensajes */}
       {conversacionActiva ? (
         <div
           className="chat-box"
@@ -28,10 +46,26 @@ export default function ChatUsuario() {
             display: "flex",
             flexDirection: "column",
             backgroundColor: "#fff",
+            height: "100%",
           }}
         >
-          <ChatMensajes conversacionId={conversacionActiva} />
-          <ChatEntradaMensaje conversacionId={conversacionActiva} emisor={userId} />
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "1rem",
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <ChatMensajes conversacionId={conversacionActiva} />
+          </div>
+
+          <div style={{ padding: "1rem" }}>
+            <ChatEntradaMensaje
+              conversacionId={conversacionActiva}
+              emisor={userId}
+            />
+          </div>
         </div>
       ) : (
         <div
