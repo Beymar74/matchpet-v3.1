@@ -10,6 +10,7 @@ interface SmsRecordatorio {
   mensaje: string;
   fecha: string;
   estado: 'Enviado' | 'Programado' | 'Fallido';
+  administrador: string;
 }
 
 const SmsRecordatorio = () => {
@@ -18,7 +19,7 @@ const SmsRecordatorio = () => {
   const [modalCrearAbierto, setModalCrearAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [smsAEditar, setSmsAEditar] = useState<SmsRecordatorio | null>(null);
-  const [nuevoSms, setNuevoSms] = useState({ destinatario: '', mensaje: '', fecha: '', estado: 'Programado' as const });
+  const [nuevoSms, setNuevoSms] = useState({ destinatario: '', mensaje: '', fecha: '', estado: 'Programado' as const, administrador: '' });
   const [fechaFiltro, setFechaFiltro] = useState('');
   const [destinatarioFiltro, setDestinatarioFiltro] = useState('');
   const [smsEliminar, setSmsEliminar] = useState<number | null>(null);
@@ -26,26 +27,26 @@ const SmsRecordatorio = () => {
 
   useEffect(() => {
     const datos: SmsRecordatorio[] = [
-      { id: 1, destinatario: 'Juan Pérez', mensaje: 'Recordatorio de adopción para mañana', fecha: '2025-06-10', estado: 'Programado' },
-      { id: 2, destinatario: 'Laura Gómez', mensaje: 'Tu cita de adopción es hoy', fecha: '2025-06-08', estado: 'Enviado' },
-      { id: 3, destinatario: 'Carlos Ruiz', mensaje: 'Reprogramación de visita', fecha: '2025-06-07', estado: 'Fallido' }
+      { id: 1, destinatario: 'Juan Pérez', mensaje: 'Recordatorio de adopción para mañana', fecha: '2025-06-10', estado: 'Programado', administrador: 'Admin Rosa' },
+      { id: 2, destinatario: 'Laura Gómez', mensaje: 'Tu cita de adopción es hoy', fecha: '2025-06-08', estado: 'Enviado', administrador: 'Admin Jorge' },
+      { id: 3, destinatario: 'Carlos Ruiz', mensaje: 'Reprogramación de visita', fecha: '2025-06-07', estado: 'Fallido', administrador: 'Admin Rosa' }
     ];
     setSms(datos);
   }, []);
 
   const crearNuevoSms = () => {
-    if (!nuevoSms.destinatario || !nuevoSms.mensaje || new Date(nuevoSms.fecha) < new Date()) {
+    if (!nuevoSms.destinatario || !nuevoSms.mensaje || !nuevoSms.administrador || new Date(nuevoSms.fecha) < new Date()) {
       alert('❗ Completa todos los campos y asegúrate de que la fecha sea válida.');
       return;
     }
     const nuevo: SmsRecordatorio = { id: Date.now(), ...nuevoSms };
     setSms([...sms, nuevo]);
     setModalCrearAbierto(false);
-    setNuevoSms({ destinatario: '', mensaje: '', fecha: '', estado: 'Programado' });
+    setNuevoSms({ destinatario: '', mensaje: '', fecha: '', estado: 'Programado', administrador: '' });
   };
 
   const editarSmsExistente = () => {
-    if (!smsAEditar) return;
+    if (!smsAEditar || !smsAEditar.administrador) return;
     setSms(sms.map(s => s.id === smsAEditar.id ? smsAEditar : s));
     setModalEditarAbierto(false);
     setSmsAEditar(null);
@@ -91,6 +92,7 @@ const SmsRecordatorio = () => {
               <th className="px-4 py-2 text-left">Destinatario</th>
               <th className="px-4 py-2 text-left">Mensaje</th>
               <th className="px-4 py-2 text-left">Fecha</th>
+              <th className="px-4 py-2 text-left">Administrador</th>
               <th className="px-4 py-2 text-left">Estado</th>
               <th className="px-4 py-2 text-center">Acciones</th>
             </tr>
@@ -101,6 +103,7 @@ const SmsRecordatorio = () => {
                 <td className="px-4 py-2 font-medium">{s.destinatario}</td>
                 <td className="px-4 py-2">{s.mensaje}</td>
                 <td className="px-4 py-2">{s.fecha}</td>
+                <td className="px-4 py-2">{s.administrador}</td>
                 <td className="px-4 py-2">
                   <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
                     s.estado === 'Enviado' ? 'bg-green-100 text-green-700' :
@@ -136,6 +139,7 @@ const SmsRecordatorio = () => {
               <input type="text" placeholder="Nombre del destinatario" className="w-full border px-3 py-2 rounded" value={nuevoSms.destinatario} onChange={(e) => setNuevoSms({ ...nuevoSms, destinatario: e.target.value })} />
               <textarea placeholder="Mensaje" className="w-full border px-3 py-2 rounded" value={nuevoSms.mensaje} onChange={(e) => setNuevoSms({ ...nuevoSms, mensaje: e.target.value })} />
               <input type="date" className="w-full border px-3 py-2 rounded" value={nuevoSms.fecha} onChange={(e) => setNuevoSms({ ...nuevoSms, fecha: e.target.value })} />
+              <input type="text" placeholder="Administrador responsable" className="w-full border px-3 py-2 rounded" value={nuevoSms.administrador} onChange={(e) => setNuevoSms({ ...nuevoSms, administrador: e.target.value })} />
             </div>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => setModalCrearAbierto(false)} className="px-4 py-2 text-sm bg-gray-200 rounded">Cancelar</button>
@@ -154,6 +158,7 @@ const SmsRecordatorio = () => {
               <input type="text" className="w-full border px-3 py-2 rounded" value={smsAEditar.destinatario} onChange={(e) => setSmsAEditar({ ...smsAEditar, destinatario: e.target.value })} />
               <textarea className="w-full border px-3 py-2 rounded" value={smsAEditar.mensaje} onChange={(e) => setSmsAEditar({ ...smsAEditar, mensaje: e.target.value })} />
               <input type="date" className="w-full border px-3 py-2 rounded" value={smsAEditar.fecha} onChange={(e) => setSmsAEditar({ ...smsAEditar, fecha: e.target.value })} />
+              <input type="text" className="w-full border px-3 py-2 rounded" value={smsAEditar.administrador} onChange={(e) => setSmsAEditar({ ...smsAEditar, administrador: e.target.value })} />
             </div>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => setModalEditarAbierto(false)} className="px-4 py-2 text-sm bg-gray-200 rounded">Cancelar</button>
