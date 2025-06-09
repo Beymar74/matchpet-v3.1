@@ -8,6 +8,7 @@ export interface Mascota {
   edad: number;
   estado: string;
   descripcion?: string;
+  tamaño?: string;
   foto?: string;
   fechaIngreso?: string;
   compatibilidad?: number;

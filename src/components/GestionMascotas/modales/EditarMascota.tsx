@@ -65,7 +65,6 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
 
       alert('✅ Mascota actualizada correctamente (simulado)')
 
-      // 🔁 Llamar onGuardar si es modal
       if (modoModal) {
         onGuardar?.(formData)
         onClose?.()
@@ -88,20 +87,9 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
   }
 
   return modoModal ? (
-    <div
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4"
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]"
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold"
-        >
-          ✕
-        </button>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <button onClick={onClose} className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">✕</button>
         <ContenidoFormulario
           formData={formData}
           errores={errores}
@@ -129,8 +117,6 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
   )
 }
 
-// --- COMPONENTES DE FORMULARIO ---
-
 function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
   return (
     <>
@@ -142,6 +128,21 @@ function ContenidoFormulario({ formData, errores, handleChange, handleImageChang
             <InputField label="Especie *" name="especie" value={formData.especie} error={errores.especie} onChange={handleChange} />
             <InputField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
             <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
+            <div>
+              <label className="block text-sm font-semibold text-[#30588C]">Tamaño</label>
+              <select
+                name="tamano"
+                value={formData.tamano || ''}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded mt-1 bg-white border-gray-300"
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="Pequeño">Pequeño</option>
+                <option value="Mediano">Mediano</option>
+                <option value="Grande">Grande</option>
+              </select>
+            </div>
+
 
             <div>
               <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
@@ -218,4 +219,3 @@ function InputField({ label, name, value, onChange, error = false, type = 'text'
     </div>
   )
 }
-

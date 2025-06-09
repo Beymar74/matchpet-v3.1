@@ -19,13 +19,14 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
     raza: '',
     edad: '',
     estado: '',
+    tamano: '',
     descripcion: '',
     foto: '',
   })
+
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [agregarFicha, setAgregarFicha] = useState<'si' | 'no' | ''>('')
-
   const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
   const [idNuevaMascota, setIdNuevaMascota] = useState<number | null>(null)
 
@@ -59,7 +60,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado) {
+    if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado || !formData.tamano) {
       alert('🐾 Por favor, completa los campos obligatorios.')
       return
     }
@@ -70,6 +71,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
       raza: formData.raza,
       edad: Number(formData.edad),
       estado: formData.estado,
+      tamano: formData.tamano,
       descripcion: formData.descripcion,
       foto: formData.foto,
     })
@@ -189,6 +191,22 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
                 <option value="En tratamiento">En tratamiento</option>
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-[#30588C] text-sm">Tamaño 🐾</label>
+            <select
+              name="tamano"
+              value={formData.tamano}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 mt-1"
+              required
+            >
+              <option value="">Selecciona tamaño</option>
+              <option value="Pequeño">Pequeño</option>
+              <option value="Mediano">Mediano</option>
+              <option value="Grande">Grande</option>
+            </select>
           </div>
 
           <div>
