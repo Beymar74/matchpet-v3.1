@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 import { Mascota } from '../../app/refugio/tipos';
 import ModalMascota from '@/components/GestionMascotas/modales/ModalMascota';
@@ -10,8 +10,19 @@ interface TarjetaMascotaProps {
 }
 
 const TarjetaMascota: React.FC<TarjetaMascotaProps> = ({ id }) => {
-  const mascota = mascotasSimuladas.find((m) => m.id === id);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [mascota, setMascota] = useState<Mascota | null>(() =>
+    mascotasSimuladas.find((m) => m.id === id) ?? null
+  );
+
+  useEffect(() => {
+    // Solo recargar datos cuando se cierra el modal
+    if (!mostrarModal) {
+      const actualizadas = JSON.parse(localStorage.getItem('mascotas') || '[]');
+      const encontrada = actualizadas.find((m: any) => m.id === id);
+      if (encontrada) setMascota(encontrada);
+    }
+  }, [mostrarModal]);
 
   if (!mascota) return null;
 
@@ -35,7 +46,7 @@ const TarjetaMascota: React.FC<TarjetaMascotaProps> = ({ id }) => {
         className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow cursor-pointer text-gray-700"
       >
         {/* Imagen con estado encima */}
-        <div className="relative mb-4 h-40  bg-gray-100 flex items-center justify-center rounded-md">
+        <div className="relative mb-4 h-40 bg-gray-100 flex items-center justify-center rounded-md">
           {mascota.foto.startsWith('http') ? (
             <img
               src={mascota.foto}
@@ -62,16 +73,37 @@ const TarjetaMascota: React.FC<TarjetaMascotaProps> = ({ id }) => {
           <p><span className="font-medium">Ingreso:</span> {mascota.fechaIngreso ?? 'No registrado'}</p>
         </div>
 
-        {/* Compatibilidad y solicitudes */}
-        <div className="flex justify-between text-sm font-medium">
-          <p>
-            <span className="text-gray-500">Compatibilidad:</span>{' '}
-            <span className="text-[#30588C] font-bold">{mascota.compatibilidad ?? 0}%</span>
-          </p>
-          <p>
-            <span className="text-gray-500">Solicitudes:</span>{' '}
-            <span className="text-[#BF3952] font-bold">{mascota.solicitudes ?? 0}</span>
-          </p>
+        {/* Compatibilidad, Solicitudes y Adoptabilidad */}
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 text-sm font-medium mt-2">
+          <div>
+            <p className="text-gray-500">Compatibilidad</p>
+            <p className="text-[#30588C] font-bold">{mascota.compatibilidad ?? 0}%</p>
+          </div>
+
+          <div>
+            <p className="text-gray-500">Solicitudes</p>
+            <p className="text-[#BF3952] font-bold">{mascota.solicitudes ?? 0}</p>
+          </div>
+
+          <div>
+            <p className="text-gray-500">Adoptabilidad</p>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="h-3 rounded-full text-[10px] text-white text-center"
+                style={{
+                  width: `${mascota.adoptabilidad ?? 0}%`,
+                  backgroundColor:
+                    (mascota.adoptabilidad ?? 0) > 70
+                      ? '#4CAF50'
+                      : (mascota.adoptabilidad ?? 0) > 40
+                      ? '#FFB800'
+                      : '#F44336'
+                }}
+              >
+                {mascota.adoptabilidad ?? 0}%
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -80,6 +112,7 @@ const TarjetaMascota: React.FC<TarjetaMascotaProps> = ({ id }) => {
         <ModalMascota
           mascota={mascota}
           onClose={() => setMostrarModal(false)}
+          onGuardar={(actualizada) => setMascota(actualizada)}
         />
       )}
     </>
@@ -87,4 +120,3 @@ const TarjetaMascota: React.FC<TarjetaMascotaProps> = ({ id }) => {
 };
 
 export default TarjetaMascota;
-

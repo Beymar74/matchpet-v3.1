@@ -17,6 +17,7 @@ export interface RefugioInfo {
   }
   
   export interface Mascota {
+    adoptabilidad: number;
     id: number;
     nombre: string;
     especie: string;

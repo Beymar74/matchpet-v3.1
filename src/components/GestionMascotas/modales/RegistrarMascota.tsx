@@ -5,6 +5,8 @@ import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
 import { agregarMascota } from '@/data/mascotasSimuladas'
 import { especies, razasPorEspecie } from '@/data/especiesRazas'
 import CrearFichaMedica from './CreaarFichamedica'
+import { estimarAdoptabilidad } from "@/utils/estimarAdoptabilidad"
+
 
 interface Props {
   onClose: () => void
@@ -15,12 +17,17 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
 
   const [formData, setFormData] = useState({
     nombre: '',
-    especie: '',
-    raza: '',
-    edad: '',
-    estado: '',
-    descripcion: '',
-    foto: '',
+  especie: '',
+  raza: '',
+  edad: '',
+  estado: '',
+  descripcion: '',
+  foto: '',
+  size: 'Medium',
+  weight: '',
+  vaccinated: false,
+  health: '0',
+  previousOwner: false
   })
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -57,13 +64,30 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
+    e.preventDefault();
+  
     if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado) {
-      alert('🐾 Por favor, completa los campos obligatorios.')
-      return
+      alert("🐾 Por favor, completa los campos obligatorios.");
+      return;
     }
-
+  
+    // 🧠 Datos simulados que pide el algoritmo de adoptabilidad
+    const datosEstimacion = {
+      PetType: formData.especie,            // especie = tipo
+      Breed: formData.raza || "Unknown",    // valor por defecto si no elige
+      AgeMonths: Number(formData.edad),
+      Color: "White",                       // puedes agregar este campo al form si quieres
+      Size: "Medium",                       // idem
+      WeightKg: 10,                         // podrías estimarlo por especie o pedirlo
+      Vaccinated: 1,                        // puedes añadir un checkbox
+      HealthCondition: 0,                   // por defecto sana
+      TimeInShelterDays: 5,                 // valor fijo (puede cambiar luego)
+      AdoptionFee: 100,                     // fijo o configurable
+      PreviousOwner: 0                      // también podrías agregar al formulario
+    };
+  
+    const adoptabilidad = estimarAdoptabilidad(datosEstimacion);
+  
     const nueva = agregarMascota({
       nombre: formData.nombre,
       especie: formData.especie,
@@ -72,16 +96,18 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
       estado: formData.estado,
       descripcion: formData.descripcion,
       foto: formData.foto,
-    })
-
-    if (agregarFicha === 'si') {
-      setIdNuevaMascota(nueva.id)
-      setMostrarCrearFicha(true)
+      adoptabilidad // ✅ se guarda junto con la mascota
+    });
+  
+    if (agregarFicha === "si") {
+      setIdNuevaMascota(nueva.id);
+      setMostrarCrearFicha(true);
     } else {
-      alert('✅ Mascota registrada correctamente.')
-      onClose()
+      alert(`✅ Mascota registrada correctamente. Adoptabilidad: ${adoptabilidad}/100`);
+      onClose();
     }
-  }
+  };
+  
 
   const handleFichaGuardada = () => {
     alert('✅ Ficha médica registrada correctamente.')
@@ -97,7 +123,27 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
       />
     )
   }
+  const [adoptabilidad, setAdoptabilidad] = useState(0)
 
+  useEffect(() => {
+    const datos = {
+      PetType: formData.especie,
+      Breed: formData.raza || "Unknown",
+      AgeMonths: Number(formData.edad) || 0,
+      Color: "White",
+      Size: formData.size,
+      WeightKg: Number(formData.weight) || 10,
+      Vaccinated: formData.vaccinated ? 1 : 0,
+      HealthCondition: Number(formData.health),
+      TimeInShelterDays: 5,
+      AdoptionFee: 100,
+      PreviousOwner: formData.previousOwner ? 1 : 0
+    }
+  
+    const resultado = estimarAdoptabilidad(datos)
+    setAdoptabilidad(resultado)
+  }, [formData])
+  
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div
@@ -189,6 +235,32 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
                 <option value="En tratamiento">En tratamiento</option>
               </select>
             </div>
+            <div className="flex gap-4">
+  <div className="w-1/2">
+    <label className="block font-semibold text-[#30588C] text-sm">Tamaño</label>
+    <select
+      name="size"
+      value={formData.size}
+      onChange={handleChange}
+      className="w-full border rounded px-3 py-2 mt-1"
+    >
+      <option value="Small">Pequeño</option>
+      <option value="Medium">Mediano</option>
+      <option value="Large">Grande</option>
+    </select>
+  </div>
+
+  <div className="w-1/2">
+    <label className="block font-semibold text-[#30588C] text-sm">Peso (kg)</label>
+    <input
+      type="number"
+      name="weight"
+      value={formData.weight}
+      onChange={handleChange}
+      className="w-full border rounded px-3 py-2 mt-1"
+    />
+  </div>
+</div>
           </div>
 
           <div>
@@ -201,6 +273,44 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
               rows={3}
             />
           </div>
+          <div className="flex gap-4">
+  <div className="w-1/3">
+    <label className="block font-semibold text-[#30588C] text-sm">¿Vacunado?</label>
+    <input
+      type="checkbox"
+      name="vaccinated"
+      checked={formData.vaccinated}
+      onChange={(e) =>
+        setFormData((prev) => ({ ...prev, vaccinated: e.target.checked }))
+      }
+    />
+  </div>
+
+  <div className="w-1/3">
+    <label className="block font-semibold text-[#30588C] text-sm">Condición médica</label>
+    <select
+      name="health"
+      value={formData.health}
+      onChange={handleChange}
+      className="w-full border rounded px-3 py-2 mt-1"
+    >
+      <option value="0">Sano</option>
+      <option value="1">Con tratamiento</option>
+    </select>
+  </div>
+
+  <div className="w-1/3">
+    <label className="block font-semibold text-[#30588C] text-sm">¿Tuvo dueño anterior?</label>
+    <input
+      type="checkbox"
+      name="previousOwner"
+      checked={formData.previousOwner}
+      onChange={(e) =>
+        setFormData((prev) => ({ ...prev, previousOwner: e.target.checked }))
+      }
+    />
+  </div>
+</div>
 
           <div>
             <label className="block font-semibold text-[#30588C] text-sm">Foto</label>

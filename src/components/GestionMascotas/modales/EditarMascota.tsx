@@ -2,47 +2,59 @@
 
 import React, { useState, useEffect } from 'react'
 
-interface FichaMedica {
-  idMascota: string
-  vacunas: string
-  alergias: string
-  enfermedades: string
-  esterilizado: string
-  notas: string
+interface Mascota {
+  id: number
+  nombre: string
+  especie: string
+  raza: string
+  edad: number
+  sexo: string
+  descripcion: string
+  tamaño: string
+  color: string
+  fechaIngreso: string
+  foto: string
+  estado: string
+  adoptabilidad: number  // en porcentaje
+
 }
 
 interface Props {
-  mascotaId: number
+  id: number
+  modoModal?: boolean
   onClose: () => void
+  onGuardar?: (mascotaActualizada: Mascota) => void
 }
 
-export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
-  const [formData, setFormData] = useState<FichaMedica | null>(null)
+export default function EditarMascotaModal({ id, onClose, onGuardar }: Props) {
+  const [formData, setFormData] = useState<Mascota | null>(null)
 
   useEffect(() => {
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
-    if (encontrada) {
-      setFormData({ ...encontrada })
-    }
-  }, [mascotaId])
+    const mascotas = JSON.parse(localStorage.getItem('mascotas') || '[]')
+    const encontrada = mascotas.find((m: any) => m.id === id)
+    if (encontrada) setFormData({ ...encontrada })
+  }, [id])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     if (!formData) return
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const value = e.target.type === 'number' ? parseInt(e.target.value) || 0 : e.target.value
+    setFormData({ ...formData, [e.target.name]: value })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData) return
 
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const index = fichas.findIndex((f: any) => f.idMascota === mascotaId.toString())
+    const mascotas = JSON.parse(localStorage.getItem('mascotas') || '[]')
+    const index = mascotas.findIndex((m: any) => m.id === id)
 
     if (index !== -1) {
-      fichas[index] = formData
-      localStorage.setItem('fichasMedicas', JSON.stringify(fichas))
-      alert('✅ Ficha médica actualizada correctamente.')
+      mascotas[index] = formData
+      localStorage.setItem('mascotas', JSON.stringify(mascotas))
+      if (onGuardar) onGuardar(formData)
+      alert('✅ Mascota actualizada correctamente.')
       onClose()
     }
   }
@@ -62,28 +74,28 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
           ✕
         </button>
 
-        <h2 className="text-2xl font-bold mb-4 text-[#30588C] text-center">✏️ Editar Ficha Médica</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[#30588C] text-center">✏️ Editar Mascota</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <TextField label="Vacunas" name="vacunas" value={formData.vacunas} onChange={handleChange} />
-          <TextField label="Alergias" name="alergias" value={formData.alergias} onChange={handleChange} />
-          <TextField label="Enfermedades" name="enfermedades" value={formData.enfermedades} onChange={handleChange} />
-          
-          <div>
-            <label className="block text-sm font-semibold text-[#30588C] mb-1">Esterilizado</label>
-            <select
-              name="esterilizado"
-              value={formData.esterilizado}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 bg-white"
-            >
-              <option value="">Seleccionar...</option>
-              <option value="Sí">Sí</option>
-              <option value="No">No</option>
-            </select>
-          </div>
+          <TextField label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
+          <TextField label="Especie" name="especie" value={formData.especie} onChange={handleChange} />
+          <TextField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
+          <NumberField label="Edad (en años)" name="edad" value={formData.edad} onChange={handleChange} />
 
-          <TextField label="Notas" name="notas" value={formData.notas} onChange={handleChange} isTextArea />
+          <SelectField label="Sexo" name="sexo" value={formData.sexo} onChange={handleChange} options={['Macho', 'Hembra']} />
+          <TextField label="Tamaño" name="tamaño" value={formData.tamaño} onChange={handleChange} />
+          <TextField label="Color" name="color" value={formData.color} onChange={handleChange} />
+          <TextField label="Fecha de ingreso" name="fechaIngreso" value={formData.fechaIngreso} onChange={handleChange} />
+          <TextField label="Foto (URL o emoji)" name="foto" value={formData.foto} onChange={handleChange} />
+          <SelectField label="Estado" name="estado" value={formData.estado} onChange={handleChange} options={['Disponible', 'En proceso', 'Adoptado']} />
+          <TextField label="Descripción" name="descripcion" value={formData.descripcion} onChange={handleChange} isTextArea />
+          <NumberField
+  label="Adoptabilidad (%)"
+  name="adoptabilidad"
+  value={formData.adoptabilidad}
+  onChange={handleChange}
+/>
+
 
           <div className="flex justify-end pt-4">
             <button
@@ -99,40 +111,41 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
   )
 }
 
-function TextField({
-  label,
-  name,
-  value,
-  onChange,
-  isTextArea = false
-}: {
-  label: string
-  name: string
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  isTextArea?: boolean
-}) {
+// Reutilizables
+function TextField({ label, name, value, onChange, isTextArea = false }: any) {
   return (
     <div>
       <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
       {isTextArea ? (
-        <textarea
-          name={name}
-          value={value}
-          onChange={onChange}
-          rows={3}
-          className="w-full border border-gray-300 px-3 py-2 rounded bg-white"
-        />
+        <textarea name={name} value={value} onChange={onChange} rows={3} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
       ) : (
-        <input
-          type="text"
-          name={name}
-          value={value}
-          onChange={onChange}
-          className="w-full border border-gray-300 px-3 py-2 rounded bg-white"
-        />
+        <input type="text" name={name} value={value} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
       )}
     </div>
   )
 }
 
+function NumberField({ label, name, value, onChange }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
+      <input type="number" name={name} value={value} min={0} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
+    </div>
+  )
+}
+
+function SelectField({ label, name, value, onChange, options }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
+      <select name={name} value={value} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white">
+        <option value="">Seleccionar...</option>
+        {options.map((opt: string, idx: number) => (
+          <option key={idx} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
