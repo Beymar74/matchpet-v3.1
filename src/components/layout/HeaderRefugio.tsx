@@ -19,7 +19,8 @@ import {
   BarChart3,
   FileText,
   Home,
-  Calendar
+  Calendar,
+  Grid3X3
 } from 'lucide-react';
 
 // Tipos TypeScript para mejor tipado
@@ -46,6 +47,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 
 // Enlaces de navegación principal
 const MAIN_NAV_LINKS = [
+  { id: "main-panel", href: "/refugio", label: "Panel de Control", color: "indigo" },
   { id: "main-mascotas", href: "/PantallaGestionMascotas", label: "Mis Mascotas", color: "green" },
   { id: "main-solicitudes", href: "/solicitudes-adopcion", label: "Solicitudes", color: "blue" },
   { id: "main-perfil", href: "/ver-perfil-refugio", label: "Perfil", color: "pink" }
@@ -54,20 +56,12 @@ const MAIN_NAV_LINKS = [
 // Enlaces del menú desplegable
 const MENU_LINKS = [
   { 
-    id: "menu-perfil-refugio",
-    href: "/ver-perfil-refugio", 
-    label: "Perfil del refugio",
-    description: "Ver y editar información",
-    icon: Building2,
-    color: "green"
-  },
-  { 
-    id: "menu-gestionar-mascotas",
-    href: "/dashboard-refugio", 
-    label: "Gestionar mascotas",
-    description: "Ver, agregar y editar",
-    icon: PawPrint,
-    color: "blue"
+    id: "menu-panel-control",
+    href: "/refugio", 
+    label: "Panel de Control",
+    description: "Dashboard principal",
+    icon: Grid3X3,
+    color: "indigo"
   },
   { 
     id: "menu-agregar-mascota",
@@ -92,20 +86,13 @@ const MENU_LINKS = [
     description: "Análisis del refugio",
     icon: BarChart3,
     color: "indigo"
-  },
-  { 
-    id: "menu-configuracion",
-    href: "/configuracion-refugio", 
-    label: "Configuración",
-    description: "Ajustes del refugio",
-    icon: Settings,
-    color: "gray"
   }
 ];
 
 // Enlaces móviles
 const MOBILE_NAV_LINKS = [
-  { id: "mobile-mascotas", href: "/dashboard-refugio", label: "🐾 Mis Mascotas", color: "green" },
+  { id: "mobile-panel", href: "/refugio", label: "📊 Panel de Control", color: "indigo" },
+  { id: "mobile-mascotas", href: "/PantallaGestionMascotas", label: "🐾 Mis Mascotas", color: "green" },
   { id: "mobile-agregar", href: "/agregar-mascota", label: "➕ Agregar Mascota", color: "purple" },
   { id: "mobile-solicitudes", href: "/solicitudes-adopcion", label: "💝 Solicitudes", color: "blue" },
   { id: "mobile-perfil", href: "/ver-perfil-refugio", label: "🏠 Mi Perfil", color: "teal" }
@@ -140,7 +127,7 @@ const getNotificationColor = (type: string): string => {
 
 // Componente de Logo
 const Logo = React.memo(() => (
-  <Link href="/dashboard-refugio" className="flex items-center gap-3 group">
+  <Link href="/refugio" className="flex items-center gap-3 group">
     <div className="relative">
       <div className="w-[90px] sm:w-[110px] md:w-[130px] transform group-hover:scale-105 transition-transform duration-300">
         <Image

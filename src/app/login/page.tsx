@@ -68,30 +68,40 @@ export default function LoginPage() {
       const data = await response.json();
   
       if (data.success && data.idUsuario) {
-        // Guardar ID de usuario
         localStorage.setItem('idUsuario', data.idUsuario);
-        
+      
         // Guardar email si se marcó "recordarme"
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', email);
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-  
+      
         // Obtener el rol
         const rolResponse = await fetch(`/api/obtener-rol?idUsuario=${data.idUsuario}`);
         const rolData = await rolResponse.json();
-  
+      
         if (rolData.rol) {
           localStorage.setItem("rolUsuario", rolData.rol);
-        
+      
           if (rolData.rol === 'Refugio') {
             try {
+              // Obtener el ID del refugio
               const refugioResponse = await fetch(`/api/obtener-id-refugio?idUsuario=${data.idUsuario}`);
               const refugioData = await refugioResponse.json();
-        
+      
               if (refugioData.success && refugioData.idRefugio) {
                 localStorage.setItem('idRefugio', refugioData.idRefugio);
+      
+                // ✅ Obtener perfil completo del refugio para nombre y foto
+                const perfilResponse = await fetch(`/api/refugio-perfil/${refugioData.idRefugio}`);
+                const perfilData = await perfilResponse.json();
+      
+                if (perfilData.NombreRefugio) {
+                  localStorage.setItem('nombreRefugio', perfilData.NombreRefugio);
+                  localStorage.setItem('fotoRefugio', perfilData.Foto_Perfil || '/Refugio/refugio1.jpeg');
+                }
+      
                 setTimeout(() => {
                   window.location.href = '/refugio';
                 }, 500);
@@ -114,14 +124,12 @@ export default function LoginPage() {
               window.location.href = '/match';
             }, 500);
           }
-         } else {
+        } else {
           setErrorLogin(true);
           setIsLoading(false);
         }
-      } else {
-        setErrorLogin(true);
-        setIsLoading(false);
       }
+      
     } catch (err) {
       console.error('Error en login:', err);
       setErrorLogin(true);
