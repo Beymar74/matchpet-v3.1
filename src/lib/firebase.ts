@@ -1,15 +1,16 @@
+// lib/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB9-ozSXXXIZOuno72RMD24IO6w0CHGdQA",
-  authDomain: "chatmatchpet.firebaseapp.com",
-  databaseURL: "https://chatmatchpet-default-rtdb.firebaseio.com",
-  projectId: "chatmatchpet",
-  storageBucket: "chatmatchpet.firebasestorage.app",
-  messagingSenderId: "176080576812",
-  appId: "1:176080576812:web:e1daa710cdec0c16c94c89"
+  apiKey: "AIzaSyD7zbj3yKQtpG_dlCRSWZKpRjnf09tmFA0", // ← ¡con I mayúscula!
+  authDomain: "maychpet.firebaseapp.com",
+  projectId: "maychpet",
+  storageBucket: "maychpet.appspot.com",
+  messagingSenderId: "819051628508",
+  appId: "1:819051628508:web:8e3ef7aa67415e8a6cb119"
 };
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
