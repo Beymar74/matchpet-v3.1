@@ -86,7 +86,7 @@ const GestionNotificaciones = () => {
       icon: Users
     }
   ];
-
+  
   const accionesRapidas = [
     {
       titulo: 'Notificación Rápida',
