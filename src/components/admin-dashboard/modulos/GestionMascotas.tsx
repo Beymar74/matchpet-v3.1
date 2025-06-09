@@ -48,6 +48,7 @@ export default function GestionMascotas() {
     { id: 'todos', label: 'Todos', count: mascotasSimuladas.length },
     { id: 'Disponible', label: 'Disponibles', count: mascotasSimuladas.filter(m => m.estado === 'Disponible').length },
     { id: 'Adoptado', label: 'Adoptados', count: mascotasSimuladas.filter(m => m.estado === 'Adoptado').length },
+    { id: 'En tratamiento', label: 'En tratamiento', count: mascotasSimuladas.filter(m => m.estado === 'En tratamiento').length },
     { id: 'En Proceso', label: 'En Proceso', count: mascotasSimuladas.filter(m => m.estado === 'En Proceso').length },
     { id: 'Pendiente', label: 'Pendientes', count: mascotasSimuladas.filter(m => m.estado === 'Pendiente').length }
   ];
@@ -186,111 +187,100 @@ const estadisticasMascotas = [
       </div>
 
       {/* Lista de Mascotas */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 mb-6">
-        <div className="flex items-center space-x-2">
-          <h2 className="text-lg font-semibold text-gray-900">Lista de Mascotas</h2>
-          <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-            {mascotasRecientes.length} resultados
-          </span>
-        </div>
+<div className="bg-white rounded-xl shadow-md p-6">
+  {/* Header */}
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 mb-6">
+    <div className="flex items-center space-x-2">
+      <h2 className="text-lg font-semibold text-gray-900">Lista de Mascotas</h2>
+      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+        {mascotasRecientes.length} resultados
+      </span>
+    </div>
 
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar mascotas..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 w-64"
-            />
-          </div>
-          <button className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            <span>Filtros</span>
-          </button>
-          <button className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Download className="h-4 w-4" />
-            <span>Exportar</span>
-          </button>
-        </div>
+    <div className="flex items-center space-x-4">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Buscar mascotas..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 w-64"
+        />
       </div>
+      <button className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <Filter className="h-4 w-4" />
+        <span>Filtros</span>
+      </button>
+      <button className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <Download className="h-4 w-4" />
+        <span>Exportar</span>
+      </button>
+    </div>
+  </div>
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {filtros.map((filtro) => (
-          <button
-            key={filtro.id}
-            onClick={() => setFiltroActivo(filtro.id)}
-            className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm transition-colors ${
-              filtroActivo === filtro.id
-                ? "bg-red-100 text-red-700 border border-red-200"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            <span>{filtro.label}</span>
-            <span className="bg-white px-1 rounded text-xs">{filtro.count}</span>
-          </button>
-        ))}
-      </div>
+  {/* Filtros */}
+  <div className="flex flex-wrap gap-2 mb-6">
+    {filtros.map((filtro) => (
+      <button
+        key={filtro.id}
+        onClick={() => setFiltroActivo(filtro.id)}
+        className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm transition-colors ${
+          filtroActivo === filtro.id
+            ? "bg-red-100 text-red-700 border border-red-200"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        }`}
+      >
+        <span>{filtro.label}</span>
+        <span className="bg-white px-1 rounded text-xs">{filtro.count}</span>
+      </button>
+    ))}
+  </div>
 
-      {/* Grid de Mascotas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mascotasRecientes.map((mascota, index) => (
-          <div
-            key={mascota.id}
-            className="border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <div className="relative">
-              <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center text-4xl">
-                <img src={mascota.foto} alt={mascota.nombre} className="h-full object-contain" />
-              </div>
-              <div
-                className={`absolute top-2 right-2 inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(mascota.estado)}`}
-              >
-                <span>{getEstadoIcon(mascota.estado)}</span>
-                <span>{mascota.estado}</span>
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{mascota.nombre}</h3>
-                  <p className="text-sm text-gray-600">{mascota.raza}</p>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="text-sm text-gray-600">{mascota.rating ?? "4.5"}</span>
-                </div>
-              </div>
-
-              <div className="space-y-1 text-sm text-gray-600 mb-4">
-                <p>🎂 {mascota.edad}</p>
-                <p>🏠 {mascota.refugioid}</p>
-                <p>📅 {new Date(mascota.fecha).toLocaleDateString("es-ES")}</p>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">{mascota.tipo}</span>
+    {/* Tabla de Mascotas */}
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Nombre</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Edad</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Refugio</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Especie</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Raza</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Estado</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {mascotasRecientes.map((mascota) => (
+            <tr key={mascota.id} className="hover:bg-gray-50">
+              <td className="px-4 py-2 text-sm text-gray-800">{mascota.nombre}</td>
+              <td className="px-4 py-2 text-sm text-gray-600">{mascota.edad}</td>
+              <td className="px-4 py-2 text-sm text-gray-600">{mascota.refugioid}</td>
+              <td className="px-4 py-2 text-sm text-gray-600">{mascota.tipo}</td>
+              <td className="px-4 py-2 text-sm text-gray-600">{mascota.raza}</td>
+              <td className="px-4 py-2 text-sm">
+                <span className={`inline-block px-2 py-1 text-xs rounded-full ${getEstadoColor(mascota.estado)}`}>
+                  {mascota.estado}
+                </span>
+              </td>
+              <td className="px-4 py-2">
                 <div className="flex space-x-2">
-                  <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                  <button className="text-blue-500 hover:text-blue-700">
                     <Eye className="h-4 w-4" />
                   </button>
-                  <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                  <button className="text-red-500 hover:text-red-700">
                     <Edit className="h-4 w-4" />
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-    </div>
+  </div>
+</div>
   );
 };
 
