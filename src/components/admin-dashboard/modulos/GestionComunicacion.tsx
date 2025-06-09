@@ -564,29 +564,6 @@ const GestionComunicacion = () => {
           </table>
         </div>
       </div>
-
-      {/* Configuración */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Configuración de Comunicación
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Personaliza las herramientas de chat, soporte y moderación de contenido.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Settings className="h-5 w-5" />
-              <span>Configurar Chat</span>
-            </button>
-            <button className="inline-flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              <Flag className="h-5 w-5" />
-              <span>Moderación y Filtros</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
