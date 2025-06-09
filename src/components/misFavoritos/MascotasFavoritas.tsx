@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { obtenerMascotasFavoritas } from '@/data/mascotasSimuladas'
-import CardMascota from '@/app/PantallaGestionMascotas/componentes/CardMascota'
+import CardMascota from './CardMascotaUsuario'
 import { Mascota } from '@/app/refugio/tipos'
 
 export default function MascotasFavoritas() {

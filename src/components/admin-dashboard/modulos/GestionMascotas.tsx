@@ -177,12 +177,8 @@ const irAFichaMedica = () => {
       {/* Acciones Rápidas */}
       <div className="bg-white rounded-xl shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <button className="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors group">
-            <CheckCircle className="h-8 w-8 text-red-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-red-900">Aprobar Mascotas</span>
-            <span className="text-xs text-red-600 mt-1">12 pendientes</span>
-          </button>
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+         
            <button
             onClick={irAMultimedia}
             className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
