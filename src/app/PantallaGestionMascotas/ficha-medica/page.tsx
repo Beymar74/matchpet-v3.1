@@ -21,7 +21,7 @@ interface FichaMedica {
   notas?: string
 }
 
-export default function FichaMedicaPage() {
+function FichaMedicaPage() {
   const [fichas, setFichas] = useState<FichaMedica[]>([])
   const [paginaActual, setPaginaActual] = useState(1)
   const [fichaSeleccionadaId, setFichaSeleccionadaId] = useState<number | null>(null)
@@ -183,3 +183,6 @@ export default function FichaMedicaPage() {
     </div>
   )
 }
+
+
+export default FichaMedicaPage
