@@ -8,12 +8,13 @@ export interface Mascota {
   edad: number;
   estado: string;
   descripcion?: string;
+  tamaño?: string;
   foto?: string;
   fechaIngreso?: string;
   compatibilidad?: number;
   solicitudes?: number;
    rating?: number;
-  refugio?: string;
+  refugioid?: string;
   fecha?: string;
   tipo?: string;
   adoptabilidad?: number;

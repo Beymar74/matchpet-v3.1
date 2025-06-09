@@ -3,6 +3,7 @@
 import React from 'react'
 import Header from '@/components/Header'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function HistorialCambiosPage() {
   const historialMock = [
@@ -22,6 +23,8 @@ export default function HistorialCambiosPage() {
       responsable: 'voluntario_ingreso',
     },
   ]
+
+   const router = useRouter()
 
   return (
     <div className="pt-[80px] min-h-screen bg-white text-gray-900 transition-colors duration-500">
@@ -58,12 +61,11 @@ export default function HistorialCambiosPage() {
         </div>
 
         <div className="mt-6 text-sm">
-          <Link
-            href="/PantallaGestionMascotas"
-            className="text-[#6093BF] hover:underline"
-          >
-            ← Volver a Gestión de Mascotas
-          </Link>
+          <div className="mt-6 text-sm">
+          <button onClick={() => router.back()} className="text-[#6093BF] hover:underline">
+            ← Volver a la página anterior
+          </button>
+        </div>
         </div>
       </main>
     </div>
