@@ -105,6 +105,16 @@ const estadisticasMascotas = [
 ];
 
  const router = useRouter();
+
+const irAFichaMedica = () => {
+    router.push('/PantallaGestionMascotas/ficha-medica')
+  }
+
+  const irAMultimedia = () => {
+    router.push('/PantallaGestionMascotas/multimedia')
+  }
+
+
   return (
     <div className="space-y-6">
       {/* Header del Módulo */}
@@ -173,16 +183,22 @@ const estadisticasMascotas = [
             <span className="text-sm font-medium text-red-900">Aprobar Mascotas</span>
             <span className="text-xs text-red-600 mt-1">12 pendientes</span>
           </button>
-          <button className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group">
+           <button
+            onClick={irAMultimedia}
+            className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
+          >
             <Camera className="h-8 w-8 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
             <span className="text-sm font-medium text-blue-900">Actualizar Fotos</span>
             <span className="text-xs text-blue-600 mt-1">23 sin foto</span>
           </button>
-          <button className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group">
-            <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-green-900">Estado de Salud</span>
-            <span className="text-xs text-green-600 mt-1">5 revisiones</span>
-          </button>
+         <button
+          onClick={irAFichaMedica}
+          className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group"
+        >
+          <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-medium text-green-900">Estado de Salud</span>
+          <span className="text-xs text-green-600 mt-1">5 revisiones</span>
+        </button>
         </div>
       </div>
 
