@@ -20,14 +20,20 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
   const [formData, setFormData] = useState<FichaMedica | null>(null)
 
   useEffect(() => {
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
+    const fichas: FichaMedica[] = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+
+    const encontrada = fichas.find((ficha) =>
+      ficha?.idMascota !== undefined && Number(ficha.idMascota) === mascotaId
+    )
+
     if (encontrada) {
       setFormData({ ...encontrada })
     }
   }, [mascotaId])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     if (!formData) return
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
@@ -36,8 +42,10 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
     e.preventDefault()
     if (!formData) return
 
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const index = fichas.findIndex((f: any) => f.idMascota === mascotaId.toString())
+    const fichas: FichaMedica[] = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
+    const index = fichas.findIndex((ficha) =>
+      ficha?.idMascota !== undefined && Number(ficha.idMascota) === mascotaId
+    )
 
     if (index !== -1) {
       fichas[index] = formData
@@ -68,7 +76,7 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
           <TextField label="Vacunas" name="vacunas" value={formData.vacunas} onChange={handleChange} />
           <TextField label="Alergias" name="alergias" value={formData.alergias} onChange={handleChange} />
           <TextField label="Enfermedades" name="enfermedades" value={formData.enfermedades} onChange={handleChange} />
-          
+
           <div>
             <label className="block text-sm font-semibold text-[#30588C] mb-1">Esterilizado</label>
             <select
@@ -83,7 +91,13 @@ export default function EditarFichaMedicaModal({ mascotaId, onClose }: Props) {
             </select>
           </div>
 
-          <TextField label="Notas" name="notas" value={formData.notas} onChange={handleChange} isTextArea />
+          <TextField
+            label="Notas"
+            name="notas"
+            value={formData.notas}
+            onChange={handleChange}
+            isTextArea
+          />
 
           <div className="flex justify-end pt-4">
             <button
@@ -135,4 +149,3 @@ function TextField({
     </div>
   )
 }
-

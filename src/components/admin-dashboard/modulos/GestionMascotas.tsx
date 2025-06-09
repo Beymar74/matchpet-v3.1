@@ -166,7 +166,7 @@ const estadisticasMascotas = [
       {/* Acciones Rápidas */}
       <div className="bg-white rounded-xl shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <button className="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors group">
             <CheckCircle className="h-8 w-8 text-red-600 mb-2 group-hover:scale-110 transition-transform" />
             <span className="text-sm font-medium text-red-900">Aprobar Mascotas</span>
@@ -181,11 +181,6 @@ const estadisticasMascotas = [
             <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
             <span className="text-sm font-medium text-green-900">Estado de Salud</span>
             <span className="text-xs text-green-600 mt-1">5 revisiones</span>
-          </button>
-          <button className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group">
-            <MapPin className="h-8 w-8 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-medium text-purple-900">Por Ubicación</span>
-            <span className="text-xs text-purple-600 mt-1">Ver mapa</span>
           </button>
         </div>
       </div>
@@ -275,7 +270,7 @@ const estadisticasMascotas = [
 
               <div className="space-y-1 text-sm text-gray-600 mb-4">
                 <p>🎂 {mascota.edad}</p>
-                <p>🏠 {mascota.refugio}</p>
+                <p>🏠 {mascota.refugioid}</p>
                 <p>📅 {new Date(mascota.fecha).toLocaleDateString("es-ES")}</p>
               </div>
 
@@ -295,28 +290,6 @@ const estadisticasMascotas = [
         ))}
       </div>
     </div>
-      {/* Configuración */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Configuración del Módulo
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Personaliza las funcionalidades del módulo de gestión de mascotas.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-              <Settings className="h-5 w-5" />
-              <span>Configurar Campos</span>
-            </button>
-            <button className="inline-flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              <PawPrint className="h-5 w-5" />
-              <span>Criterios de Aprobación</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

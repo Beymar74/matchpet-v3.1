@@ -12,7 +12,25 @@ const GestionMascotas: React.FC = () => {
   const [mascotaSeleccionadaId, setMascotaSeleccionadaId] = useState<number | null>(null);
   const [modalRegistroAbierto, setModalRegistroAbierto] = useState(false);
 
+  // 🔍 Estados para los filtros
+  const [filtroTexto, setFiltroTexto] = useState('');
+  const [filtroEspecie, setFiltroEspecie] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
+
+  // Mascota seleccionada para ver detalle en el modal
   const mascotaSeleccionada = mascotasSimuladas.find(m => m.id === mascotaSeleccionadaId);
+
+  // 🧠 Aplicar filtros a las mascotas
+  const mascotasFiltradas = mascotasSimuladas.filter((mascota) => {
+    const coincideTexto =
+      mascota.nombre.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+      mascota.raza.toLowerCase().includes(filtroTexto.toLowerCase());
+
+    const coincideEspecie = filtroEspecie === '' || mascota.especie === filtroEspecie;
+    const coincideEstado = filtroEstado === '' || mascota.estado === filtroEstado;
+
+    return coincideTexto && coincideEspecie && coincideEstado;
+  });
 
   return (
     <div className="space-y-6">
@@ -28,10 +46,19 @@ const GestionMascotas: React.FC = () => {
         </button>
       </div>
 
-      <FiltrosBusqueda />
+      {/* Componentes de filtros */}
+      <FiltrosBusqueda
+        filtroTexto={filtroTexto}
+        filtroEspecie={filtroEspecie}
+        filtroEstado={filtroEstado}
+        onFiltroTextoChange={setFiltroTexto}
+        onFiltroEspecieChange={setFiltroEspecie}
+        onFiltroEstadoChange={setFiltroEstado}
+      />
 
+      {/* Tarjetas de mascotas filtradas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mascotasSimuladas.map((mascota) => (
+        {mascotasFiltradas.map((mascota) => (
           <TarjetaMascota
             key={mascota.id}
             id={mascota.id}
@@ -40,7 +67,7 @@ const GestionMascotas: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal de detalles de mascota */}
+      {/* Modal de detalles */}
       {mascotaSeleccionada && (
         <ModalMascota
           mascota={mascotaSeleccionada}
