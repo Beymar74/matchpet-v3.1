@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import CrearFichaMedicaModal from "./CreaarFichamedica"
-import EditarFichaMedicaModal from "./EditarFichaMedica" // si lo tienes implementado
+import EditarFichaMedicaModal from "./EditarFichaMedica"
 
 interface Props {
   mascotaId: number
@@ -14,10 +14,14 @@ export default function FichaMedica({ mascotaId, onClose }: Props) {
   const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
   const [mostrarEditarFicha, setMostrarEditarFicha] = useState(false)
 
-  const cargarFicha = () => {
-    const fichas = JSON.parse(localStorage.getItem('fichasMedicas') || '[]')
-    const encontrada = fichas.find((f: any) => f.idMascota === mascotaId.toString())
-    setFicha(encontrada || null)
+  const cargarFicha = async () => {
+    try {
+      const res = await fetch(`/api/fichamedica/ver?id=${mascotaId}`)
+      const data = await res.json()
+      setFicha(data || null)
+    } catch (error) {
+      console.error('❌ Error al cargar ficha médica', error)
+    }
   }
 
   useEffect(() => {
@@ -26,7 +30,6 @@ export default function FichaMedica({ mascotaId, onClose }: Props) {
 
   return (
     <>
-      {/* Modal principal: Ficha médica */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div className="bg-white text-gray-900 p-6 rounded-xl shadow-xl w-full max-w-2xl relative">
           <button
@@ -43,11 +46,11 @@ export default function FichaMedica({ mascotaId, onClose }: Props) {
           {ficha ? (
             <>
               <div className="space-y-4">
-                <p><strong className="text-[#30588C]">Vacunas:</strong> {ficha.vacunas}</p>
-                <p><strong className="text-[#30588C]">Alergias:</strong> {ficha.alergias}</p>
-                <p><strong className="text-[#30588C]">Enfermedades:</strong> {ficha.enfermedades}</p>
-                <p><strong className="text-[#30588C]">Esterilizado:</strong> {ficha.esterilizado}</p>
-                <p><strong className="text-[#30588C]">Notas:</strong> {ficha.notas}</p>
+                <p><strong className="text-[#30588C]">Vacunas:</strong> {ficha.Vacunas}</p>
+                <p><strong className="text-[#30588C]">Alergias:</strong> {ficha.Alergias}</p>
+                <p><strong className="text-[#30588C]">Enfermedades:</strong> {ficha.Enfermedades}</p>
+                <p><strong className="text-[#30588C]">Esterilizado:</strong> {ficha.Esterilizado}</p>
+                <p><strong className="text-[#30588C]">Notas:</strong> {ficha.Notas}</p>
               </div>
 
               <div className="mt-6 flex justify-end">
@@ -73,7 +76,7 @@ export default function FichaMedica({ mascotaId, onClose }: Props) {
         </div>
       </div>
 
-      {/* Modal para crear ficha médica */}
+      {/* Crear y editar */}
       {mostrarCrearFicha && (
         <CrearFichaMedicaModal
           mascotaId={mascotaId}
@@ -85,7 +88,6 @@ export default function FichaMedica({ mascotaId, onClose }: Props) {
         />
       )}
 
-      {/* Modal para editar ficha médica (opcional, si está implementado) */}
       {mostrarEditarFicha && (
         <EditarFichaMedicaModal
           mascotaId={mascotaId}
