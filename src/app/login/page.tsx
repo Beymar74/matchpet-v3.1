@@ -59,7 +59,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('https://agrosmart.wuaze.com/login.php', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' }
@@ -79,7 +79,7 @@ export default function LoginPage() {
         }
   
         // Obtener el rol
-        const rolResponse = await fetch(`https://agrosmart.wuaze.com/obtener-rol.php?idUsuario=${data.idUsuario}`);
+        const rolResponse = await fetch(`/api/obtener-rol?idUsuario=${data.idUsuario}`);
         const rolData = await rolResponse.json();
   
         if (rolData.rol) {
@@ -87,8 +87,7 @@ export default function LoginPage() {
         
           if (rolData.rol === 'Refugio') {
             try {
-              const refugioResponse = await fetch(`https://agrosmart.wuaze.com/obtener-id-refugio.php?idUsuario=${data.idUsuario}`);
-
+              const refugioResponse = await fetch(`/api/obtener-id-refugio?idUsuario=${data.idUsuario}`);
               const refugioData = await refugioResponse.json();
         
               if (refugioData.success && refugioData.idRefugio) {

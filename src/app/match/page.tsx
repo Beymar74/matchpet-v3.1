@@ -1,64 +1,96 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Heart, X, Star, MapPin, Calendar, Weight, Award, Filter, ArrowLeft, ArrowRight, Camera, Phone, MessageCircle, Info } from 'lucide-react';
 import HeaderUsuario from '@/components/layout/HeaderUsuario';
+import { basePetsData } from '@/data/petsData';
+
+const MatchPetImage = ({ especie, nombre, petId, imageCache, setImageCache }) => {
+  const [imageUrl, setImageUrl] = useState('/placeholder.jpg');
+  
+  useEffect(() => {
+    // Verificar si ya tenemos la imagen en cache
+    if (imageCache[petId]) {
+      setImageUrl(imageCache[petId]);
+      return;
+    }
+    
+    const getImage = async () => {
+      let newImageUrl = '/placeholder.jpg';
+      
+      if (especie.toLowerCase() === 'gato') {
+        // Gato sin texto personalizado
+        newImageUrl = `https://cataas.com/cat?${petId}`; // Usar petId para consistencia
+      } else if (especie.toLowerCase() === 'perro') {
+        // Imagen aleatoria de perro
+        try {
+          const res = await fetch('https://dog.ceo/api/breeds/image/random');
+          const data = await res.json();
+          newImageUrl = data.message;
+        } catch (error) {
+          console.error('Error cargando imagen de perro:', error);
+        }
+      }
+      
+      // Guardar en cache y actualizar estado
+      setImageUrl(newImageUrl);
+      setImageCache(prev => ({
+        ...prev,
+        [petId]: newImageUrl
+      }));
+    };
+    
+    getImage();
+  }, [especie, nombre, petId, imageCache, setImageCache]);
+  
+  return (
+    <img
+      src={imageUrl}
+      alt={nombre}
+      className="w-full h-full object-cover"
+      onError={() => setImageUrl('/placeholder.jpg')} // Fallback en caso de error
+    />
+  );
+};
 
 const MatchPetScreen = () => {
   const [currentPet, setCurrentPet] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [likedPets, setLikedPets] = useState([]);
+  // Cache de imágenes para mantener las mismas al navegar
+  const [imageCache, setImageCache] = useState({});
+  
+  // Estados para filtros
+  const [filters, setFilters] = useState({
+    especie: 'todos',
+    edad: 'cualquier',
+    tamaño: 'cualquier',
+    distancia: 'sin-limite'
+  });
 
-  const pets = [
-    {
-      id: 1,
-      name: "Luna",
-      breed: "Labrador",
-      age: "2 años",
-      weight: "25 kg",
-      gender: "Hembra",
-      location: "Refugio Amigo Fiel",
-      distance: "2.5 km",
-      compatibility: 92,
-      personality: ["Juguetona", "Cariñosa", "Activa"],
-      description: "Luna es una perra muy cariñosa que ama jugar y estar con familia. Le encanta el agua y es perfecta para familias activas.",
-      vaccinated: true,
-      sterilized: true,
-      images: ["/api/placeholder/400/500", "/api/placeholder/400/500", "/api/placeholder/400/500"]
-    },
-    {
-      id: 2,
-      name: "Max",
-      breed: "Golden Retriever",
-      age: "4 años",
-      weight: "30 kg",
-      gender: "Macho",
-      location: "Refugio Santa Clara",
-      distance: "1.8 km",
-      compatibility: 88,
-      personality: ["Tranquilo", "Protector", "Leal"],
-      description: "Max es un perro muy tranquilo y protector, ideal para familias con niños. Es muy obediente y cariñoso.",
-      vaccinated: true,
-      sterilized: true,
-      images: ["/api/placeholder/400/500", "/api/placeholder/400/500"]
-    },
-    {
-      id: 3,
-      name: "Bella",
-      breed: "Pastor Alemán",
-      age: "3 años",
-      weight: "28 kg",
-      gender: "Hembra",
-      location: "Refugio Ciudad",
-      distance: "3.2 km",
-      compatibility: 85,
-      personality: ["Inteligente", "Activa", "Guardiana"],
-      description: "Bella es muy inteligente y activa. Necesita una familia que le dedique tiempo para ejercicio y entrenamiento.",
-      vaccinated: true,
-      sterilized: false,
-      images: ["/api/placeholder/400/500"]
+  // Filtrar mascotas según los criterios seleccionados
+  const filteredPets = useMemo(() => {
+    return basePetsData.filter(pet => {
+      if (filters.especie !== 'todos' && pet.species !== filters.especie) return false;
+      if (filters.edad !== 'cualquier' && pet.ageGroup !== filters.edad) return false;
+      if (filters.tamaño !== 'cualquier' && pet.sizeGroup !== filters.tamaño) return false;
+      if (filters.distancia !== 'sin-limite') {
+        const petDistance = parseFloat(pet.distance);
+        const maxDistance = parseFloat(filters.distancia);
+        if (petDistance > maxDistance) return false;
+      }
+      return true;
+    });
+  }, [filters]);
+
+  const pets = filteredPets.length > 0 ? filteredPets : basePetsData;
+
+  // Efecto para resetear currentPet cuando cambien los filtros
+  useEffect(() => {
+    if (currentPet >= pets.length) {
+      setCurrentPet(0);
     }
-  ];
+  }, [pets.length, currentPet]);
 
   const nextPet = () => {
     setCurrentPet((prev) => (prev + 1) % pets.length);
@@ -69,7 +101,26 @@ const MatchPetScreen = () => {
   };
 
   const handleLike = () => {
-    setLikedPets([...likedPets, pets[currentPet].id]);
+    const currentPetData = pets[currentPet];
+    
+    // Agregar a favoritos locales
+    setLikedPets([...likedPets, currentPetData.id]);
+    
+    // Guardar en localStorage para persistencia
+    const favoritosGuardados = JSON.parse(localStorage.getItem('mascotasFavoritas') || '[]');
+    const nuevaFavorita = {
+      ...currentPetData,
+      fechaGuardado: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+      estado: 'Disponible'
+    };
+    
+    // Evitar duplicados
+    const yaExiste = favoritosGuardados.some(fav => fav.id === currentPetData.id);
+    if (!yaExiste) {
+      favoritosGuardados.push(nuevaFavorita);
+      localStorage.setItem('mascotasFavoritas', JSON.stringify(favoritosGuardados));
+    }
+    
     nextPet();
   };
 
@@ -77,7 +128,26 @@ const MatchPetScreen = () => {
     nextPet();
   };
 
-  const pet = pets[currentPet];
+  // Manejar cambios en filtros
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+    setCurrentPet(0); // Resetear a la primera mascota cuando cambien los filtros
+  };
+
+  // Aplicar filtros
+  const applyFilters = () => {
+    setCurrentPet(0);
+    setShowFilters(false);
+  };
+
+  const pet = pets[currentPet] || pets[0];
+
+  if (!pet) {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -87,7 +157,9 @@ const MatchPetScreen = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Controls Bar */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Encuentra tu compañero perfecto</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Encuentra tu compañero perfecto</h2>
+          </div>
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => setShowFilters(!showFilters)}
@@ -95,6 +167,9 @@ const MatchPetScreen = () => {
             >
               <Filter size={20} />
               <span>Filtros</span>
+              {(filters.especie !== 'todos' || filters.edad !== 'cualquier' || filters.tamaño !== 'cualquier' || filters.distancia !== 'sin-limite') && (
+                <span className="bg-red-500 text-white text-xs rounded-full w-2 h-2"></span>
+              )}
             </button>
             <div className="flex items-center space-x-2 text-sm text-gray-600 bg-white px-3 py-2 rounded-lg shadow-sm">
               <Heart size={16} className="text-red-500" />
@@ -113,48 +188,75 @@ const MatchPetScreen = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Especie</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Todos</option>
-                    <option>Perros</option>
-                    <option>Gatos</option>
+                  <select 
+                    value={filters.especie}
+                    onChange={(e) => handleFilterChange('especie', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="perro">Perros</option>
+                    <option value="gato">Gatos</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Cualquier edad</option>
-                    <option>Cachorro (0-1 año)</option>
-                    <option>Joven (1-3 años)</option>
-                    <option>Adulto (3-7 años)</option>
-                    <option>Senior (7+ años)</option>
+                  <select 
+                    value={filters.edad}
+                    onChange={(e) => handleFilterChange('edad', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="cualquier">Cualquier edad</option>
+                    <option value="cachorro">Cachorro (0-1 año)</option>
+                    <option value="joven">Joven (1-3 años)</option>
+                    <option value="adulto">Adulto (3-7 años)</option>
+                    <option value="senior">Senior (7+ años)</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Tamaño</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Cualquier tamaño</option>
-                    <option>Pequeño (0-10 kg)</option>
-                    <option>Mediano (10-25 kg)</option>
-                    <option>Grande (25+ kg)</option>
+                  <select 
+                    value={filters.tamaño}
+                    onChange={(e) => handleFilterChange('tamaño', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="cualquier">Cualquier tamaño</option>
+                    <option value="pequeño">Pequeño (0-10 kg)</option>
+                    <option value="mediano">Mediano (10-25 kg)</option>
+                    <option value="grande">Grande (25+ kg)</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Distancia máxima</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Sin límite</option>
-                    <option>2 km</option>
-                    <option>5 km</option>
-                    <option>10 km</option>
-                    <option>20 km</option>
+                  <select 
+                    value={filters.distancia}
+                    onChange={(e) => handleFilterChange('distancia', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="sin-limite">Sin límite</option>
+                    <option value="2">2 km</option>
+                    <option value="5">5 km</option>
+                    <option value="10">10 km</option>
+                    <option value="20">20 km</option>
                   </select>
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-red-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
+                <button 
+                  onClick={applyFilters}
+                  className="w-full bg-gradient-to-r from-red-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
+                >
                   Aplicar filtros
                 </button>
+                
+                {filteredPets.length === 0 && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p className="text-sm text-yellow-800">
+                      No se encontraron mascotas con estos filtros. Mostrando todas las mascotas disponibles.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -168,10 +270,12 @@ const MatchPetScreen = () => {
                 
                 {/* Pet Image Section */}
                 <div className="lg:col-span-3 relative h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200">
-                  <img 
-                    src={pet.images[0]} 
-                    alt={pet.name}
-                    className="w-full h-full object-cover"
+                  <MatchPetImage 
+                    especie={pet.species} 
+                    nombre={pet.name} 
+                    petId={pet.id}
+                    imageCache={imageCache}
+                    setImageCache={setImageCache}
                   />
                   
                   {/* Compatibility Badge */}
@@ -196,9 +300,9 @@ const MatchPetScreen = () => {
 
                   {/* Image indicators */}
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                    {pet.images.map((_, index) => (
-                      <div key={index} className="w-2 h-2 rounded-full bg-white/60"></div>
-                    ))}
+                    <div className="w-2 h-2 rounded-full bg-white/60"></div>
+                    <div className="w-2 h-2 rounded-full bg-white/60"></div>
+                    <div className="w-2 h-2 rounded-full bg-white/60"></div>
                   </div>
                 </div>
 
@@ -277,22 +381,6 @@ const MatchPetScreen = () => {
                         <span className="text-sm">Me gusta</span>
                       </button>
                     </div>
-
-                    {/* Additional Actions */}
-                    <div className="flex justify-center space-x-4 pt-3 border-t border-gray-100">
-                      <button className="flex items-center space-x-1 text-gray-600 hover:text-blue-600 transition-colors">
-                        <Camera size={14} />
-                        <span className="text-xs">Más fotos</span>
-                      </button>
-                      <button className="flex items-center space-x-1 text-gray-600 hover:text-green-600 transition-colors">
-                        <Phone size={14} />
-                        <span className="text-xs">Contactar refugio</span>
-                      </button>
-                      <button className="flex items-center space-x-1 text-gray-600 hover:text-purple-600 transition-colors">
-                        <Info size={14} />
-                        <span className="text-xs">Más info</span>
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -312,12 +400,20 @@ const MatchPetScreen = () => {
               
               <div className="space-y-4">
                 {pets.filter((_, index) => index !== currentPet).slice(0, 3).map((recommendedPet, index) => (
-                  <div key={recommendedPet.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <img 
-                      src={recommendedPet.images[0]} 
-                      alt={recommendedPet.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                  <div 
+                    key={recommendedPet.id} 
+                    onClick={() => setCurrentPet(pets.findIndex(p => p.id === recommendedPet.id))}
+                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      <MatchPetImage 
+                        especie={recommendedPet.species} 
+                        nombre={recommendedPet.name}
+                        petId={recommendedPet.id}
+                        imageCache={imageCache}
+                        setImageCache={setImageCache}
+                      />
+                    </div>
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-800 text-sm">{recommendedPet.name}</h4>
                       <p className="text-xs text-gray-600">{recommendedPet.breed}</p>
@@ -333,7 +429,10 @@ const MatchPetScreen = () => {
               <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
                 <h4 className="font-medium text-gray-800 text-sm mb-2">💡 Consejo de adopción</h4>
                 <p className="text-xs text-gray-600">
-                  Recuerda que adoptar una mascota es una responsabilidad de por vida. Asegúrate de tener tiempo, espacio y recursos para cuidarla.
+                  {pet.species === 'gato' 
+                    ? 'Los gatos necesitan espacios seguros y verticales para explorar. Considera torres para gatos y ventanas seguras.'
+                    : 'Los perros necesitan ejercicio diario y socialización. Asegúrate de tener tiempo para paseos y juegos.'
+                  }
                 </p>
               </div>
             </div>
