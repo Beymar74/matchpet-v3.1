@@ -6,7 +6,6 @@ import FiltrosBusqueda from './FiltrosBusqueda';
 import TarjetaMascota from '../../../../components/GestionMascotas/TarjetaMascota';
 import ModalMascota from '../../../../components/GestionMascotas/modales/ModalMascota';
 import RegistrarMascota from '../../../../components/GestionMascotas/modales/RegistrarMascota';
-import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 
 const GestionMascotas: React.FC = () => {
   const [mascotaSeleccionadaId, setMascotaSeleccionadaId] = useState<number | null>(null);
@@ -17,20 +16,7 @@ const GestionMascotas: React.FC = () => {
   const [filtroEspecie, setFiltroEspecie] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
 
-  // Mascota seleccionada para ver detalle en el modal
-  const mascotaSeleccionada = mascotasSimuladas.find(m => m.id === mascotaSeleccionadaId);
-
   // 🧠 Aplicar filtros a las mascotas
-  const mascotasFiltradas = mascotasSimuladas.filter((mascota) => {
-    const coincideTexto =
-      mascota.nombre.toLowerCase().includes(filtroTexto.toLowerCase()) ||
-      mascota.raza.toLowerCase().includes(filtroTexto.toLowerCase());
-
-    const coincideEspecie = filtroEspecie === '' || mascota.especie === filtroEspecie;
-    const coincideEstado = filtroEstado === '' || mascota.estado === filtroEstado;
-
-    return coincideTexto && coincideEspecie && coincideEstado;
-  });
 
   return (
     <div className="space-y-6">

@@ -1,11 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import {
-  fichasMedicasSimuladas,
-  obtenerFichaMedicaPorId,
-  FichaMedica
-} from '@/data/fichasMedicasSimuladas'
+
 
 interface EditarFichaMedicaProps {
   mascotaId: number

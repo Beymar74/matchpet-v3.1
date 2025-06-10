@@ -1,7 +1,5 @@
-// src/components/admin-dashboard/dashboard/GraficoAdopciones.tsx
 import React, { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, Filter } from 'lucide-react';
-import axios from 'axios';
 
 const GraficoAdopciones = () => {
   const [periodoSeleccionado, setPeriodoSeleccionado] = useState<'semana' | 'mes' | 'año'>('mes');
@@ -16,8 +14,10 @@ const GraficoAdopciones = () => {
     const fetchDatos = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/grafico-adopciones?periodo=${periodoSeleccionado}`);
-        setDatos(res.data);
+        const res = await fetch(`/api/grafico-adopciones?periodo=${periodoSeleccionado}`);
+        if (!res.ok) throw new Error('Error al obtener datos');
+        const json = await res.json();
+        setDatos(json);
       } catch (err) {
         console.error("Error al obtener datos:", err);
       } finally {

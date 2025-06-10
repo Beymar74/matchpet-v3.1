@@ -1,4 +1,3 @@
-// src/components/admin-dashboard/dashboard/EstadisticasCards.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
 import FormattedNumber from '@/components/FormattedNumber';
@@ -12,7 +11,6 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
-import axios from 'axios';
 
 const EstadisticasCards: React.FC<{ loading: boolean }> = ({ loading }) => {
   const [data, setData] = useState({
@@ -27,8 +25,10 @@ const EstadisticasCards: React.FC<{ loading: boolean }> = ({ loading }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('/api/estadisticas');
-        setData(res.data);
+        const res = await fetch('/api/estadisticas');
+        if (!res.ok) throw new Error('Error al obtener estadísticas');
+        const json = await res.json();
+        setData(json);
       } catch (err) {
         console.error('❌ Error cargando estadísticas:', err);
       }
