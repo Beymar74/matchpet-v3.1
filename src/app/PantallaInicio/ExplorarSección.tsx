@@ -263,13 +263,6 @@ export default function ExploreSection() {
               Únete a nuestra comunidad y sé parte del cambio que necesitan nuestros amigos peludos.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/login"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#30588C] to-blue-600 hover:from-[#254559] hover:to-blue-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-              >
-                <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                Programar visita
-              </Link>
             </div>
           </div>
         </div>
