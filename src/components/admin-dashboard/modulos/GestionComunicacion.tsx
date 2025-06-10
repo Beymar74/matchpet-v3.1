@@ -1,5 +1,6 @@
 // src/components/admin-dashboard/modulos/GestionComunicacion.tsx
 import React, { useState } from 'react';
+import { useRouter } from "next/navigation";
 import { 
   MessageCircle,
   Plus,
@@ -257,6 +258,11 @@ const GestionComunicacion = () => {
       default: return 'bg-gray-400';
     }
   };
+  const router = useRouter();
+
+  const manejarClickNuevoTicket = () => {
+    router.push("/pantallaComunicacion/Chat/admin/conversacion/nueva");
+  };
 
   return (
     <div className="space-y-6">
@@ -281,159 +287,11 @@ const GestionComunicacion = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              <Plus className="h-4 w-4" />
-              <span>Nuevo Ticket</span>
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {estadisticasComunicacion.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={stat.titulo}
-              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">{stat.titulo}</p>
-                  <p className="text-xl font-bold text-gray-900">
-                    {stat.valor.toLocaleString()}{stat.unidad || ''}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">{stat.cambio}</p>
-                </div>
-                <div className={`p-2 rounded-lg bg-${stat.color}-100`}>
-                  <Icon className={`h-5 w-5 text-${stat.color}-600`} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Acciones Rápidas */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {accionesRapidas.map((accion, index) => {
-            const Icon = accion.icon;
-            return (
-              <button
-                key={accion.titulo}
-                className={`flex flex-col items-center p-4 bg-${accion.color}-50 rounded-lg hover:bg-${accion.color}-100 transition-colors group relative`}
-              >
-                {accion.badge && (
-                  <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                    {accion.badge}
-                  </div>
-                )}
-                <Icon className={`h-8 w-8 text-${accion.color}-600 mb-2 group-hover:scale-110 transition-transform`} />
-                <span className={`text-sm font-medium text-${accion.color}-900`}>{accion.titulo}</span>
-                <span className={`text-xs text-${accion.color}-600 mt-1`}>{accion.descripcion}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Equipo de Soporte */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Equipo de Soporte en Línea</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {equipoSoporte.map((agente, index) => (
-            <div
-              key={agente.id}
-              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-                    {agente.nombre.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div className={`absolute -bottom-1 -right-1 w-3 h-3 ${getEstadoAgente(agente.estado)} rounded-full border-2 border-white`}></div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{agente.nombre}</h3>
-                  <p className="text-sm text-gray-600">{agente.rol}</p>
-                </div>
-              </div>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Conversaciones:</span>
-                  <span className="font-medium">{agente.conversaciones}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Rating:</span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                    <span className="font-medium">{agente.rating}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Respuesta:</span>
-                  <span className="font-medium">{agente.tiempo_respuesta}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Templates de Respuesta */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Templates de Respuesta</h2>
-          <button className="flex items-center space-x-2 px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors">
-            <Plus className="h-4 w-4" />
-            <span>Nuevo Template</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {templatesMensajes.map((template, index) => (
-            <div
-              key={template.id}
-              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-medium text-gray-900">{template.nombre}</h3>
-                  <span className="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600 mt-1 inline-block">
-                    {template.categoria}
-                  </span>
-                </div>
-                <span className="text-sm text-gray-500">{template.usos} usos</span>
-              </div>
-              
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{template.contenido}</p>
-              
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-green-600 font-medium">Activo</span>
-                <div className="flex space-x-2">
-                  <button className="p-1 text-gray-400 hover:text-blue-600 rounded">
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  <button className="p-1 text-gray-400 hover:text-green-600 rounded">
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button className="p-1 text-gray-400 hover:text-purple-600 rounded">
-                    <Send className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      
       {/* Lista de Conversaciones */}
       <div className="bg-white rounded-xl shadow-md p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 mb-6">
@@ -553,29 +411,6 @@ const GestionComunicacion = () => {
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Configuración */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Configuración de Comunicación
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Personaliza las herramientas de chat, soporte y moderación de contenido.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Settings className="h-5 w-5" />
-              <span>Configurar Chat</span>
-            </button>
-            <button className="inline-flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              <Flag className="h-5 w-5" />
-              <span>Moderación y Filtros</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

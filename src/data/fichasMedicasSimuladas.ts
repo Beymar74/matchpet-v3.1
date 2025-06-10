@@ -31,3 +31,14 @@ export function obtenerFichaMedicaPorId(id: string) {
   // Si no hay en localStorage, buscar en las simuladas
   return fichasMedicasSimuladas.find(f => f.idMascota === id) || null
 }
+
+// Favoritos simulados por usuario
+const favoritasPorUsuario: Record<string, number[]> = {
+  default_user: [1, 2] // Ids de mascotas favoritas del usuario
+}
+
+// ✅ Función que debes exportar
+export function obtenerMascotasFavoritas(usuarioId: string): Mascota[] {
+  const ids = favoritasPorUsuario[usuarioId] || []
+  return mascotasSimuladas.filter((m) => ids.includes(m.id))
+}

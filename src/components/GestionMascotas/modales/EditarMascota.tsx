@@ -1,151 +1,220 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas'
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
+import Header from '@/components/Header'
 
-interface Mascota {
-  id: number
-  nombre: string
-  especie: string
-  raza: string
-  edad: number
-  sexo: string
-  descripcion: string
-  tamaño: string
-  color: string
-  fechaIngreso: string
-  foto: string
-  estado: string
-  adoptabilidad: number  // en porcentaje
-
-}
-
-interface Props {
-  id: number
+interface EditarMascotaProps {
+  id: string | number
   modoModal?: boolean
-  onClose: () => void
+  onClose?: () => void
   onGuardar?: (mascotaActualizada: Mascota) => void
 }
 
-export default function EditarMascotaModal({ id, onClose, onGuardar }: Props) {
+export default function EditarMascota({ id, modoModal = false, onClose, onGuardar }: EditarMascotaProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState<Mascota | null>(null)
+  const [errores, setErrores] = useState<{ [key: string]: boolean }>({})
+  const [subiendo, setSubiendo] = useState(false)
 
   useEffect(() => {
-    const mascotas = JSON.parse(localStorage.getItem('mascotas') || '[]')
-    const encontrada = mascotas.find((m: any) => m.id === id)
-    if (encontrada) setFormData({ ...encontrada })
+    const mascota = mascotasSimuladas.find((m) => m.id === Number(id))
+    if (mascota) setFormData({ ...mascota })
   }, [id])
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     if (!formData) return
-    const value = e.target.type === 'number' ? parseInt(e.target.value) || 0 : e.target.value
-    setFormData({ ...formData, [e.target.name]: value })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+    setErrores({ ...errores, [e.target.name]: false })
+  }
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !formData) return
+
+    setSubiendo(true)
+    const url = await uploadToCloudinary(file)
+    if (url) {
+      setFormData({ ...formData, foto: url })
+    }
+    setSubiendo(false)
+  }
+
+  const validarFormulario = () => {
+    if (!formData) return false
+    const campos = ['nombre', 'especie', 'edad', 'estado']
+    const errores: any = {}
+    campos.forEach((campo) => {
+      if (!formData[campo as keyof Mascota]) errores[campo] = true
+    })
+    setErrores(errores)
+    return Object.keys(errores).length === 0
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData) return
+    if (!validarFormulario() || !formData) return
 
-    const mascotas = JSON.parse(localStorage.getItem('mascotas') || '[]')
-    const index = mascotas.findIndex((m: any) => m.id === id)
-
+    const index = mascotasSimuladas.findIndex((m) => m.id === Number(id))
     if (index !== -1) {
-      mascotas[index] = formData
-      localStorage.setItem('mascotas', JSON.stringify(mascotas))
-      if (onGuardar) onGuardar(formData)
-      alert('✅ Mascota actualizada correctamente.')
-      onClose()
+      mascotasSimuladas[index] = { ...formData }
+
+      alert('✅ Mascota actualizada correctamente (simulado)')
+
+      if (modoModal) {
+        onGuardar?.(formData)
+        onClose?.()
+      } else {
+        router.push('/PantallaGestionMascotas')
+      }
     }
   }
 
-  if (!formData) return null
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
-      <div
-        className="relative w-full max-w-3xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold"
-        >
-          ✕
-        </button>
-
-        <h2 className="text-2xl font-bold mb-4 text-[#30588C] text-center">✏️ Editar Mascota</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <TextField label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
-          <TextField label="Especie" name="especie" value={formData.especie} onChange={handleChange} />
-          <TextField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
-          <NumberField label="Edad (en años)" name="edad" value={formData.edad} onChange={handleChange} />
-
-          <SelectField label="Sexo" name="sexo" value={formData.sexo} onChange={handleChange} options={['Macho', 'Hembra']} />
-          <TextField label="Tamaño" name="tamaño" value={formData.tamaño} onChange={handleChange} />
-          <TextField label="Color" name="color" value={formData.color} onChange={handleChange} />
-          <TextField label="Fecha de ingreso" name="fechaIngreso" value={formData.fechaIngreso} onChange={handleChange} />
-          <TextField label="Foto (URL o emoji)" name="foto" value={formData.foto} onChange={handleChange} />
-          <SelectField label="Estado" name="estado" value={formData.estado} onChange={handleChange} options={['Disponible', 'En proceso', 'Adoptado']} />
-          <TextField label="Descripción" name="descripcion" value={formData.descripcion} onChange={handleChange} isTextArea />
-          <NumberField
-  label="Adoptabilidad (%)"
-  name="adoptabilidad"
-  value={formData.adoptabilidad}
-  onChange={handleChange}
-/>
-
-
-          <div className="flex justify-end pt-4">
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded transition"
-            >
-              💾 Guardar Cambios
-            </button>
-          </div>
-        </form>
+  if (!formData) {
+    return (
+      <div className={`${modoModal ? '' : 'pt-[80px] min-h-screen'} bg-white text-gray-900`}>
+        {!modoModal && <Header />}
+        <main className="max-w-3xl mx-auto py-10 px-6">
+          <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
+          <p className="text-red-500">Mascota no encontrada.</p>
+        </main>
+      </div>
+    )
+  }
+  return modoModal ? (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <button onClick={onClose} className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">✕</button>
+        <ContenidoFormulario
+          formData={formData}
+          errores={errores}
+          handleChange={handleChange}
+          handleImageChange={handleImageChange}
+          handleSubmit={handleSubmit}
+          subiendo={subiendo}
+        />
       </div>
     </div>
+  ) : (
+    <div className="min-h-screen bg-white text-gray-900 transition-colors duration-500">
+      <Header />
+      <main className="max-w-4xl mx-auto py-10 px-6">
+        <ContenidoFormulario
+          formData={formData}
+          errores={errores}
+          handleChange={handleChange}
+          handleImageChange={handleImageChange}
+          handleSubmit={handleSubmit}
+          subiendo={subiendo}
+        />
+      </main>
+    </div>
+  )
+}
+function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
+  return (
+    <>
+      <h1 className="text-3xl font-bold mb-6 text-[#BF3952]">✏️ Editar Mascota</h1>
+      <form onSubmit={handleSubmit} className="bg-white text-gray-900 p-6 rounded-xl shadow-xl space-y-5">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1 space-y-4">
+            <InputField label="Nombre *" name="nombre" value={formData.nombre} error={errores.nombre} onChange={handleChange} />
+            <InputField label="Especie *" name="especie" value={formData.especie} error={errores.especie} onChange={handleChange} />
+            <InputField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
+            <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
+            <div>
+              <label className="block text-sm font-semibold text-[#30588C]">Tamaño</label>
+              <select
+                name="tamano"
+                value={formData.tamano || ''}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded mt-1 bg-white border-gray-300"
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="Pequeño">Pequeño</option>
+                <option value="Mediano">Mediano</option>
+                <option value="Grande">Grande</option>
+              </select>
+            </div>
+
+
+            <div>
+              <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
+              <select
+                name="estado"
+                value={formData.estado}
+                onChange={handleChange}
+                className={`w-full border px-3 py-2 rounded mt-1 bg-white ${errores.estado ? 'border-red-500' : 'border-gray-300'}`}
+              >
+                <option value="Disponible">Disponible</option>
+                <option value="Adoptado">Adoptado</option>
+                <option value="En tratamiento">En tratamiento</option>
+                <option value="Necesidades Especiales">Necesidades Especiales</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-[#30588C]">Descripción</label>
+              <textarea
+                name="descripcion"
+                value={formData.descripcion}
+                onChange={handleChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 bg-white"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] mb-1">Actualizar imagen</label>
+              <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#6093BF] text-white rounded shadow hover:opacity-90">
+                Seleccionar archivo
+              </label>
+              <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+              {subiendo && <p className="text-xs mt-2 text-yellow-600">Subiendo imagen...</p>}
+            </div>
+          </div>
+
+          {formData.foto && (
+            <div className="flex-1 flex justify-center items-center">
+              <img
+                src={formData.foto}
+                alt="Vista previa"
+                className="max-w-full max-h-[300px] object-contain rounded-lg shadow"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end pt-4">
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded transition"
+          >
+            💾 Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </>
   )
 }
 
-// Reutilizables
-function TextField({ label, name, value, onChange, isTextArea = false }: any) {
+function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
-      {isTextArea ? (
-        <textarea name={name} value={value} onChange={onChange} rows={3} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
-      ) : (
-        <input type="text" name={name} value={value} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
-      )}
+      <label className="block text-sm font-semibold text-[#30588C]">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className={`w-full border px-3 py-2 rounded mt-1 bg-white ${error ? 'border-red-500' : 'border-gray-300'}`}
+        required={label.includes('*')}
+      />
     </div>
   )
 }
 
-function NumberField({ label, name, value, onChange }: any) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
-      <input type="number" name={name} value={value} min={0} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white" />
-    </div>
-  )
-}
-
-function SelectField({ label, name, value, onChange, options }: any) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-[#30588C] mb-1">{label}</label>
-      <select name={name} value={value} onChange={onChange} className="w-full border border-gray-300 px-3 py-2 rounded bg-white">
-        <option value="">Seleccionar...</option>
-        {options.map((opt: string, idx: number) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  )
-}

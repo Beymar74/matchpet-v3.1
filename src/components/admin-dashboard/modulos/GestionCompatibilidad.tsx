@@ -202,13 +202,6 @@ const GestionCompatibilidad = () => {
       color: 'green',
       action: () => ejecutarAnalisisML()
     },
-    {
-      titulo: 'Reportes',
-      descripcion: 'Métricas detalladas',
-      icon: BarChart3,
-      color: 'orange',
-      action: () => generarReporte()
-    }
   ];
 
   const filtros = [
@@ -428,13 +421,6 @@ const GestionCompatibilidad = () => {
             >
               <Plus className="h-4 w-4" />
               <span>Nuevo Test</span>
-            </button>
-            <button 
-              onClick={generarReporte}
-              className="flex items-center space-x-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <Download className="h-4 w-4" />
-              <span>Exportar</span>
             </button>
           </div>
         </div>
