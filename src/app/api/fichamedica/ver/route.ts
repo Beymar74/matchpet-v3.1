@@ -16,28 +16,49 @@ export async function GET() {
   try {
     await sql.connect(config)
 
-    const result = await sql.query(`
+    // 1. Obtener datos de todas las mascotas con ficha médica
+    const mascotasResult = await sql.query(`
       SELECT 
-        m.ID_Mascota AS idMascota,
-        m.Nombre,
-        e.Nombre_Especie AS especie,
-        m.Edad,
-        f.Vacunas,
-        f.Esterilizado,
-        f.Enfermedades,
-        f.Alergias,
-        f.Notas
-      FROM Mascotas m
-      LEFT JOIN Fichas_Medicas f ON m.ID_Mascota = f.ID_Mascota
-      LEFT JOIN Mascotas_Especies me ON m.ID_Mascota = me.ID_Mascota
-      LEFT JOIN Especies e ON me.ID_Especie = e.ID_Especie
+        M.ID_Mascota,
+        M.Nombre,
+        M.Edad,
+        E.Nombre_Especie,
+        FM.Esterilizado,
+        FM.Notas
+      FROM Mascotas M
+      INNER JOIN Mascotas_Especies ME ON M.ID_Mascota = ME.ID_Mascota
+      INNER JOIN Especies E ON ME.ID_Especie = E.ID_Especie
+      LEFT JOIN Ficha_Medica_Mascotas FM ON M.ID_Mascota = FM.ID_Mascota
     `)
 
-    return NextResponse.json(result.recordset)
+    const fichas = await Promise.all(
+      mascotasResult.recordset.map(async (m) => {
+        const vacunas = await sql.query`
+          SELECT Nombre_Vacuna FROM Vacunas_Mascotas WHERE ID_Mascota = ${m.ID_Mascota}
+        `
+        const enfermedades = await sql.query`
+          SELECT Nombre_Enfermedad FROM Enfermedades_Mascotas WHERE ID_Mascota = ${m.ID_Mascota}
+        `
+
+        return {
+          idMascota: m.ID_Mascota,
+          nombre: m.Nombre,
+          especie: m.Nombre_Especie,
+          edad: `${m.Edad} años`,
+          esterilizado: m.Esterilizado ? 'Sí' : 'No',
+          notas: m.Notas ?? '',
+          vacunas: vacunas.recordset.map(v => v.Nombre_Vacuna).join(', ') || 'Ninguna',
+          enfermedades: enfermedades.recordset.map(e => e.Nombre_Enfermedad).join(', ') || 'Ninguna',
+        }
+      })
+    )
+
+    return NextResponse.json(fichas)
   } catch (error) {
-    console.error('Error al obtener fichas médicas:', error)
-    return NextResponse.json({ error: 'Error al obtener fichas médicas' }, { status: 500 })
-  } finally {
-    sql.close()
+    console.error('❌ Error al obtener fichas médicas:', error)
+    return NextResponse.json(
+      { error: 'Error al obtener las fichas médicas', detalle: (error as Error).message },
+      { status: 500 }
+    )
   }
 }
