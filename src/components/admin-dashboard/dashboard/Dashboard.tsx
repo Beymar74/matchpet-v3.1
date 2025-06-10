@@ -1,7 +1,6 @@
 // src/components/admin-dashboard/dashboard/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import EstadisticasCards from './EstadisticasCards';
-import ActividadReciente from './ActividadReciente';
 import AccionesRapidas from './AccionesRapidas';
 import EstadoSistema from './EstadoSistema';
 import GraficoAdopciones from './GraficoAdopciones';
@@ -62,14 +61,6 @@ const Dashboard = () => {
           <EstadoSistema />
         </div>
 
-        {/* Columna Derecha - 1/3 */}
-        <div className="space-y-6">
-          {/* Actividad Reciente */}
-          <ActividadReciente />
-          
-          {/* Acciones Rápidas */}
-          <AccionesRapidas />
-        </div>
       </div>
     </div>
   );
