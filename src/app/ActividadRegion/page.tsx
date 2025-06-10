@@ -11,7 +11,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
+import HeaderAdmin from "@/components/layout/HeaderAdmin";
+import SidebarAdmin from "@/components/admin-dashboard/sidebar/SidebarAdmin";
 // Menú superior
 const botonesModulo7 = [
   { nombre: 'Inicio', ruta: '/admin' },
@@ -19,7 +20,6 @@ const botonesModulo7 = [
   { nombre: 'Evolución', ruta: '/EvolucionHistorica' },
   { nombre: 'Región', ruta: '/ActividadRegion' },
   { nombre: 'Favoritos', ruta: '/FavoritosFrecuentes' },
-  { nombre: 'Logs', ruta: '/LogsAuditorias' },
 ];
 
 // Datos simulados
@@ -45,10 +45,14 @@ export default function ActividadRegionRefugio() {
     (regionSeleccionada === "Todas" || d.region === regionSeleccionada) &&
     (refugioSeleccionado === "Todos" || d.refugio === refugioSeleccionado)
   );
-
+  const [activeModule, setActiveModule] = useState("modulo7");
+  const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="p-6 bg-white text-[#011526] shadow-xl rounded-2xl max-w-6xl mx-auto mt-6 border border-[#264653]">
-      {/* Menú superior */}
+  <>
+  <HeaderAdmin />
+      
+    <main className={`min-h-screen bg-gray-50 py-8 px-4 transition-all ${collapsed ? "ml-2" : "ml-8"}`}>
+        <div className="max-w-5xl mx-auto bg-white shadow rounded-xl p-6">
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         {botonesModulo7.map((btn, i) => (
           <Link
@@ -158,5 +162,7 @@ export default function ActividadRegionRefugio() {
         </table>
       </div>
     </div>
+    </main>
+    </>
   );
 }

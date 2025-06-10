@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas'
 import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
 import Header from '@/components/Header'
 

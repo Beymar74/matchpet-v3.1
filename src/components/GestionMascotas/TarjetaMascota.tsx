@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { mascotasSimuladas } from '@/data/mascotasSimuladas';
 import { Mascota } from '../../app/refugio/tipos';
 import ModalMascota from '@/components/GestionMascotas/modales/ModalMascota';
 

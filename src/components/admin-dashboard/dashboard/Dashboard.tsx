@@ -1,8 +1,6 @@
-// src/components/admin-dashboard/dashboard/Dashboard.tsx
+'use client';
 import React, { useState, useEffect } from 'react';
 import EstadisticasCards from './EstadisticasCards';
-import ActividadReciente from './ActividadReciente';
-import AccionesRapidas from './AccionesRapidas';
 import EstadoSistema from './EstadoSistema';
 import GraficoAdopciones from './GraficoAdopciones';
 import { RefreshCw } from 'lucide-react';
@@ -10,20 +8,39 @@ import { RefreshCw } from 'lucide-react';
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [estadisticas, setEstadisticas] = useState({
+    usuarios: 0,
+    mascotas: 0,
+    adopciones: 0,
+    refugios: 0,
+    pendientes: 0,
+    compatibilidad: 0
+  });
+
+  const fetchEstadisticas = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/estadisticas');
+      const data = await res.json();
+      setEstadisticas(data);
+    } catch (error) {
+      console.error('❌ Error al cargar estadísticas:', error);
+    } finally {
+      setLastUpdate(new Date());
+      setLoading(false);
+    }
+  };
 
   const handleRefresh = async () => {
-    setLoading(true);
-    // Simular carga de datos
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setLastUpdate(new Date());
-    setLoading(false);
+    await fetchEstadisticas();
   };
 
   useEffect(() => {
-    // Auto-refresh cada 5 minutos
+    fetchEstadisticas();
+
     const interval = setInterval(() => {
-      setLastUpdate(new Date());
-    }, 300000);
+      fetchEstadisticas();
+    }, 300000); // cada 5 minutos
 
     return () => clearInterval(interval);
   }, []);
@@ -51,24 +68,12 @@ const Dashboard = () => {
       {/* Estadísticas Cards */}
       <EstadisticasCards loading={loading} />
 
+
       {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Columna Izquierda - 2/3 */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Gráfico de Adopciones */}
           <GraficoAdopciones />
-          
-          {/* Estado del Sistema */}
           <EstadoSistema />
-        </div>
-
-        {/* Columna Derecha - 1/3 */}
-        <div className="space-y-6">
-          {/* Actividad Reciente */}
-          <ActividadReciente />
-          
-          {/* Acciones Rápidas */}
-          <AccionesRapidas />
         </div>
       </div>
     </div>

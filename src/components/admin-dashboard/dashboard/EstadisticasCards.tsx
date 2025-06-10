@@ -1,29 +1,46 @@
-// src/components/admin-dashboard/dashboard/EstadisticasCards.tsx
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import FormattedNumber from '@/components/FormattedNumber';
-import { 
-  Users, 
-  Heart, 
-  CheckCircle, 
-  MapPin, 
-  Clock, 
+import {
+  Users,
+  Heart,
+  CheckCircle,
+  MapPin,
+  Clock,
   TrendingUp,
-  UserPlus,
-  Award,
-  MessageSquare,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
 
-interface EstadisticasCardsProps {
-  loading: boolean;
-}
+const EstadisticasCards: React.FC<{ loading: boolean }> = ({ loading }) => {
+  const [data, setData] = useState({
+    usuarios: 0,
+    mascotas: 0,
+    adopciones: 0,
+    refugios: 0,
+    pendientes: 0,
+    compatibilidad: 0
+  });
 
-const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/estadisticas');
+        if (!res.ok) throw new Error('Error al obtener estadísticas');
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error('❌ Error cargando estadísticas:', err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const estadisticas = [
     {
       titulo: 'Total Usuarios',
-      valor: 1247,
+      valor: data.usuarios,
       cambio: +15,
       porcentaje: +12.5,
       icon: Users,
@@ -32,7 +49,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
     },
     {
       titulo: 'Total Mascotas',
-      valor: 856,
+      valor: data.mascotas,
       cambio: +8,
       porcentaje: +8.3,
       icon: Heart,
@@ -41,7 +58,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
     },
     {
       titulo: 'Adopciones/Mes',
-      valor: 127,
+      valor: data.adopciones,
       cambio: +23,
       porcentaje: +22.1,
       icon: CheckCircle,
@@ -50,7 +67,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
     },
     {
       titulo: 'Refugios Activos',
-      valor: 34,
+      valor: data.refugios,
       cambio: +2,
       porcentaje: +6.3,
       icon: MapPin,
@@ -59,7 +76,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
     },
     {
       titulo: 'Pendientes',
-      valor: 23,
+      valor: data.pendientes,
       cambio: -5,
       porcentaje: -17.9,
       icon: Clock,
@@ -68,7 +85,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
     },
     {
       titulo: 'Compatibilidad',
-      valor: 92.5,
+      valor: data.compatibilidad,
       cambio: +1.2,
       porcentaje: +1.3,
       icon: TrendingUp,
@@ -87,7 +104,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
       yellow: { border: 'border-yellow-500', bg: 'bg-yellow-50', text: 'text-yellow-900', icon: 'text-yellow-500' },
       indigo: { border: 'border-indigo-500', bg: 'bg-indigo-50', text: 'text-indigo-900', icon: 'text-indigo-500' }
     };
-    return colorMap[color];
+    return colorMap[color] || colorMap['blue'];
   };
 
   return (
@@ -96,7 +113,7 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
         const Icon = stat.icon;
         const colors = getColorClasses(stat.color);
         const isPositiveChange = stat.cambio > 0;
-        
+
         return (
           <div
             key={stat.titulo}
@@ -120,27 +137,23 @@ const EstadisticasCards: React.FC<EstadisticasCardsProps> = ({ loading }) => {
                     <Icon className={`h-5 w-5 ${colors.icon}`} />
                   </div>
                 </div>
-                
+
                 <div className="mb-2">
                   <p className="text-2xl font-bold text-gray-900">
                     <FormattedNumber value={stat.valor} />
                     {stat.sufijo && stat.sufijo}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-500">{stat.descripcion}</span>
-                  <div className={`flex items-center space-x-1 ${
-                    isPositiveChange ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <div className={`flex items-center space-x-1 ${isPositiveChange ? 'text-green-600' : 'text-red-600'}`}>
                     {isPositiveChange ? (
                       <ArrowUpRight className="h-3 w-3" />
                     ) : (
                       <ArrowDownRight className="h-3 w-3" />
                     )}
-                    <span className="font-medium">
-                      {Math.abs(stat.porcentaje)}%
-                    </span>
+                    <span className="font-medium">{Math.abs(stat.porcentaje)}%</span>
                   </div>
                 </div>
               </>

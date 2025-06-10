@@ -12,7 +12,8 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-
+import HeaderAdmin from '@/components/layout/HeaderAdmin';
+import SidebarAdmin from '@/components/admin-dashboard/sidebar/SidebarAdmin';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend);
 
 const datosHistoricos = {
@@ -34,7 +35,6 @@ const botonesModulo7 = [
   { nombre: 'Evolución', ruta: '/EvolucionHistorica' },
   { nombre: 'Región', ruta: '/ActividadRegion' },
   { nombre: 'Favoritos', ruta: '/FavoritosFrecuentes' },
-  { nombre: 'Logs', ruta: '/LogsAuditorias' },
 ];
 
 const EvolucionHistorica = () => {
@@ -81,10 +81,14 @@ const EvolucionHistorica = () => {
     },
     scales: { y: { beginAtZero: true } },
   };
-
-  return (
-    <main className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto bg-white shadow rounded-xl p-6">
+  const [activeModule, setActiveModule] = useState("modulo7");
+  const [collapsed, setCollapsed] = useState(false);
+  
+  return ( 
+    <>
+  <HeaderAdmin />
+<main className={`min-h-screen bg-gray-50 py-8 px-4 transition-all ${collapsed ? "ml-20" : "ml-80"}`}>
+        <div className="max-w-5xl mx-auto bg-white shadow rounded-xl p-6">
 
         {/* Botones navegación módulo */}
         <div className="flex flex-wrap justify-center gap-2 mb-6">
@@ -196,6 +200,7 @@ const EvolucionHistorica = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 
