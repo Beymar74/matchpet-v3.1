@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
-import { agregarMascota } from '@/data/mascotasSimuladas'
 import { especies, razasPorEspecie } from '@/data/especiesRazas'
 import CrearFichaMedica from './CreaarFichamedica'
 
@@ -20,13 +19,12 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
     edad: '',
     estado: '',
     tamano: '',
-    descripcion: '',
     foto: '',
   })
 
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [agregarFicha, setAgregarFicha] = useState<'si' | 'no' | ''>('')
+  const [agregarFicha, setAgregarFicha] = useState<'si' | 'no' | ''>('') // seleccionador de ficha
   const [mostrarCrearFicha, setMostrarCrearFicha] = useState(false)
   const [idNuevaMascota, setIdNuevaMascota] = useState<number | null>(null)
 
@@ -40,7 +38,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [onClose])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
@@ -57,7 +55,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
     setUploading(false)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formData.nombre || !formData.especie || !formData.edad || !formData.estado || !formData.tamano) {
@@ -65,23 +63,27 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
       return
     }
 
-    const nueva = agregarMascota({
-      nombre: formData.nombre,
-      especie: formData.especie,
-      raza: formData.raza,
-      edad: Number(formData.edad),
-      estado: formData.estado,
-      tamano: formData.tamano,
-      descripcion: formData.descripcion,
-      foto: formData.foto,
-    })
+    try {
+      const res = await fetch('/api/mascotasRefg/publicar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
 
-    if (agregarFicha === 'si') {
-      setIdNuevaMascota(nueva.id)
-      setMostrarCrearFicha(true)
-    } else {
-      alert('✅ Mascota registrada correctamente.')
-      onClose()
+      const result = await res.json()
+
+      if (!res.ok) throw new Error(result.error || 'Error al registrar')
+
+      if (agregarFicha === 'si') {
+        setIdNuevaMascota(result.id)
+        setMostrarCrearFicha(true)
+      } else {
+        alert('✅ Mascota registrada correctamente.')
+        onClose()
+      }
+    } catch (error) {
+      console.error('❌ Error al guardar mascota:', error)
+      alert('❌ No se pudo registrar la mascota.')
     }
   }
 
@@ -142,7 +144,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
               >
                 <option value="">Selecciona especie</option>
                 {especies.map((esp) => (
-                  <option key={esp}>{esp}</option>
+                  <option key={esp} value={esp}>{esp}</option>
                 ))}
               </select>
             </div>
@@ -157,7 +159,7 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
               >
                 <option value="">Selecciona raza</option>
                 {razasPorEspecie[formData.especie]?.map((raza) => (
-                  <option key={raza}>{raza}</option>
+                  <option key={raza} value={raza}>{raza}</option>
                 ))}
               </select>
             </div>
@@ -239,24 +241,18 @@ export default function ModalRegistrarMascota({ onClose }: Props) {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#30588C] text-sm">
-              ¿Deseas agregar historial médico ahora?
-            </label>
+            <label className="block font-semibold text-[#30588C] text-sm">¿Agregar historial médico?</label>
             <div className="flex gap-4 mt-2">
               <button
                 type="button"
-                className={`px-4 py-2 rounded border ${
-                  agregarFicha === 'si' ? 'bg-[#BF3952] text-white' : ''
-                }`}
+                className={`px-4 py-2 rounded border ${agregarFicha === 'si' ? 'bg-[#BF3952] text-white' : ''}`}
                 onClick={() => setAgregarFicha('si')}
               >
                 Sí
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 rounded border ${
-                  agregarFicha === 'no' ? 'bg-[#30588C] text-white' : ''
-                }`}
+                className={`px-4 py-2 rounded border ${agregarFicha === 'no' ? 'bg-[#30588C] text-white' : ''}`}
                 onClick={() => setAgregarFicha('no')}
               >
                 No

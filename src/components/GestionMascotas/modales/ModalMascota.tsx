@@ -43,10 +43,12 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+console.log('✅ ID pasado:', mascotaActualizada?.ID_Mascota)
 
   // Pantallas condicionales
   if (pantalla === 'editar') {
     return (
+      
       <EditarMascota
         id={mascotaActualizada.ID_Mascota}
         modoModal
