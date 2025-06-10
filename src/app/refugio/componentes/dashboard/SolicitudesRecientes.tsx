@@ -1,24 +1,31 @@
 // src/app/refugio/componentes/dashboard/SolicitudesRecientes.tsx
 import React from 'react';
 import { SolicitudAdopcion } from '../../tipos';
+import { useRouter } from 'next/navigation';
 
 interface SolicitudesRecientesProps {
   solicitudesPendientes: SolicitudAdopcion[];
 }
 
 const SolicitudesRecientes: React.FC<SolicitudesRecientesProps> = ({ solicitudesPendientes }) => {
+  // Mover useRouter dentro del componente
+  const router = useRouter();
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-[#011526]">Solicitudes Recientes</h3>
-        <button className="text-[#30588C] hover:text-[#254559] font-medium text-sm">
+        <button
+          onClick={() => router.push('/EstadoSolicitud')}
+          className="text-[#30588C] hover:text-[#254559] font-medium text-sm"
+        >
           Ver todas
         </button>
       </div>
       <div className="space-y-3">
         {solicitudesPendientes.map((solicitud) => (
-          <div 
-            key={solicitud.id} 
+          <div
+            key={solicitud.id}
             className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             <div className="flex items-center space-x-3">

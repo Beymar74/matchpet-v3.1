@@ -8,33 +8,36 @@ export default function Page() {
   const opciones = [
     {
       titulo: 'Evaluación de Solicitudes',
-      ruta: 'EvaluacionSolicitudes',
+      ruta: '/EstadoSolicitud',
       imagen: '/Perros/perrito_PA_10.png',
     },
     {
       titulo: 'Estado de Solicitudes',
-      ruta: 'EstadoSolicitud',
+      ruta: '/EvaluacionSolicitudesRefugio',
       imagen: '/Perros/perrito_PA_11.png',
     },
     {
       titulo: 'Seguimiento Post-Adopción',
-      ruta: 'SeguimientoPostAdopcion',
+      ruta: '/SeguimientoPostAdopcion',
       imagen: '/Gatos/gatito_PA_10.png',
-    },
-    {
-      titulo: 'Visitas Previas',
-      ruta: 'VisitasPrevias',
-      imagen: '/Gatos/gatito_PA_13.png',
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Breadcrumb */}
-      <div className="bg-white dark:bg-gray-800 py-2 px-6 text-sm text-gray-600 dark:text-gray-300">
-        Inicio / Adopciones
-      </div>
+  // Datos de ejemplo para las solicitudes
+  const solicitudes = [
+    { estado: 'Pendiente', cantidad: 5 },
+    { estado: 'Aceptada', cantidad: 8 },
+    { estado: 'Rechazada', cantidad: 3 },
+  ];
 
+  // Cálculos para porcentajes de progreso
+  const totalSolicitudes = solicitudes.reduce((acc, sol) => acc + sol.cantidad, 0);
+  const pendientePorcentaje = (solicitudes.find((sol) => sol.estado === 'Pendiente')?.cantidad || 0) / totalSolicitudes;
+  const aceptadaPorcentaje = (solicitudes.find((sol) => sol.estado === 'Aceptada')?.cantidad || 0) / totalSolicitudes;
+  const rechazadaPorcentaje = (solicitudes.find((sol) => sol.estado === 'Rechazada')?.cantidad || 0) / totalSolicitudes;
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Banner */}
       <div className="relative w-full h-72 md:h-80">
         <Image
@@ -54,22 +57,59 @@ export default function Page() {
         </div>
       </div>
 
+      {/* Botón de Volver atrás */}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => router.push('/refugio')}
+          className="px-6 py-2 text-sm bg-[#2D3B5A] text-white rounded-full hover:bg-[#254266] transition duration-300"
+        >
+          Volver al Refugio
+        </button>
+      </div>
+
+      {/* Estadísticas Visuales */}
+      <div className="max-w-6xl mx-auto p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+        {/* Estadísticas de Solicitudes */}
+        {solicitudes.map((sol, index) => (
+          <div
+            key={index}
+            className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg flex items-center space-x-4"
+          >
+            <div className="flex items-center justify-center w-12 h-12 bg-[#6093BF] rounded-full text-white text-lg font-semibold">
+              {sol.estado.charAt(0)}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{sol.estado}</h3>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{sol.cantidad} Solicitudes</div>
+            </div>
+            <div className="flex items-center">
+              <div className="w-16 h-2 bg-gray-300 rounded-full">
+                <div
+                  className="h-full bg-[#30588C] rounded-full"
+                  style={{ width: `${Math.round((sol.cantidad / totalSolicitudes) * 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Tarjetas de opciones */}
-      <div className="max-w-5xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="max-w-6xl mx-auto p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
         {opciones.map((op) => (
           <button
             key={op.ruta}
-            onClick={() => router.push(`/PantallaAdopciones/${op.ruta}`)}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transform hover:scale-105 transition duration-300 overflow-hidden text-left"
+            onClick={() => router.push(op.ruta)}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition duration-300 overflow-hidden text-left p-4"
           >
             <Image
               src={op.imagen}
               alt={op.titulo}
               width={500}
               height={300}
-              className="w-full h-40 object-cover"
+              className="w-full h-40 object-cover rounded-lg"
             />
-            <div className="p-4">
+            <div className="mt-4">
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{op.titulo}</h2>
             </div>
           </button>
