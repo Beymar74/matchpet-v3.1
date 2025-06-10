@@ -6,7 +6,6 @@ import { Heart, Clock, Sparkles, Star, Rocket, Facebook, Instagram, Twitter } fr
 const PantallaProximamente = () => {
   const [particles, setParticles] = useState([]);
   const [currentColor, setCurrentColor] = useState(0);
-  const router = useRouter();
 
   // Paleta de colores MatchPet
   const matchPetColors = ['#BF3952', '#30588C', '#6093BF', '#254559'];
@@ -198,7 +197,7 @@ const PantallaProximamente = () => {
               style={{ backgroundColor: matchPetColors[1] }}
               onClick={(e) => {
                 handleButtonClick(e);
-                router.push('/refugios');
+                window.location.href = '/refugios';
               }}
             >
               <Rocket className="w-5 h-5 mr-2" />
@@ -210,7 +209,7 @@ const PantallaProximamente = () => {
               style={{ backgroundColor: matchPetColors[0] }}
               onClick={(e) => {
                 handleButtonClick(e);
-                router.push('/Mascotas');
+                window.location.href = '/Mascotas';
               }}
             >
               <Heart className="w-5 h-5 mr-2" />
