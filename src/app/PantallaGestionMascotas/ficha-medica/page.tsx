@@ -6,57 +6,39 @@ import Link from 'next/link'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
-import EditarFichaMedicaModal from '@/components/GestionMascotas/modales/EditarFichaMedica'
-import { obtenerFichaMedicaPorId, fichasMedicasSimuladas } from '@/data/fichasMedicasSimuladas'
 import { useRouter } from 'next/navigation'
+import EditarFichaMedicaModal from '@/components/GestionMascotas/modales/EditarFichaMedica'
 
 interface FichaMedica {
-  idMascota: string
+  idMascota: number
   nombre: string
   especie: string
-  edad: string
+  edad: number
   vacunas: string
-  esterilizado: string
-  enfermedades: string
-  alergias?: string
-  notas?: string
+  tipoCirugia?: string
+  fechaCirugia?: string
+  fechaDesparasitacion?: string
 }
 
-function FichaMedicaPage() {
+export default function FichaMedicaPage() {
   const [fichas, setFichas] = useState<FichaMedica[]>([])
   const [paginaActual, setPaginaActual] = useState(1)
   const [fichaSeleccionadaId, setFichaSeleccionadaId] = useState<number | null>(null)
   const filasPorPagina = 5
+  const router = useRouter()
 
   useEffect(() => {
-    const mascotasLocal: any[] = JSON.parse(localStorage.getItem('mascotas') || '[]')
-
-    // Obtener todas las fichas únicas (IDs de mascotas)
-    const idsFichas = new Set<string>()
-
-    const fichasLocales = JSON.parse(localStorage.getItem('fichasMedicas') || '[]') as FichaMedica[]
-    fichasLocales.forEach((f: any) => idsFichas.add(f.idMascota))
-    fichasMedicasSimuladas.forEach((f: any) => idsFichas.add(f.idMascota))
-
-    const fichasCompletadas: FichaMedica[] = Array.from(idsFichas).map((id) => {
-      const fichaBase = obtenerFichaMedicaPorId(id)
-
-      const mascota = mascotasLocal.find((m) => String(m.id) === id)
-      const router = useRouter()
-      return {
-        idMascota: id,
-        vacunas: fichaBase?.vacunas || '',
-        enfermedades: fichaBase?.enfermedades || '',
-        esterilizado: fichaBase?.esterilizado || 'No',
-        alergias: fichaBase?.alergias || '',
-        notas: fichaBase?.notas || '',
-        nombre: mascota?.nombre || 'Desconocido',
-        especie: mascota?.especie || 'Desconocida',
-        edad: typeof mascota?.edad === 'number' ? mascota.edad + ' años' : mascota?.edad || 'No definida'
+    const obtenerFichas = async () => {
+      try {
+        const res = await fetch('/api/ficha-medica/ver')
+        const data = await res.json()
+        setFichas(data)
+      } catch (error) {
+        console.error('❌ Error al obtener fichas médicas:', error)
       }
-    })
+    }
 
-    setFichas(fichasCompletadas)
+    obtenerFichas()
   }, [])
 
   const totalPaginas = Math.ceil(fichas.length / filasPorPagina)
@@ -75,9 +57,9 @@ function FichaMedicaPage() {
   const exportarPDF = () => {
     const doc = new jsPDF()
     doc.text('Historial Médico de Mascotas', 14, 16)
-    const columnas = ['Nombre', 'Especie', 'Edad', 'Vacunas', 'Esterilizado', 'Enfermedades']
+    const columnas = ['Nombre', 'Especie', 'Edad', 'Vacunas', 'Cirugía', 'Desparasitación']
     const filas = fichas.map(f => [
-      f.nombre, f.especie, f.edad, f.vacunas, f.esterilizado, f.enfermedades
+      f.nombre, f.especie, f.edad + ' años', f.vacunas, f.tipoCirugia || '-', f.fechaDesparasitacion || '-'
     ])
     ;(doc as any).autoTable({ head: [columnas], body: filas, startY: 20 })
     doc.save('fichas_medicas.pdf')
@@ -86,55 +68,43 @@ function FichaMedicaPage() {
   return (
     <div className="pt-[80px] min-h-screen bg-[#f9fafb] text-gray-900">
       <Header />
-
       <main className="max-w-6xl mx-auto py-10 px-6 space-y-6">
         <h1 className="text-4xl font-bold text-[#BF3952]">🩺 Historial Médico de Mascotas</h1>
-        <p className="text-gray-700 text-sm">
-          Visualiza, edita o exporta las fichas médicas registradas en el sistema.
-        </p>
 
-        {/* Botones */}
         <div className="flex space-x-4">
-          <button
-            onClick={exportarExcel}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
-          >
+          <button onClick={exportarExcel} className="bg-green-600 text-white px-4 py-2 rounded text-sm">
             📥 Exportar a Excel
           </button>
-          <button
-            onClick={exportarPDF}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-          >
+          <button onClick={exportarPDF} className="bg-blue-600 text-white px-4 py-2 rounded text-sm">
             📄 Exportar a PDF
           </button>
         </div>
 
-        {/* Tabla */}
         <div className="overflow-x-auto border border-gray-200 rounded-xl shadow bg-white">
-          <table className="min-w-full">
-            <thead className="bg-[#30588C] text-white text-left text-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-[#30588C] text-white">
               <tr>
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Especie</th>
                 <th className="px-4 py-3">Edad</th>
                 <th className="px-4 py-3">Vacunas</th>
-                <th className="px-4 py-3">Esterilizado</th>
-                <th className="px-4 py-3">Enfermedades</th>
+                <th className="px-4 py-3">Cirugía</th>
+                <th className="px-4 py-3">Desparasitación</th>
                 <th className="px-4 py-3">Acción</th>
               </tr>
             </thead>
             <tbody>
-              {fichasPaginadas.map((ficha) => (
-                <tr key={ficha.idMascota} className="border-t border-gray-200 hover:bg-gray-50 text-sm">
-                  <td className="px-4 py-3">{ficha.nombre}</td>
-                  <td className="px-4 py-3">{ficha.especie}</td>
-                  <td className="px-4 py-3">{ficha.edad}</td>
-                  <td className="px-4 py-3">{ficha.vacunas}</td>
-                  <td className="px-4 py-3">{ficha.esterilizado}</td>
-                  <td className="px-4 py-3">{ficha.enfermedades}</td>
+              {fichasPaginadas.map(f => (
+                <tr key={f.idMascota} className="border-t border-gray-200 hover:bg-gray-50">
+                  <td className="px-4 py-3">{f.nombre}</td>
+                  <td className="px-4 py-3">{f.especie}</td>
+                  <td className="px-4 py-3">{f.edad} años</td>
+                  <td className="px-4 py-3">{f.vacunas}</td>
+                  <td className="px-4 py-3">{f.tipoCirugia || '-'}</td>
+                  <td className="px-4 py-3">{f.fechaDesparasitacion || '-'}</td>
                   <td className="px-4 py-3">
                     <button
-                      onClick={() => setFichaSeleccionadaId(parseInt(ficha.idMascota))}
+                      onClick={() => setFichaSeleccionadaId(f.idMascota)}
                       className="text-blue-600 hover:underline"
                     >
                       Editar
@@ -146,29 +116,27 @@ function FichaMedicaPage() {
           </table>
         </div>
 
-        {/* Paginación */}
         <div className="flex justify-between items-center mt-4 text-sm">
           <span>Página {paginaActual} de {totalPaginas}</span>
           <div className="space-x-2">
             <button
               onClick={() => setPaginaActual(p => Math.max(1, p - 1))}
               disabled={paginaActual === 1}
-              className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+              className="px-3 py-1 bg-gray-200 rounded"
             >
               Anterior
             </button>
             <button
               onClick={() => setPaginaActual(p => Math.min(totalPaginas, p + 1))}
               disabled={paginaActual === totalPaginas}
-              className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+              className="px-3 py-1 bg-gray-200 rounded"
             >
               Siguiente
             </button>
           </div>
         </div>
 
-        {/* Modal de edición */}
-        {fichaSeleccionadaId !== null && (
+        {fichaSeleccionadaId && (
           <EditarFichaMedicaModal
             mascotaId={fichaSeleccionadaId}
             onClose={() => setFichaSeleccionadaId(null)}
@@ -177,13 +145,10 @@ function FichaMedicaPage() {
 
         <div className="mt-6 text-sm">
           <button onClick={() => router.back()} className="text-[#6093BF] hover:underline">
-            ← Volver a la página anterior
+            ← Volver
           </button>
         </div>
       </main>
     </div>
   )
 }
-
-
-export default FichaMedicaPage

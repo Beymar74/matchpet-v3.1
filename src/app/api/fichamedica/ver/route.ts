@@ -16,49 +16,30 @@ export async function GET() {
   try {
     await sql.connect(config)
 
-    // 1. Obtener datos de todas las mascotas con ficha médica
-    const mascotasResult = await sql.query(`
+    const resultado = await sql.query(`
       SELECT 
-        M.ID_Mascota,
+        M.ID_Mascota AS idMascota,
         M.Nombre,
+        E.Nombre_Especie AS especie,
         M.Edad,
-        E.Nombre_Especie,
-        FM.Esterilizado,
-        FM.Notas
+        ISNULL(V.Vacunas, '') AS vacunas,
+        C.Tipo_Cirugia,
+        FORMAT(C.Fecha_Cirugia, 'yyyy-MM-dd') AS fechaCirugia,
+        FORMAT(D.Fecha_Desparasitacion, 'yyyy-MM-dd') AS fechaDesparasitacion
       FROM Mascotas M
-      INNER JOIN Mascotas_Especies ME ON M.ID_Mascota = ME.ID_Mascota
-      INNER JOIN Especies E ON ME.ID_Especie = E.ID_Especie
-      LEFT JOIN Ficha_Medica_Mascotas FM ON M.ID_Mascota = FM.ID_Mascota
+      LEFT JOIN Mascotas_Especies ME ON M.ID_Mascota = ME.ID_Mascota
+      LEFT JOIN Especies E ON ME.ID_Especie = E.ID_Especie
+      LEFT JOIN (
+        SELECT ID_Mascota, STRING_AGG(Nombre_Vacuna, ', ') AS Vacunas
+        FROM Vacunas_Mascotas GROUP BY ID_Mascota
+      ) V ON V.ID_Mascota = M.ID_Mascota
+      LEFT JOIN Cirugias_Mascotas C ON C.ID_Mascota = M.ID_Mascota
+      LEFT JOIN Desparasitaciones_Mascotas D ON D.ID_Mascota = M.ID_Mascota
     `)
 
-    const fichas = await Promise.all(
-      mascotasResult.recordset.map(async (m) => {
-        const vacunas = await sql.query`
-          SELECT Nombre_Vacuna FROM Vacunas_Mascotas WHERE ID_Mascota = ${m.ID_Mascota}
-        `
-        const enfermedades = await sql.query`
-          SELECT Nombre_Enfermedad FROM Enfermedades_Mascotas WHERE ID_Mascota = ${m.ID_Mascota}
-        `
-
-        return {
-          idMascota: m.ID_Mascota,
-          nombre: m.Nombre,
-          especie: m.Nombre_Especie,
-          edad: `${m.Edad} años`,
-          esterilizado: m.Esterilizado ? 'Sí' : 'No',
-          notas: m.Notas ?? '',
-          vacunas: vacunas.recordset.map(v => v.Nombre_Vacuna).join(', ') || 'Ninguna',
-          enfermedades: enfermedades.recordset.map(e => e.Nombre_Enfermedad).join(', ') || 'Ninguna',
-        }
-      })
-    )
-
-    return NextResponse.json(fichas)
+    return NextResponse.json(resultado.recordset)
   } catch (error) {
     console.error('❌ Error al obtener fichas médicas:', error)
-    return NextResponse.json(
-      { error: 'Error al obtener las fichas médicas', detalle: (error as Error).message },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }
