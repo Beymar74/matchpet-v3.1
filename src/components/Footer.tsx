@@ -25,17 +25,17 @@ export default function Footer() {
             <h5 className="font-semibold text-white mb-4">Explora</h5>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#about-section" className="hover:text-white transition">
+                <Link href="/sobrenosotros" className="hover:text-white transition">
                   Sobre Nosotros
                 </Link>
               </li>
               <li>
-                <Link href="#pets" className="hover:text-white transition">
+                <Link href="/Mascotas" className="hover:text-white transition">
                   Mascotas
                 </Link>
               </li>
               <li>
-                <Link href="#explorar" className="hover:text-white transition">
+                <Link href="/refugios" className="hover:text-white transition">
                   Refugios
                 </Link>
               </li>
@@ -46,9 +46,9 @@ export default function Footer() {
           <div>
             <h5 className="font-semibold text-white mb-4">Contacto</h5>
             <div className="text-sm space-y-2">
-              <p>Email: info@matchpet.com</p>
-              <p>Teléfono: +123 456 7890</p>
-              <p>Dirección: Calle Ficticia #123, Ciudad, País</p>
+              <p>Email: matchpet@gmail.com</p>
+              <p>Teléfono: +591 65670114</p>
+              <p>Dirección: Escuela Militar de Ingeniería, Av. Rafael Pabón, La Paz</p>
             </div>
           </div>
 
@@ -56,15 +56,15 @@ export default function Footer() {
           <div>
             <h5 className="font-semibold text-white mb-4">Síguenos</h5>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white transition" aria-label="Facebook">
+              <Link href="/Proximamente" className="text-gray-300 hover:text-white transition" aria-label="Facebook">
                 <Facebook className="w-6 h-6" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition" aria-label="Instagram">
+              </Link>
+              <Link href="/Proximamente" className="text-gray-300 hover:text-white transition" aria-label="Instagram">
                 <Instagram className="w-6 h-6" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition" aria-label="Twitter">
+              </Link>
+              <Link href="/Proximamente" className="text-gray-300 hover:text-white transition" aria-label="Twitter">
                 <Twitter className="w-6 h-6" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
