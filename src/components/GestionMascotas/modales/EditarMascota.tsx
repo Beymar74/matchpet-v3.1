@@ -1,268 +1,95 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
-import Header from '@/components/Header';
+import React, { useEffect, useState } from 'react';
+import ModalMascota from '@/components/GestionMascotas/modales/ModalMascota';
 
 interface Mascota {
   ID_Mascota: number;
   Nombre: string;
-  Especie: string;
-  Raza: string;
   Edad: number;
+  Raza: string;
   Foto?: string;
-  Estado: string;
-  Descripcion?: string;
-  Tamano?: string;
+  NombreRefugio?: string;
   Nombre_Estado?: string;
+  Nombre_Especie?: string;
 }
 
-interface EditarMascotaProps {
-  id: string | number;
-  modoModal?: boolean;
-  onClose?: () => void;
-  onGuardar?: (mascotaActualizada: Mascota) => void;
+interface Props {
+  id: number;
 }
 
-export default function EditarMascota({ id, modoModal = false, onClose, onGuardar }: EditarMascotaProps) {
-  const router = useRouter();
-  const [formData, setFormData] = useState<any>(null);
-  const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
-  const [subiendo, setSubiendo] = useState(false);
+const TarjetaMascota: React.FC<Props> = ({ id }) => {
+  const [mascota, setMascota] = useState<Mascota | null>(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   useEffect(() => {
-    const obtenerMascota = async () => {
+    const fetchMascota = async () => {
       try {
-        const res = await fetch(`/api/mascotas/${id}`);
+        const res = await fetch('/api/mascotasRefg/ver');
         const data = await res.json();
-        if (data) {
-          setFormData({
-            id: data.ID_Mascota,
-            nombre: data.Nombre,
-            especie: data.Especie,
-            raza: data.Raza,
-            edad: data.Edad,
-            foto: data.Foto,
-            estado: data.Nombre_Estado || data.Estado || '',
-            descripcion: data.Descripcion ?? '',
-            tamano: data.Tamano ?? ''
-          });
+
+        if (Array.isArray(data)) {
+          const encontrada = data.find((m: Mascota) => m.ID_Mascota === id);
+          setMascota(encontrada ?? null);
+        } else {
+          console.error('Respuesta inesperada de la API:', data);
         }
       } catch (error) {
-        console.error('❌ Error al obtener mascota:', error);
+        console.error('Error al obtener la mascota:', error);
       }
     };
-    obtenerMascota();
+
+    fetchMascota();
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    if (!formData) return;
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrores({ ...errores, [e.target.name]: false });
-  };
+  if (!mascota) return null;
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !formData) return;
-    setSubiendo(true);
-    const url = await uploadToCloudinary(file);
-    if (url) {
-      setFormData({ ...formData, foto: url });
-    }
-    setSubiendo(false);
-  };
-
-  const validarFormulario = () => {
-    if (!formData) return false;
-    const campos = ['nombre', 'especie', 'edad', 'estado'];
-    const errores: any = {};
-    campos.forEach((campo) => {
-      if (!formData[campo]) errores[campo] = true;
-    });
-    setErrores(errores);
-    return Object.keys(errores).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validarFormulario() || !formData) return;
-
-    const datosAEnviar = {
-      ID_Mascota: formData.id,
-      Nombre: formData.nombre,
-      Especie: formData.especie,
-      Raza: formData.raza,
-      Edad: Number(formData.edad),
-      Foto: formData.foto,
-      Estado: formData.estado
-    };
-
-    try {
-      const res = await fetch('/api/mascotas/editar', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosAEnviar),
-      });
-
-      if (!res.ok) throw new Error('Error al actualizar en la base de datos');
-
-      alert('✅ Mascota actualizada correctamente');
-
-      if (modoModal) {
-        onGuardar?.(formData);
-        onClose?.();
-      } else {
-        router.push('/PantallaGestionMascotas');
-      }
-    } catch (error) {
-      console.error('Error al guardar:', error);
-      alert('❌ No se pudo guardar. Revisa la consola.');
+  const getEstadoColor = (estado: string | undefined) => {
+    switch (estado) {
+      case 'Disponible': return 'bg-green-100 text-green-800';
+      case 'En Proceso': return 'bg-yellow-100 text-yellow-800';
+      case 'Adoptado': return 'bg-blue-100 text-blue-800';
+      case 'Pendiente': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  if (!formData) {
-    return (
-      <div className={`${modoModal ? '' : 'pt-[80px] min-h-screen'} bg-white text-gray-900`}>
-        {!modoModal && <Header />}
-        <main className="max-w-3xl mx-auto py-10 px-6">
-          <h1 className="text-3xl font-bold mb-6">Editar Mascota</h1>
-          <p className="text-red-500">Mascota no encontrada.</p>
-        </main>
-      </div>
-    );
-  }
-
-  return modoModal ? (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-        <button onClick={onClose} className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">✕</button>
-        <ContenidoFormulario
-          formData={formData}
-          errores={errores}
-          handleChange={handleChange}
-          handleImageChange={handleImageChange}
-          handleSubmit={handleSubmit}
-          subiendo={subiendo}
-        />
-      </div>
-    </div>
-  ) : (
-    <div className="min-h-screen bg-white text-gray-900 transition-colors duration-500">
-      <Header />
-      <main className="max-w-4xl mx-auto py-10 px-6">
-        <ContenidoFormulario
-          formData={formData}
-          errores={errores}
-          handleChange={handleChange}
-          handleImageChange={handleImageChange}
-          handleSubmit={handleSubmit}
-          subiendo={subiendo}
-        />
-      </main>
-    </div>
-  );
-}
-
-function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6 text-[#BF3952]">✏️ Editar Mascota</h1>
-      <form onSubmit={handleSubmit} className="bg-white text-gray-900 p-6 rounded-xl shadow-xl space-y-5">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 space-y-4">
-            <InputField label="Nombre *" name="nombre" value={formData.nombre} error={errores.nombre} onChange={handleChange} />
-            <InputField label="Especie *" name="especie" value={formData.especie} error={errores.especie} onChange={handleChange} />
-            <InputField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
-            <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
-
-            <div>
-              <label className="block text-sm font-semibold text-[#30588C]">Tamaño</label>
-              <select
-                name="tamano"
-                value={formData.tamano || ''}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded mt-1 bg-white border-gray-300"
-              >
-                <option value="">Selecciona una opción</option>
-                <option value="Pequeño">Pequeño</option>
-                <option value="Mediano">Mediano</option>
-                <option value="Grande">Grande</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
-              <select
-                name="estado"
-                value={formData.estado}
-                onChange={handleChange}
-                className={`w-full border px-3 py-2 rounded mt-1 bg-white ${errores.estado ? 'border-red-500' : 'border-gray-300'}`}
-              >
-                <option value="Disponible">Disponible</option>
-                <option value="Adoptado">Adoptado</option>
-                <option value="En tratamiento">En tratamiento</option>
-                <option value="Necesidades Especiales">Necesidades Especiales</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-[#30588C]">Descripción</label>
-              <textarea
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 bg-white"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="fileInput" className="block text-sm font-semibold text-[#30588C] mb-1">Actualizar imagen</label>
-              <label htmlFor="fileInput" className="inline-block cursor-pointer px-4 py-2 bg-[#6093BF] text-white rounded shadow hover:opacity-90">
-                Seleccionar archivo
-              </label>
-              <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-              {subiendo && <p className="text-xs mt-2 text-yellow-600">Subiendo imagen...</p>}
-            </div>
-          </div>
-
-          {formData.foto && (
-            <div className="flex-1 flex justify-center items-center">
-              <img
-                src={formData.foto}
-                alt="Vista previa"
-                className="max-w-full max-h-[300px] object-contain rounded-lg shadow"
-              />
-            </div>
+      <div
+        onClick={() => setMostrarModal(true)}
+        className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow cursor-pointer text-gray-700 w-full max-w-xs"
+      >
+        {/* Imagen */}
+        <div className="relative mb-4 h-40 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden">
+          {mascota.Foto ? (
+            <img src={mascota.Foto} alt={mascota.Nombre} className="h-full object-cover" />
+          ) : (
+            <div className="text-5xl">🐶</div>
           )}
+          <span className={`absolute top-2 left-2 text-xs px-3 py-1 rounded-full font-semibold shadow ${getEstadoColor(mascota.Nombre_Estado)}`}>
+            {mascota.Nombre_Estado ?? 'Sin estado'}
+          </span>
         </div>
 
-        <div className="flex justify-end pt-4">
-          <button
-            type="submit"
-            className="bg-gradient-to-r from-[#BF3952] to-[#30588C] hover:opacity-90 text-white px-6 py-2 rounded transition"
-          >
-            💾 Guardar Cambios
-          </button>
+        {/* Nombre */}
+        <h3 className="font-bold text-lg text-[#011526] mb-2">{mascota.Nombre}</h3>
+
+        {/* Detalles */}
+        <div className="text-sm space-y-1 mb-1">
+          <p><span className="font-medium">Especie:</span> {mascota.Nombre_Especie ?? 'Desconocida'}</p>
+          <p><span className="font-medium">Raza:</span> {mascota.Raza}</p>
+          <p><span className="font-medium">Edad:</span> {mascota.Edad}</p>
+          <p><span className="font-medium">Refugio:</span> {mascota.NombreRefugio ?? 'Desconocido'}</p>
         </div>
-      </form>
+      </div>
+
+      {/* Modal */}
+      {mostrarModal && mascota && (
+        <ModalMascota mascota={mascota} onClose={() => setMostrarModal(false)} />
+      )}
     </>
   );
-}
+};
 
-function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-[#30588C]">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className={`w-full border px-3 py-2 rounded mt-1 bg-white ${error ? 'border-red-500' : 'border-gray-300'}`}
-        required={label.includes('*')}
-      />
-    </div>
-  );
-}
+export default TarjetaMascota;

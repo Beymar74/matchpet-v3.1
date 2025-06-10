@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Heart, Plus, Search, Filter, Download, Eye, Edit, CheckCircle,
-  XCircle, Clock, Shield, PawPrint
+  XCircle, Clock, Shield, PawPrint, Camera
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 

@@ -16,18 +16,18 @@ export async function GET() {
   try {
 	await sql.connect(config);
 
-	const result = await sql.query`
+const result = await sql.query`
   SELECT 
-	M.ID_Mascota,
-	M.Nombre,
-	M.Edad,
-	M.Raza,
-	M.Foto,
-	R.Nombre AS NombreRefugio,
-	E.Nombre_Estado AS Nombre_Estado,
-	ES.Nombre_Especie,
-	T.Nombre_Tamanio,
-	C.Nombre_Color
+    M.ID_Mascota,
+    M.Nombre,
+    M.Edad,
+    M.Raza,
+    F.URL_Foto AS Foto, -- 🔁 Corrección: desde Fotos_Mascotas
+    R.Nombre AS NombreRefugio,
+    E.Nombre_Estado AS Nombre_Estado,
+    ES.Nombre_Especie,
+    T.Nombre_Tamanio,
+    C.Nombre_Color
   FROM Mascotas M
   LEFT JOIN Refugios R ON M.ID_Refugio = R.ID_Refugio
   LEFT JOIN Estados_Mascota E ON M.ID_Estado = E.ID_Estado
@@ -37,7 +37,9 @@ export async function GET() {
   LEFT JOIN Tamanios T ON MT.ID_Tamanio = T.ID_Tamanio
   LEFT JOIN Mascotas_Colores MC ON M.ID_Mascota = MC.ID_Mascota
   LEFT JOIN Colores C ON MC.ID_Color = C.ID_Color
+  LEFT JOIN Fotos_Mascotas F ON M.ID_Mascota = F.ID_Mascota -- ✅ Aquí se obtiene la imagen
 `;
+
 
 	return NextResponse.json(result.recordset);
   } catch (error) {
