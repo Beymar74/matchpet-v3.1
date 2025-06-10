@@ -20,16 +20,15 @@ import {
   Star
 } from 'lucide-react';
 
-import { mascotasSimuladas } from '@/data/mascotasSimuladas'; 
 import { useRouter } from "next/navigation";
 
 export default function GestionMascotas() {
   const [filtroActivo, setFiltroActivo] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
-  const [mascotasRecientes, setMascotasRecientes] = useState(mascotasSimuladas);
+  const [mascotasRecientes, setMascotasRecientes] = useState([]);
 
   useEffect(() => {
-    let filtradas = [...mascotasSimuladas];
+    let filtradas = [...mascotasRecientes];
 
     if (filtroActivo !== 'todos') {
       filtradas = filtradas.filter((m) => m.estado === filtroActivo);
@@ -45,12 +44,12 @@ export default function GestionMascotas() {
   }, [busqueda, filtroActivo]);
 
   const filtros = [
-    { id: 'todos', label: 'Todos', count: mascotasSimuladas.length },
-    { id: 'Disponible', label: 'Disponibles', count: mascotasSimuladas.filter(m => m.estado === 'Disponible').length },
-    { id: 'Adoptado', label: 'Adoptados', count: mascotasSimuladas.filter(m => m.estado === 'Adoptado').length },
-    { id: 'En tratamiento', label: 'En tratamiento', count: mascotasSimuladas.filter(m => m.estado === 'En tratamiento').length },
-    { id: 'En Proceso', label: 'En Proceso', count: mascotasSimuladas.filter(m => m.estado === 'En Proceso').length },
-    { id: 'Pendiente', label: 'Pendientes', count: mascotasSimuladas.filter(m => m.estado === 'Pendiente').length }
+    { id: 'todos', label: 'Todos', count: 0 },
+    { id: 'Disponible', label: 'Disponibles', count: 0 },
+    { id: 'Adoptado', label: 'Adoptados', count: 0 },
+    { id: 'En tratamiento', label: 'En tratamiento', count: 0 },
+    { id: 'En Proceso', label: 'En Proceso', count: 0 },
+    { id: 'Pendiente', label: 'Pendientes', count: 0 }
   ];
 
   const getEstadoColor = (estado: string) => {
@@ -76,29 +75,29 @@ export default function GestionMascotas() {
 const estadisticasMascotas = [
   {
     titulo: 'Total Mascotas',
-    valor: mascotasSimuladas.length,
-    cambio: '+23 esta semana',
+    valor: 0,
+    cambio: '+0 esta semana',
     color: 'red',
     icon: Heart,
   },
   {
     titulo: 'Disponibles',
-    valor: mascotasSimuladas.filter(m => m.estado === 'Disponible').length,
-    cambio: '+10',
+    valor: 0,
+    cambio: '+0',
     color: 'green',
     icon: CheckCircle,
   },
   {
     titulo: 'Adoptadas',
-    valor: mascotasSimuladas.filter(m => m.estado === 'Adoptado').length,
-    cambio: '+5',
+    valor: 0,
+    cambio: '+0',
     color: 'blue',
     icon: PawPrint,
   },
   {
     titulo: 'Pendientes',
-    valor: mascotasSimuladas.filter(m => m.estado === 'Pendiente').length,
-    cambio: '+2',
+    valor: 0,
+    cambio: '+0',
     color: 'yellow',
     icon: Clock,
   },
@@ -185,7 +184,7 @@ const irAFichaMedica = () => {
           >
             <Camera className="h-8 w-8 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
             <span className="text-sm font-medium text-blue-900">Actualizar Fotos</span>
-            <span className="text-xs text-blue-600 mt-1">23 sin foto</span>
+            <span className="text-xs text-blue-600 mt-1">0 sin foto</span>
           </button>
          <button
           onClick={irAFichaMedica}
@@ -193,7 +192,7 @@ const irAFichaMedica = () => {
         >
           <PawPrint className="h-8 w-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
           <span className="text-sm font-medium text-green-900">Estado de Salud</span>
-          <span className="text-xs text-green-600 mt-1">5 revisiones</span>
+          <span className="text-xs text-green-600 mt-1">0 revisiones</span>
         </button>
         </div>
       </div>
@@ -264,30 +263,38 @@ const irAFichaMedica = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {mascotasRecientes.map((mascota) => (
-            <tr key={mascota.id} className="hover:bg-gray-50">
-              <td className="px-4 py-2 text-sm text-gray-800">{mascota.nombre}</td>
-              <td className="px-4 py-2 text-sm text-gray-600">{mascota.edad}</td>
-              <td className="px-4 py-2 text-sm text-gray-600">{mascota.refugioid}</td>
-              <td className="px-4 py-2 text-sm text-gray-600">{mascota.tipo}</td>
-              <td className="px-4 py-2 text-sm text-gray-600">{mascota.raza}</td>
-              <td className="px-4 py-2 text-sm">
-                <span className={`inline-block px-2 py-1 text-xs rounded-full ${getEstadoColor(mascota.estado)}`}>
-                  {mascota.estado}
-                </span>
-              </td>
-              <td className="px-4 py-2">
-                <div className="flex space-x-2">
-                  <button className="text-blue-500 hover:text-blue-700">
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <Edit className="h-4 w-4" />
-                  </button>
-                </div>
+          {mascotasRecientes.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                No hay mascotas registradas
               </td>
             </tr>
-          ))}
+          ) : (
+            mascotasRecientes.map((mascota) => (
+              <tr key={mascota.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 text-sm text-gray-800">{mascota.nombre}</td>
+                <td className="px-4 py-2 text-sm text-gray-600">{mascota.edad}</td>
+                <td className="px-4 py-2 text-sm text-gray-600">{mascota.refugioid}</td>
+                <td className="px-4 py-2 text-sm text-gray-600">{mascota.tipo}</td>
+                <td className="px-4 py-2 text-sm text-gray-600">{mascota.raza}</td>
+                <td className="px-4 py-2 text-sm">
+                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${getEstadoColor(mascota.estado)}`}>
+                    {mascota.estado}
+                  </span>
+                </td>
+                <td className="px-4 py-2">
+                  <div className="flex space-x-2">
+                    <button className="text-blue-500 hover:text-blue-700">
+                      <Eye className="h-4 w-4" />
+                    </button>
+                    <button className="text-red-500 hover:text-red-700">
+                      <Edit className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
@@ -295,4 +302,3 @@ const irAFichaMedica = () => {
 </div>
   );
 };
-
