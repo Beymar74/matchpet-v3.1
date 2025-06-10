@@ -8,7 +8,6 @@ import {
   Lock,
   Check,
   LogIn,
-  Chrome,
   AlertCircle,
   Loader2,
   Heart,
@@ -43,21 +42,10 @@ export default function LoginPage() {
   const validatePassword = (password: string) => {
     if (!password) {
       setPasswordError('');
-    } else if (password.length < 6) {
-      setPasswordError('Mínimo 6 caracteres');
     } else {
       setPasswordError('');
     }
   };
-
-  // Cargar datos guardados si existe "recordarme"
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMe(true);
-    }
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,18 +84,37 @@ export default function LoginPage() {
   
         if (rolData.rol) {
           localStorage.setItem("rolUsuario", rolData.rol);
-  
-          // Pequeña animación antes de redirigir
-          setTimeout(() => {
-            if (rolData.rol === 'Administrador') {
-              window.location.href = '/admin-dashboard';
-            } else if (rolData.rol === 'Refugio') {
-              window.location.href = '/refugio';
-            } else {
-              window.location.href = '/match';
+        
+          if (rolData.rol === 'Refugio') {
+            try {
+              const refugioResponse = await fetch(`/api/obtener-id-refugio?idUsuario=${data.idUsuario}`);
+              const refugioData = await refugioResponse.json();
+        
+              if (refugioData.success && refugioData.idRefugio) {
+                localStorage.setItem('idRefugio', refugioData.idRefugio);
+                setTimeout(() => {
+                  window.location.href = '/refugio';
+                }, 500);
+              } else {
+                console.error('No se pudo obtener el ID del refugio');
+                setErrorLogin(true);
+                setIsLoading(false);
+              }
+            } catch (error) {
+              console.error('Error al obtener el ID del refugio:', error);
+              setErrorLogin(true);
+              setIsLoading(false);
             }
-          }, 500);
-        } else {
+          } else if (rolData.rol === 'Administrador') {
+            setTimeout(() => {
+              window.location.href = '/admin';
+            }, 500);
+          } else {
+            setTimeout(() => {
+              window.location.href = '/match';
+            }, 500);
+          }
+         } else {
           setErrorLogin(true);
           setIsLoading(false);
         }
@@ -120,11 +127,6 @@ export default function LoginPage() {
       setErrorLogin(true);
       setIsLoading(false);
     }
-  };
-
-  const handleSocialLogin = (provider: string) => {
-    // Placeholder para login social
-    console.log(`Login con ${provider}`);
   };
   
   return (
@@ -286,7 +288,7 @@ export default function LoginPage() {
                 <span className="text-gray-600">Recordarme</span>
               </label>
               <Link 
-                href="/RecuperacionContrasena" 
+                href="/recuperar-contrasena" 
                 className="text-[#30588C] hover:text-[#254559] transition-colors font-medium"
               >
                 ¿Olvidaste tu contraseña?
@@ -307,27 +309,6 @@ export default function LoginPage() {
               {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </form>
-
-          {/* Divisor */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-500">O continúa con</span>
-            </div>
-          </div>
-
-          {/* Botón de login con Google */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSocialLogin('Google')}
-            className="w-full py-3 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md flex items-center justify-center gap-3"
-          >
-            <Chrome size={20} className="text-red-500" />
-            <span>Continuar con Google</span>
-          </Button>
 
           {/* Link de registro */}
           <div className="text-center text-sm text-gray-600">

@@ -240,7 +240,7 @@ export default function PetsSection() {
           <div className="w-full xl:w-2/5">
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-xl">
               <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center xl:text-left bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                Mascotas Disponibles
+                Nuevas Mascotas Disponibles
               </h2>
               
               <div className="space-y-4">

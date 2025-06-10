@@ -3,6 +3,7 @@
 import React from 'react'
 import Header from '@/components/Header'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function HistorialCambiosPage() {
   const historialMock = [
@@ -23,17 +24,19 @@ export default function HistorialCambiosPage() {
     },
   ]
 
+   const router = useRouter()
+
   return (
-    <div className="pt-[80px] min-h-screen bg-white dark:bg-[#011526] text-gray-900 dark:text-white transition-colors duration-500">
+    <div className="pt-[80px] min-h-screen bg-white text-gray-900 transition-colors duration-500">
       <Header />
 
       <main className="max-w-4xl mx-auto py-12 px-6">
         <h1 className="text-4xl font-bold mb-4 text-[#BF3952]">🕘 Historial de Cambios</h1>
-        <p className="mb-6 text-sm text-gray-700 dark:text-white/80">
+        <p className="mb-6 text-sm text-gray-700">
           A continuación se detallan los cambios realizados sobre las fichas de mascotas:
         </p>
 
-        <div className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-lg overflow-x-auto">
+        <div className="bg-white text-gray-900 rounded-xl shadow-lg overflow-x-auto">
           <table className="min-w-full text-sm text-left">
             <thead className="bg-[#6093BF] text-white">
               <tr>
@@ -46,7 +49,7 @@ export default function HistorialCambiosPage() {
               {historialMock.map((registro, index) => (
                 <tr
                   key={index}
-                  className={`${index % 2 === 0 ? 'bg-gray-100 dark:bg-[#2a2a2a]' : 'bg-white dark:bg-[#1a1a1a]'} border-t border-gray-200 dark:border-gray-700`}
+                  className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} border-t border-gray-200`}
                 >
                   <td className="px-4 py-2">{registro.fecha}</td>
                   <td className="px-4 py-2">{registro.cambio}</td>
@@ -58,12 +61,11 @@ export default function HistorialCambiosPage() {
         </div>
 
         <div className="mt-6 text-sm">
-          <Link
-            href="/PantallaGestionMascotas"
-            className="text-[#6093BF] hover:underline"
-          >
-            ← Volver a Gestión de Mascotas
-          </Link>
+          <div className="mt-6 text-sm">
+          <button onClick={() => router.back()} className="text-[#6093BF] hover:underline">
+            ← Volver a la página anterior
+          </button>
+        </div>
         </div>
       </main>
     </div>

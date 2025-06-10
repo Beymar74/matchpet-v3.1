@@ -19,7 +19,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     pathname.startsWith("/admin") ||                    // ← ESTA ES LA LÍNEA NUEVA
     pathname.startsWith("/AsignacionRolesPermisos") ||
     pathname.startsWith("/admin-dashboard") ||
-    pathname.startsWith("/usuarios");
+    pathname.startsWith("/usuarios")||
+    pathname.startsWith("/ComparativaAdopciones")||
+    pathname.startsWith("/EvolucionHistorica")||
+    pathname.startsWith("/ActividadRegion")||
+    pathname.startsWith("/FavoritosFrecuentes")||
+    pathname.startsWith("/LogsAuditorias");
 
   return (
     <>
