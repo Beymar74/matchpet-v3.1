@@ -25,6 +25,17 @@ const datosMascotas = [
   { nombre: "Luna", tipo: "Perro", especie: "Canino", favoritos: 82, estado: "Adoptado", fecha: "2025-06-01" },
   { nombre: "Max", tipo: "Gato", especie: "Felino", favoritos: 75, estado: "Disponible", fecha: "2025-06-03" },
   { nombre: "Bella", tipo: "Perro", especie: "Canino", favoritos: 68, estado: "En revisión", fecha: "2025-06-02" },
+  { nombre: "Rocky", tipo: "Perro", especie: "Canino", favoritos: 90, estado: "Disponible", fecha: "2025-06-05" },
+{ nombre: "Milo", tipo: "Gato", especie: "Felino", favoritos: 55, estado: "Adoptado", fecha: "2025-06-04" },
+{ nombre: "Daisy", tipo: "Perro", especie: "Canino", favoritos: 77, estado: "Disponible", fecha: "2025-06-06" },
+{ nombre: "Coco", tipo: "Gato", especie: "Felino", favoritos: 64, estado: "En revisión", fecha: "2025-06-07" },
+{ nombre: "Toby", tipo: "Perro", especie: "Canino", favoritos: 81, estado: "Disponible", fecha: "2025-06-08" },
+{ nombre: "Simba", tipo: "Gato", especie: "Felino", favoritos: 70, estado: "Adoptado", fecha: "2025-06-09" },
+{ nombre: "Nala", tipo: "Gato", especie: "Felino", favoritos: 62, estado: "Disponible", fecha: "2025-06-10" },
+{ nombre: "Zeus", tipo: "Perro", especie: "Canino", favoritos: 85, estado: "Disponible", fecha: "2025-06-11" },
+{ nombre: "Lola", tipo: "Perro", especie: "Canino", favoritos: 73, estado: "En revisión", fecha: "2025-06-12" },
+{ nombre: "Mimi", tipo: "Gato", especie: "Felino", favoritos: 58, estado: "Disponible", fecha: "2025-06-13" }
+
 ];
 
 export default function ReportesRefugioGraficos() {

@@ -100,7 +100,7 @@ export default function FavoritosFrecuentes() {
   return (
     <>
       <HeaderAdmin />
-<main className={`min-h-screen bg-gray-50 py-8 px-4 transition-all ${collapsed ? "ml-20" : "ml-80"}`}>
+<main className={`min-h-screen bg-gray-50 py-8 px-4 transition-all ${collapsed ? "ml-2" : "ml-8"}`}>
         <div className="max-w-5xl mx-auto bg-white shadow rounded-xl p-6">
  {/* Menú superior */}
           <div className="flex flex-wrap justify-center gap-2 mb-6">
