@@ -95,13 +95,13 @@ const GestionNotificaciones = () => {
   const manejarRedireccion = (tipo: string) => {
     switch (tipo) {
       case 'Aviso de Nueva Mascota':
-        router.push('/nueva-mascota'); // Ruta correcta
+        router.push('/nueva-mascota'); 
         break;
       case 'Campaña de Correo para Adopciones':
-        router.push('/campana-adopciones'); // Ruta correcta
+        router.push('/campana-adopciones'); 
         break;
       case 'Recordatorio por SMS':
-        router.push('/sms-recordatorio'); // Ruta correcta
+        router.push('/sms-recordatorio'); 
         break;
       default:
         break;
