@@ -17,23 +17,23 @@ export async function GET() {
     await sql.connect(config);
 
     const result = await sql.query`
-      SELECT 
-        M.ID_Mascota,
-        M.Nombre,
-        M.Edad,
-        M.Raza,
-        M.ID_Refugio,
-        M.ID_Estado,
-        R.Nombre AS NombreRefugio,
-        E.Nombre_Estado AS Nombre_Estado
-      FROM Mascotas M
-      LEFT JOIN Refugios R ON M.ID_Refugio = R.ID_Refugio
-      LEFT JOIN Estados_Mascota E ON M.ID_Estado = E.ID_Estado
-    `;
+  SELECT 
+    M.ID_Mascota,
+    M.Nombre,
+    M.Edad,
+    M.Raza,
+    M.ID_Refugio,
+    M.ID_Estado,
+    R.Nombre AS NombreRefugio
+  FROM Mascotas M
+  LEFT JOIN Refugios R ON M.ID_Refugio = R.ID_Refugio
+  -- LEFT JOIN Estados E ON M.ID_Estado = E.ID_Estado
+`;
+
 
     return NextResponse.json(result.recordset);
   } catch (error) {
-    console.error('❌ Error en API /api/mascotas/ver:', error);
+    console.error('❌ Error en API /api/mascotasAdmin/ver:', error);
     return NextResponse.json(
       { error: 'Error interno en la consulta', detalle: (error as Error).message },
       { status: 500 }

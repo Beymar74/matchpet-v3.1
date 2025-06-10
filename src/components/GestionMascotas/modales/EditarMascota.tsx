@@ -1,78 +1,125 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { mascotasSimuladas, Mascota } from '@/data/mascotasSimuladas'
-import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
-import Header from '@/components/Header'
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
+import Header from '@/components/Header';
+
+interface Mascota {
+  ID_Mascota: number;
+  Nombre: string;
+  Especie: string;
+  Raza: string;
+  Edad: number;
+  Foto?: string;
+  Estado: string;
+  Descripcion?: string;
+  Tamano?: string;
+  Nombre_Estado?: string;
+}
 
 interface EditarMascotaProps {
-  id: string | number
-  modoModal?: boolean
-  onClose?: () => void
-  onGuardar?: (mascotaActualizada: Mascota) => void
+  id: string | number;
+  modoModal?: boolean;
+  onClose?: () => void;
+  onGuardar?: (mascotaActualizada: Mascota) => void;
 }
 
 export default function EditarMascota({ id, modoModal = false, onClose, onGuardar }: EditarMascotaProps) {
-  const router = useRouter()
-  const [formData, setFormData] = useState<Mascota | null>(null)
-  const [errores, setErrores] = useState<{ [key: string]: boolean }>({})
-  const [subiendo, setSubiendo] = useState(false)
+  const router = useRouter();
+  const [formData, setFormData] = useState<any>(null);
+  const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
+  const [subiendo, setSubiendo] = useState(false);
 
   useEffect(() => {
-    const mascota = mascotasSimuladas.find((m) => m.id === Number(id))
-    if (mascota) setFormData({ ...mascota })
-  }, [id])
+    const obtenerMascota = async () => {
+      try {
+        const res = await fetch(`/api/mascotas/${id}`);
+        const data = await res.json();
+        if (data) {
+          setFormData({
+            id: data.ID_Mascota,
+            nombre: data.Nombre,
+            especie: data.Especie,
+            raza: data.Raza,
+            edad: data.Edad,
+            foto: data.Foto,
+            estado: data.Nombre_Estado || data.Estado || '',
+            descripcion: data.Descripcion ?? '',
+            tamano: data.Tamano ?? ''
+          });
+        }
+      } catch (error) {
+        console.error('❌ Error al obtener mascota:', error);
+      }
+    };
+    obtenerMascota();
+  }, [id]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    if (!formData) return
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-    setErrores({ ...errores, [e.target.name]: false })
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    if (!formData) return;
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrores({ ...errores, [e.target.name]: false });
+  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !formData) return
-
-    setSubiendo(true)
-    const url = await uploadToCloudinary(file)
+    const file = e.target.files?.[0];
+    if (!file || !formData) return;
+    setSubiendo(true);
+    const url = await uploadToCloudinary(file);
     if (url) {
-      setFormData({ ...formData, foto: url })
+      setFormData({ ...formData, foto: url });
     }
-    setSubiendo(false)
-  }
+    setSubiendo(false);
+  };
 
   const validarFormulario = () => {
-    if (!formData) return false
-    const campos = ['nombre', 'especie', 'edad', 'estado']
-    const errores: any = {}
+    if (!formData) return false;
+    const campos = ['nombre', 'especie', 'edad', 'estado'];
+    const errores: any = {};
     campos.forEach((campo) => {
-      if (!formData[campo as keyof Mascota]) errores[campo] = true
-    })
-    setErrores(errores)
-    return Object.keys(errores).length === 0
-  }
+      if (!formData[campo]) errores[campo] = true;
+    });
+    setErrores(errores);
+    return Object.keys(errores).length === 0;
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validarFormulario() || !formData) return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validarFormulario() || !formData) return;
 
-    const index = mascotasSimuladas.findIndex((m) => m.id === Number(id))
-    if (index !== -1) {
-      mascotasSimuladas[index] = { ...formData }
+    const datosAEnviar = {
+      ID_Mascota: formData.id,
+      Nombre: formData.nombre,
+      Especie: formData.especie,
+      Raza: formData.raza,
+      Edad: Number(formData.edad),
+      Foto: formData.foto,
+      Estado: formData.estado
+    };
 
-      alert('✅ Mascota actualizada correctamente (simulado)')
+    try {
+      const res = await fetch('/api/mascotas/editar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosAEnviar),
+      });
+
+      if (!res.ok) throw new Error('Error al actualizar en la base de datos');
+
+      alert('✅ Mascota actualizada correctamente');
 
       if (modoModal) {
-        onGuardar?.(formData)
-        onClose?.()
+        onGuardar?.(formData);
+        onClose?.();
       } else {
-        router.push('/PantallaGestionMascotas')
+        router.push('/PantallaGestionMascotas');
       }
+    } catch (error) {
+      console.error('Error al guardar:', error);
+      alert('❌ No se pudo guardar. Revisa la consola.');
     }
-  }
+  };
 
   if (!formData) {
     return (
@@ -83,8 +130,9 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
           <p className="text-red-500">Mascota no encontrada.</p>
         </main>
       </div>
-    )
+    );
   }
+
   return modoModal ? (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
@@ -113,8 +161,9 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
         />
       </main>
     </div>
-  )
+  );
 }
+
 function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
   return (
     <>
@@ -126,6 +175,7 @@ function ContenidoFormulario({ formData, errores, handleChange, handleImageChang
             <InputField label="Especie *" name="especie" value={formData.especie} error={errores.especie} onChange={handleChange} />
             <InputField label="Raza" name="raza" value={formData.raza} onChange={handleChange} />
             <InputField type="number" label="Edad *" name="edad" value={formData.edad} error={errores.edad} onChange={handleChange} />
+
             <div>
               <label className="block text-sm font-semibold text-[#30588C]">Tamaño</label>
               <select
@@ -140,7 +190,6 @@ function ContenidoFormulario({ formData, errores, handleChange, handleImageChang
                 <option value="Grande">Grande</option>
               </select>
             </div>
-
 
             <div>
               <label className="block text-sm font-semibold text-[#30588C]">Estado *</label>
@@ -199,7 +248,7 @@ function ContenidoFormulario({ formData, errores, handleChange, handleImageChang
         </div>
       </form>
     </>
-  )
+  );
 }
 
 function InputField({ label, name, value, onChange, error = false, type = 'text' }: any) {
@@ -215,6 +264,5 @@ function InputField({ label, name, value, onChange, error = false, type = 'text'
         required={label.includes('*')}
       />
     </div>
-  )
+  );
 }
-

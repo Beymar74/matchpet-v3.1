@@ -16,6 +16,10 @@ interface Mascota {
   ID_Estado: number;
   NombreRefugio?: string;
   Nombre_Estado?: string;
+  Nombre_Especie?: string;
+  Nombre_Tamanio?: string;
+  Nombre_Color?: string;
+  Foto?: string;
 }
 
 export default function GestionMascotas() {
@@ -28,7 +32,7 @@ export default function GestionMascotas() {
   useEffect(() => {
     const fetchMascotas = async () => {
       try {
-        const res = await fetch('/api/mascotas/ver');
+        const res = await fetch('/api/mascotasAdmin/ver');
         const data = await res.json();
 
         if (Array.isArray(data)) {
