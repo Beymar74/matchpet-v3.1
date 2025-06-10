@@ -16,7 +16,6 @@ export default function Home() {
       <Comunidad />
       <Seccióndeestadísticas />
       <ExplorarSección />
-      {/* You might want to add a Footer component here as well */}
     </>
   );
 }
