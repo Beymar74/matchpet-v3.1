@@ -123,6 +123,15 @@ export default function GestionMascotas() {
     },
   ];
 
+  
+const irAFichaMedica = () => {
+    router.push('/PantallaGestionMascotas/ficha-medica')
+  }
+
+  const irAMultimedia = () => {
+    router.push('/PantallaGestionMascotas/multimedia')
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
