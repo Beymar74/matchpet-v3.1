@@ -8,7 +8,6 @@ import {
   Lock,
   Check,
   LogIn,
-  Chrome,
   AlertCircle,
   Loader2,
   Heart,
@@ -43,12 +42,11 @@ export default function LoginPage() {
   const validatePassword = (password: string) => {
     if (!password) {
       setPasswordError('');
-    } else if (password.length < 6) {
-      setPasswordError('Mínimo 6 caracteres');
     } else {
       setPasswordError('');
     }
   };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -61,7 +59,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('https://agrosmart.wuaze.com/login.php', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' }
@@ -81,7 +79,7 @@ export default function LoginPage() {
         }
   
         // Obtener el rol
-        const rolResponse = await fetch(`/api/obtener-rol?idUsuario=${data.idUsuario}`);
+        const rolResponse = await fetch(`https://agrosmart.wuaze.com/obtener-rol.php?idUsuario=${data.idUsuario}`);
         const rolData = await rolResponse.json();
   
         if (rolData.rol) {
@@ -89,7 +87,8 @@ export default function LoginPage() {
         
           if (rolData.rol === 'Refugio') {
             try {
-              const refugioResponse = await fetch(`/api/obtener-id-refugio?idUsuario=${data.idUsuario}`);
+              const refugioResponse = await fetch(`https://agrosmart.wuaze.com/obtener-id-refugio.php?idUsuario=${data.idUsuario}`);
+
               const refugioData = await refugioResponse.json();
         
               if (refugioData.success && refugioData.idRefugio) {
@@ -128,13 +127,7 @@ export default function LoginPage() {
       console.error('Error en login:', err);
       setErrorLogin(true);
       setIsLoading(false);
-    } // ⬅️ ESTE CIERRE FALTABA
-  }; // ⬅️ Este también cierra correctamente la función handleLogin
-
-        
-  const handleSocialLogin = (provider: string) => {
-    // Placeholder para login social
-    console.log(`Login con ${provider}`);
+    }
   };
   
   return (
@@ -317,27 +310,6 @@ export default function LoginPage() {
               {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </form>
-
-          {/* Divisor */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-500">O continúa con</span>
-            </div>
-          </div>
-
-          {/* Botón de login con Google */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSocialLogin('Google')}
-            className="w-full py-3 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md flex items-center justify-center gap-3"
-          >
-            <Chrome size={20} className="text-red-500" />
-            <span>Continuar con Google</span>
-          </Button>
 
           {/* Link de registro */}
           <div className="text-center text-sm text-gray-600">

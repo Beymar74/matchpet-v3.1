@@ -85,7 +85,6 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
       </div>
     )
   }
-
   return modoModal ? (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl bg-white text-gray-900 rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
@@ -116,7 +115,6 @@ export default function EditarMascota({ id, modoModal = false, onClose, onGuarda
     </div>
   )
 }
-
 function ContenidoFormulario({ formData, errores, handleChange, handleImageChange, handleSubmit, subiendo }: any) {
   return (
     <>
@@ -219,3 +217,4 @@ function InputField({ label, name, value, onChange, error = false, type = 'text'
     </div>
   )
 }
+

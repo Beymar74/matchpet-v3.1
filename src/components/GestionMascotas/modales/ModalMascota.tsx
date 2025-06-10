@@ -35,7 +35,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
     }
   }
 
-  // Pantallas secundarias
+  // ⚠️ MOVER estas pantallas antes del return principal
   if (pantalla === 'editar') {
     return (
       <EditarMascota
@@ -72,6 +72,7 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
     )
   }
 
+  // Pantalla modal por defecto
   return (
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50"
@@ -115,42 +116,61 @@ export default function ModalMascota({ mascota, onClose }: ModalMascotaProps) {
           <p><strong>Ingreso:</strong> {mascotaActualizada.fechaIngreso ?? 'No registrado'}</p>
         </div>
 
-        <div className="flex justify-between text-lg font-medium mb-4">
-          <p>
-            Compatibilidad:{' '}
-            <span className="text-[#30588C] font-bold">{mascotaActualizada.compatibilidad ?? 0}%</span>
-          </p>
-          <p>
-            Solicitudes:{' '}
-            <span className="text-[#BF3952] font-bold">{mascotaActualizada.solicitudes ?? 0}</span>
-          </p>
+        {/* Datos extra */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm font-medium mb-4">
+          <div className="bg-gray-100 rounded p-2">
+            <p className="text-gray-600">Compatibilidad</p>
+            <p className="text-[#30588C] font-bold text-lg">{mascotaActualizada.compatibilidad ?? 0}%</p>
+          </div>
+
+          <div className="bg-gray-100 rounded p-2">
+            <p className="text-gray-600">Solicitudes</p>
+            <p className="text-[#BF3952] font-bold text-lg">{mascotaActualizada.solicitudes ?? 0}</p>
+          </div>
+
+          <div className="bg-gray-100 rounded p-2">
+            <p className="text-gray-600">Adoptabilidad</p>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-1">
+              <div
+                className={`h-4 rounded-full text-white text-xs text-center`}
+                style={{
+                  width: `${mascotaActualizada.adoptabilidad ?? 0}%`,
+                  backgroundColor:
+                    (mascotaActualizada.adoptabilidad ?? 0) > 70
+                      ? '#4CAF50'
+                      : (mascotaActualizada.adoptabilidad ?? 0) > 40
+                      ? '#FFB800'
+                      : '#F44336'
+                }}
+              >
+                {mascotaActualizada.adoptabilidad ?? 0}%
+              </div>
+            </div>
+          </div>
         </div>
 
+        {/* Botones */}
         <div className="flex flex-wrap sm:flex-nowrap gap-2 justify-between">
           <button
             onClick={() => setPantalla('editar')}
             className="flex items-center justify-center gap-2 bg-[#30588C] text-white px-4 py-2 rounded hover:bg-[#254559] w-full sm:w-1/3"
           >
-            <span>✏️</span>
-            <span>Editar</span>
+            ✏️ Editar
           </button>
           <button
             onClick={() => setPantalla(fichaExiste ? 'ficha' : 'crearFicha')}
             className="flex items-center justify-center gap-2 bg-[#6093BF] text-white px-4 py-2 rounded hover:bg-[#30588C] w-full sm:w-1/3"
           >
-            <span>🩺</span>
-            <span>Ficha Médica</span>
+            🩺 Ficha Médica
           </button>
           <button
             onClick={() => alert('🗑️ Esta funcionalidad se implementará más adelante')}
             className="flex items-center justify-center gap-2 bg-[#BF3952] text-white px-4 py-2 rounded hover:bg-red-700 w-full sm:w-1/3"
           >
-            <span>🗑️</span>
-            <span>Borrar</span>
+            🗑️ Borrar
           </button>
         </div>
       </div>
     </div>
   )
 }
-

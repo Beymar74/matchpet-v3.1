@@ -17,6 +17,7 @@ export interface Mascota {
   refugioid?: string;
   fecha?: string;
   tipo?: string;
+  adoptabilidad?: number;
 }
 
 // 🐾 Datos por defecto (si localStorage está vacío)
@@ -33,6 +34,7 @@ const baseInicial: Mascota[] = [
     fechaIngreso: "2024-05-15",
     compatibilidad: 85,
     solicitudes: 2,
+    adoptabilidad: 80,
   },
   {
     id: 2,
@@ -46,6 +48,7 @@ const baseInicial: Mascota[] = [
     fechaIngreso: "2024-04-22",
     compatibilidad: 90,
     solicitudes: 3,
+    adoptabilidad: 100,
   },
 ]
 
@@ -72,8 +75,9 @@ export function agregarMascota(nueva: Omit<Mascota, 'id'>): Mascota {
     id: Date.now(),
     ...nueva,
     fechaIngreso: nueva.fechaIngreso ?? new Date().toISOString().split("T")[0],
-    compatibilidad: nueva.compatibilidad ?? 0,
-    solicitudes: nueva.solicitudes ?? 0,
+  compatibilidad: nueva.compatibilidad ?? 0,
+  solicitudes: nueva.solicitudes ?? 0,
+  adoptabilidad: nueva.adoptabilidad ?? 0 
   }
   mascotasSimuladas.push(nuevaMascota)
   guardarMascotas()
